@@ -30,10 +30,10 @@ export class AuthService {
     }
 
     refreshToken(): Observable<AuthResponse> {
-        const refreshToken = localStorage.getItem(this.REFRESH_KEY);
-        return this.http.post<AuthResponse>(`${this.apiUrl}/refresh`, null, {
-            params: { refreshToken: refreshToken || '' }
-        }).pipe(tap(response => this.handleAuthSuccess(response)));
+        const refreshToken = localStorage.getItem(this.REFRESH_KEY) || '';
+        const params = new HttpParams().set('refreshToken', refreshToken);
+        return this.http.post<AuthResponse>(`${this.apiUrl}/refresh`, null, { params })
+            .pipe(tap(response => this.handleAuthSuccess(response)));
     }
 
     logout(): void {

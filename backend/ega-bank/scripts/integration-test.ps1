@@ -37,7 +37,8 @@ try {
     if (-not $accountNumber) { $accountNumber = $account.numero; if (-not $accountNumber) { $accountNumber = $account.accountNumber } }
 
     Write-Output "\n=== Deposit to account $accountNumber ==="
-    $depBody = @{ montant = 100000; description = 'Dépôt initial' }
+    # Use ASCII description to avoid PowerShell/JSON encoding issues when posting to the API
+    $depBody = @{ montant = 100000; description = 'Initial deposit' }
     $deposit = Invoke-RestMethod -Method Post -Uri "$baseUrl/transactions/$accountNumber/deposit" -Headers $headers -Body (ConvertTo-Json $depBody) -ErrorAction Stop
     Write-Output "DEPOSIT RESPONSE:"; $deposit | ConvertTo-Json -Depth 5
 

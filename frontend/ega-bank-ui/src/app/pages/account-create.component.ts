@@ -16,8 +16,8 @@ import { AccountService } from '../services/account.service';
         <input formControlName="clientId" />
         <label>Account Type</label>
         <select formControlName="typeCompte">
-          <option value="SAVINGS">Savings</option>
-          <option value="CHECKING">Checking</option>
+          <option value="EPARGNE">Savings (Épargne)</option>
+          <option value="COURANT">Checking (Courant)</option>
         </select>
         <label>Initial balance (optional)</label>
         <input type="number" formControlName="initialBalance" />
@@ -34,7 +34,7 @@ export class AccountCreateComponent {
   constructor(private fb: FormBuilder, private accountService: AccountService, private router: Router) {
     this.form = this.fb.group({
       clientId: ['', Validators.required],
-      typeCompte: ['SAVINGS', Validators.required],
+      typeCompte: ['EPARGNE', Validators.required],
       initialBalance: [0],
     });
   }

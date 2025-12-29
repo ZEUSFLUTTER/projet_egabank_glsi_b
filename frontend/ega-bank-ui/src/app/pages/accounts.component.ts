@@ -1,8 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { Account, mockAccounts, mockClients } from '../mock-data';
-import { statusClassObject, statusDisplay } from '../shared/status.util';
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { AccountResponse } from '../models/account.model';
+import { AccountService } from '../services/account.service';
+import { ClientService } from '../services/client.service';
 
 @Component({
   standalone: true,
@@ -10,28 +11,79 @@ import { statusClassObject, statusDisplay } from '../shared/status.util';
   imports: [CommonModule],
   templateUrl: './accounts.component.html',
 })
-export class AccountsComponent {
-  accounts = mockAccounts;
-  clients = mockClients;
-  filteredAccounts = this.accounts;
+export class AccountsComponent implements OnInit {
+  accounts: AccountResponse[] = [];
+  clientId: number | null = null;
+  isLoading = true;
+  errorMessage = '';
+  // Cache for client names
+  private clientCache: Map<number, string> = new Map();
 
-  constructor(private route: ActivatedRoute) {
+  constructor(
+    private route: ActivatedRoute,
+    private router: Router,
+    private accountService: AccountService,
+    private clientService: ClientService
+  ) { }
+
+  ngOnInit(): void {
     this.route.queryParamMap.subscribe((map) => {
-      const clientId = map.get('clientId');
-      this.filteredAccounts = clientId ? this.accounts.filter((a) => a.clientId === clientId) : this.accounts;
+      const clientIdParam = map.get('clientId');
+      this.clientId = clientIdParam ? Number(clientIdParam) : null;
+      this.loadAccounts();
     });
   }
 
-  getClientName(clientId: string) {
-    const c = this.clients.find((x) => x.clientId === clientId);
-    return c ? `${c.firstName} ${c.lastName}` : clientId;
+  private loadAccounts(): void {
+    this.isLoading = true;
+    this.errorMessage = '';
+
+    if (this.clientId) {
+      // Load accounts for specific client
+      this.accountService.getByClient(this.clientId).subscribe({
+        next: (accounts) => {
+          this.accounts = accounts;
+          this.isLoading = false;
+        },
+        error: (err) => {
+          console.error('Failed to load accounts', err);
+          this.errorMessage = 'Failed to load accounts.';
+          this.isLoading = false;
+        },
+      });
+    } else {
+      // Load all accounts
+      this.accountService.getAll(0, 100).subscribe({
+        next: (response) => {
+          this.accounts = response.content || [];
+          this.isLoading = false;
+        },
+        error: (err) => {
+          console.error('Failed to load accounts', err);
+          this.errorMessage = 'Failed to load accounts.';
+          this.isLoading = false;
+        },
+      });
+    }
   }
 
-  getStatusClass(status: Account['status']) {
-    return statusClassObject(status);
+  getStatusClass(actif: boolean) {
+    return actif ? 'badge-success' : 'badge-danger';
   }
 
-  getStatusDisplay(status: Account['status']) {
-    return statusDisplay(status);
+  getStatusDisplay(actif: boolean) {
+    return actif ? 'Active' : 'Inactive';
+  }
+
+  getTypeDisplay(typeCompte: string) {
+    const types: Record<string, string> = {
+      EPARGNE: 'Savings',
+      COURANT: 'Checking',
+    };
+    return types[typeCompte] || typeCompte;
+  }
+
+  viewTransactions(numeroCompte: string) {
+    this.router.navigate(['/transactions'], { queryParams: { accountId: numeroCompte } });
   }
 }

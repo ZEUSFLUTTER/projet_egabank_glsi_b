@@ -408,3 +408,81 @@ td {
 	color: var(--danger);
 }
 
+/* Spinners */
+.spinner-lg {
+	width: 48px;
+	height: 48px;
+	border: 4px solid var(--gray-200);
+	border-top-color: var(--primary);
+	border-radius: 50%;
+	animation: spin 1s linear infinite;
+	margin: 0 auto;
+}
+
+@keyframes spin {
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+/* Alerts */
+.alert {
+	padding: 0.75rem 1rem;
+	border-radius: var(--radius-md);
+	font-size: 0.875rem;
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+}
+
+.alert-danger {
+	background-color: #fef2f2;
+	border: 1px solid #fee2e2;
+	color: var(--danger);
+}
+
+.alert-success {
+	background-color: #dcfce7;
+	border: 1px solid #bbf7d0;
+	color: #166534;
+}
+
+/* Button sizes */
+.btn-sm {
+	padding: 0.25rem 0.5rem;
+	font-size: 0.75rem;
+}
+
+/* Additional utilities */
+.mb-6 {
+	margin-bottom: 1.5rem;
+}
+
+.mt-4 {
+	margin-top: 1rem;
+}
+
+.mr-2 {
+	margin-right: 0.5rem;
+}
+
+.flex-1 {
+	flex: 1;
+}
+
+.text-gray-600 {
+	color: var(--gray-600);
+}
+
+.text-gray-400 {
+	color: var(--gray-400);
+}
+
+.text-gray-700 {
+	color: var(--gray-700);
+}
+
+.py-12 {
+	padding-top: 3rem;
+	padding-bottom: 3rem;
+}

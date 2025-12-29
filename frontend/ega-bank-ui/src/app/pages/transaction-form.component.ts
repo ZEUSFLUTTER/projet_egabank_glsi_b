@@ -14,19 +14,22 @@ import { TransactionService } from '../services/transaction.service';
       <form [formGroup]="form" (ngSubmit)="submit()">
         <label>Type</label>
         <select formControlName="type">
-          <option value="DEPOSIT">Deposit</option>
-          <option value="WITHDRAWAL">Withdrawal</option>
-          <option value="TRANSFER">Transfer</option>
+          <option value="DEPOT">Deposit (Dépôt)</option>
+          <option value="RETRAIT">Withdrawal (Retrait)</option>
+          <option value="VIREMENT">Transfer (Virement)</option>
         </select>
 
         <label>Account Number</label>
         <input formControlName="accountNumber" />
 
-        <label *ngIf="form.value.type === 'TRANSFER'">Target Account</label>
-        <input *ngIf="form.value.type === 'TRANSFER'" formControlName="targetAccountNumber" />
+        <label *ngIf="form.value.type === 'VIREMENT'">Target Account</label>
+        <input *ngIf="form.value.type === 'VIREMENT'" formControlName="targetAccountNumber" />
 
         <label>Amount</label>
         <input type="number" formControlName="amount" />
+
+        <label>Description (optional)</label>
+        <input formControlName="description" />
 
         <div class="actions">
           <button type="submit" [disabled]="form.invalid">Submit</button>
@@ -40,25 +43,43 @@ export class TransactionFormComponent {
 
   constructor(private fb: FormBuilder, private txService: TransactionService, private router: Router) {
     this.form = this.fb.group({
-      type: ['DEPOSIT', Validators.required],
+      type: ['DEPOT', Validators.required],
       accountNumber: ['', Validators.required],
       targetAccountNumber: [''],
-      amount: [0, [Validators.required]],
+      amount: [0, [Validators.required, Validators.min(0.01)]],
+      description: [''],
     });
   }
 
   submit() {
     if (this.form.invalid) return;
     const v = this.form.value;
-    if (v.type === 'TRANSFER') {
-      this.txService.transfer({ compteSource: String(v.accountNumber), compteDestination: String(v.targetAccountNumber), montant: Number(v.amount) })
-        .subscribe({ next: () => this.router.navigateByUrl('/transactions'), error: (e) => console.error(e) });
-    } else if (v.type === 'DEPOSIT') {
-      this.txService.deposit(String(v.accountNumber), { montant: Number(v.amount) })
-        .subscribe({ next: () => this.router.navigateByUrl('/transactions'), error: (e) => console.error(e) });
+    if (v.type === 'VIREMENT') {
+      this.txService.transfer({
+        compteSource: String(v.accountNumber),
+        compteDestination: String(v.targetAccountNumber),
+        montant: Number(v.amount),
+        description: v.description || undefined
+      }).subscribe({
+        next: () => this.router.navigateByUrl('/transactions'),
+        error: (e) => console.error(e)
+      });
+    } else if (v.type === 'DEPOT') {
+      this.txService.deposit(String(v.accountNumber), {
+        montant: Number(v.amount),
+        description: v.description || undefined
+      }).subscribe({
+        next: () => this.router.navigateByUrl('/transactions'),
+        error: (e) => console.error(e)
+      });
     } else {
-      this.txService.withdraw(String(v.accountNumber), { montant: Number(v.amount) })
-        .subscribe({ next: () => this.router.navigateByUrl('/transactions'), error: (e) => console.error(e) });
+      this.txService.withdraw(String(v.accountNumber), {
+        montant: Number(v.amount),
+        description: v.description || undefined
+      }).subscribe({
+        next: () => this.router.navigateByUrl('/transactions'),
+        error: (e) => console.error(e)
+      });
     }
   }
 }

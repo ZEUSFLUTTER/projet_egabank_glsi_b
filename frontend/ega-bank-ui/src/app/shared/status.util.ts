@@ -1,30 +1,38 @@
-import { Account } from '../mock-data';
+// Status utilities for account and transaction display
 
-export type AccountStatus = Account['status'];
-
-export function statusClassObject(status: AccountStatus) {
+export function statusClassObject(actif: boolean) {
   return {
-    'badge-success': status === 'active',
-    'badge-warning': status === 'inactive',
-    'badge-danger': status === 'closed' || status === 'suspended',
+    'badge-success': actif,
+    'badge-danger': !actif,
   } as Record<string, boolean>;
 }
 
-export function statusDisplay(status: AccountStatus) {
-  // Normalize to capitalized form for display
-  return status.charAt(0).toUpperCase() + status.slice(1);
+export function statusDisplay(actif: boolean) {
+  return actif ? 'Active' : 'Inactive';
 }
 
-export type TransactionType = 'deposit' | 'withdrawal' | 'transfer' | 'payment' | 'fee';
+// Backend transaction types
+export type TransactionType = 'DEPOT' | 'RETRAIT' | 'VIREMENT_ENTRANT' | 'VIREMENT_SORTANT';
 
 export function transactionAmountClass(type: TransactionType) {
-  const isNegative = type === 'withdrawal' || type === 'payment' || type === 'fee';
+  const isPositive = type === 'DEPOT' || type === 'VIREMENT_ENTRANT';
   return {
-    'text-danger': isNegative,
-    'text-success': !isNegative,
+    'text-danger': !isPositive,
+    'text-success': isPositive,
   } as Record<string, boolean>;
 }
 
 export function transactionSign(type: TransactionType) {
-  return type === 'withdrawal' || type === 'payment' || type === 'fee' ? '-' : '+';
+  const isPositive = type === 'DEPOT' || type === 'VIREMENT_ENTRANT';
+  return isPositive ? '+' : '-';
+}
+
+export function transactionTypeDisplay(type: TransactionType) {
+  const displays: Record<TransactionType, string> = {
+    DEPOT: 'Deposit',
+    RETRAIT: 'Withdrawal',
+    VIREMENT_ENTRANT: 'Transfer In',
+    VIREMENT_SORTANT: 'Transfer Out',
+  };
+  return displays[type] || type;
 }

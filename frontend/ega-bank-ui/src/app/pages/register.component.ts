@@ -25,14 +25,17 @@ import { AuthService } from '../services/auth.service';
 
         <form [formGroup]="form" (ngSubmit)="submit()">
            <div class="mb-4">
-            <label for="fullName" class="label">Full Name</label>
+            <label for="email" class="label">Email</label>
             <input 
-              id="fullName" 
-              type="text" 
-              formControlName="fullName" 
+              id="email" 
+              type="email" 
+              formControlName="email" 
               class="input-field w-full"
-              [class.error-border]="form.get('fullName')?.invalid && form.get('fullName')?.touched"
+              [class.error-border]="form.get('email')?.invalid && form.get('email')?.touched"
             />
+            <div *ngIf="form.get('email')?.invalid && form.get('email')?.touched" class="text-xs text-danger mt-1">
+              Valid email is required
+            </div>
           </div>
 
           <div class="mb-4">
@@ -45,7 +48,7 @@ import { AuthService } from '../services/auth.service';
               [class.error-border]="form.get('username')?.invalid && form.get('username')?.touched"
             />
              <div *ngIf="form.get('username')?.invalid && form.get('username')?.touched" class="text-xs text-danger mt-1">
-              Username is required
+              Username is required (min 3 characters)
             </div>
           </div>
 
@@ -185,9 +188,9 @@ export class RegisterComponent {
 
   constructor(private fb: FormBuilder, private auth: AuthService, private router: Router) {
     this.form = this.fb.group({
-      username: ['', Validators.required],
-      password: ['', Validators.required],
-      fullName: ['', Validators.required],
+      email: ['', [Validators.required, Validators.email]],
+      username: ['', [Validators.required, Validators.minLength(3)]],
+      password: ['', [Validators.required, Validators.minLength(6)]],
     });
   }
 

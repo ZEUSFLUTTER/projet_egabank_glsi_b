@@ -20,9 +20,8 @@ import { ClientService } from '../services/client.service';
         <input type="date" formControlName="dateNaissance" />
         <label>Sex</label>
         <select formControlName="sexe">
-          <option value="U">Unspecified</option>
-          <option value="M">Male</option>
-          <option value="F">Female</option>
+          <option value="MASCULIN">Male</option>
+          <option value="FEMININ">Female</option>
         </select>
         <label>Phone</label>
         <input formControlName="telephone" />
@@ -43,7 +42,7 @@ export class ClientCreateComponent {
       nom: ['', Validators.required],
       prenom: ['', Validators.required],
       dateNaissance: [new Date().toISOString().split('T')[0], Validators.required],
-      sexe: ['U', Validators.required],
+      sexe: ['MASCULIN', Validators.required],
       telephone: [''],
       courriel: [''],
     });

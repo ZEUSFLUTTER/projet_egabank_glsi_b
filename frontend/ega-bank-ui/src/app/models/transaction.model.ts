@@ -1,8 +1,9 @@
-export type TransactionType = 'deposit' | 'withdrawal' | 'transfer' | 'payment' | 'fee' | string;
+// Transaction type enum matching backend TypeTransaction
+export type TypeTransaction = 'DEPOT' | 'RETRAIT' | 'VIREMENT_ENTRANT' | 'VIREMENT_SORTANT';
 
 export interface TransactionResponse {
   id: number;
-  type: TransactionType;
+  type: TypeTransaction;
   typeLibelle?: string;
   montant: number;
   dateTransaction: string; // ISO datetime

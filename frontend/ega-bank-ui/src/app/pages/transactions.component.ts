@@ -1,8 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { mockAccounts, mockTransactions } from '../mock-data';
-import { transactionAmountClass, transactionSign } from '../shared/status.util';
+import { AccountResponse } from '../models/account.model';
+import { TransactionResponse } from '../models/transaction.model';
+import { AccountService } from '../services/account.service';
+import { TransactionService } from '../services/transaction.service';
 
 @Component({
   standalone: true,
@@ -10,28 +12,90 @@ import { transactionAmountClass, transactionSign } from '../shared/status.util';
   imports: [CommonModule],
   templateUrl: './transactions.component.html',
 })
-export class TransactionsComponent {
-  transactions = mockTransactions;
-  accounts = mockAccounts;
-  filteredTransactions = this.transactions;
-  selectedAccount: any = null;
+export class TransactionsComponent implements OnInit {
+  transactions: TransactionResponse[] = [];
+  selectedAccount: AccountResponse | null = null;
   accountId: string | null = null;
+  isLoading = true;
+  errorMessage = '';
 
-  constructor(private route: ActivatedRoute) {
+  constructor(
+    private route: ActivatedRoute,
+    private txService: TransactionService,
+    private accountService: AccountService
+  ) { }
+
+  ngOnInit(): void {
     this.route.queryParamMap.subscribe((map) => {
       this.accountId = map.get('accountId');
-      this.filteredTransactions = this.accountId ? this.transactions.filter((t) => t.accountId === this.accountId) : this.transactions;
-      this.selectedAccount = this.accountId ? this.accounts.find((a) => a.accountId === this.accountId) : null;
-      // simple sort newest first
-      this.filteredTransactions.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+      if (this.accountId) {
+        this.loadAccountAndTransactions(this.accountId);
+      } else {
+        this.isLoading = false;
+        this.errorMessage = 'Please select an account to view transactions.';
+      }
     });
   }
 
+  private loadAccountAndTransactions(numeroCompte: string): void {
+    this.isLoading = true;
+    this.errorMessage = '';
+
+    // Load account details
+    this.accountService.getByNumber(numeroCompte).subscribe({
+      next: (account) => {
+        this.selectedAccount = account;
+      },
+      error: (err) => {
+        console.error('Failed to load account', err);
+      },
+    });
+
+    // Load transactions
+    this.txService.getAllByAccount(numeroCompte).subscribe({
+      next: (transactions) => {
+        this.transactions = transactions.sort(
+          (a, b) => new Date(b.dateTransaction).getTime() - new Date(a.dateTransaction).getTime()
+        );
+        this.isLoading = false;
+      },
+      error: (err) => {
+        console.error('Failed to load transactions', err);
+        this.errorMessage = 'Failed to load transactions.';
+        this.isLoading = false;
+      },
+    });
+  }
+
+  getTypeDisplay(type: string) {
+    const types: Record<string, string> = {
+      DEPOT: 'Deposit',
+      RETRAIT: 'Withdrawal',
+      VIREMENT_ENTRANT: 'Transfer In',
+      VIREMENT_SORTANT: 'Transfer Out',
+    };
+    return types[type] || type;
+  }
+
   getTxnAmountClass(type: string) {
-    return transactionAmountClass(type as any);
+    if (type === 'DEPOT' || type === 'VIREMENT_ENTRANT') {
+      return 'text-success';
+    }
+    return 'text-danger';
   }
 
   getTxnSign(type: string) {
-    return transactionSign(type as any);
+    if (type === 'DEPOT' || type === 'VIREMENT_ENTRANT') {
+      return '+';
+    }
+    return '-';
+  }
+
+  getAccountTypeDisplay(typeCompte: string) {
+    const types: Record<string, string> = {
+      EPARGNE: 'Savings',
+      COURANT: 'Checking',
+    };
+    return types[typeCompte] || typeCompte;
   }
 }

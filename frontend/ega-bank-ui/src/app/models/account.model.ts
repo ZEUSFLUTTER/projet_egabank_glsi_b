@@ -1,14 +1,19 @@
+// Account type enum matching backend TypeCompte
+export type TypeCompte = 'EPARGNE' | 'COURANT';
+
 export interface AccountResponse {
   id: number;
   numeroCompte: string;
+  typeCompte: TypeCompte;
+  typeCompteLibelle?: string;
+  dateCreation?: string; // ISO datetime
   solde: number;
-  devise: string;
-  typeCompte: string;
-  status: 'active' | 'inactive' | 'closed' | 'suspended' | string;
+  actif: boolean;
   clientId?: number;
+  clientNomComplet?: string;
 }
 
 export interface AccountRequest {
-  typeCompte: string;
+  typeCompte: TypeCompte;
   clientId: number;
 }

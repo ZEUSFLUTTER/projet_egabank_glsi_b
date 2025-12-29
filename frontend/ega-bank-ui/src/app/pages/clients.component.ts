@@ -1,7 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { Account, Client, mockAccounts, mockClients } from '../mock-data';
+import { ClientResponse } from '../models/client.model';
+import { ClientService } from '../services/client.service';
 
 @Component({
   standalone: true,
@@ -10,24 +11,36 @@ import { Account, Client, mockAccounts, mockClients } from '../mock-data';
   templateUrl: './clients.component.html',
 })
 export class ClientsComponent implements OnInit {
-  clients: Client[] = mockClients;
-  accounts: Account[] = mockAccounts;
-  clientBalances: { [clientId: string]: number } = {};
+  clients: ClientResponse[] = [];
+  isLoading = true;
+  errorMessage = '';
 
-  constructor(private router: Router) { }
+  constructor(private router: Router, private clientService: ClientService) { }
 
   ngOnInit(): void {
-    this.calculateBalances();
+    this.loadClients();
   }
 
-  private calculateBalances(): void {
-    this.clients.forEach(client => {
-      const clientAccounts = this.accounts.filter(a => client.accountIds.includes(a.accountId));
-      this.clientBalances[client.clientId] = clientAccounts.reduce((sum, account) => sum + account.balance, 0);
+  private loadClients(): void {
+    this.isLoading = true;
+    this.clientService.getAll(0, 100).subscribe({
+      next: (response) => {
+        this.clients = response.content || [];
+        this.isLoading = false;
+      },
+      error: (err) => {
+        console.error('Failed to load clients', err);
+        this.errorMessage = 'Failed to load clients. Please try again.';
+        this.isLoading = false;
+      },
     });
   }
 
-  viewAccounts(clientId: string) {
+  viewAccounts(clientId: number) {
     this.router.navigate(['/accounts'], { queryParams: { clientId } });
+  }
+
+  viewDetails(clientId: number) {
+    this.router.navigate(['/clients', clientId]);
   }
 }

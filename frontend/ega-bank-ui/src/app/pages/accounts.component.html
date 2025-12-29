@@ -4,7 +4,19 @@
         <p class="text-gray-500">Overview of all customer accounts and financial holdings.</p>
     </div>
 
-    <div class="card overflow-hidden">
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="text-center py-12">
+        <div class="spinner-lg"></div>
+        <p class="text-gray-500 mt-4">Loading accounts...</p>
+    </div>
+
+    <!-- Error State -->
+    <div *ngIf="errorMessage && !isLoading" class="alert alert-danger mb-4">
+        {{ errorMessage }}
+    </div>
+
+    <!-- Accounts Table -->
+    <div *ngIf="!isLoading && accounts.length > 0" class="card overflow-hidden">
         <div class="table-responsive">
             <table>
                 <thead>
@@ -12,29 +24,46 @@
                         <th>Account</th>
                         <th>Client</th>
                         <th>Status</th>
-                        <th>Open Date</th>
-                        <th>Balance</th>
+                        <th>Created</th>
+                        <th class="text-right">Balance</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr *ngFor="let account of filteredAccounts">
+                    <tr *ngFor="let account of accounts">
                         <td>
-                            <div class="font-medium capitalize">{{account.accountType}} Account</div>
-                            <div class="text-sm text-gray-500 font-mono">{{account.accountId}}</div>
+                            <div class="font-medium">{{ getTypeDisplay(account.typeCompte) }}</div>
+                            <div class="text-sm text-gray-500 font-mono">{{ account.numeroCompte }}</div>
                         </td>
-                        <td>{{getClientName(account.clientId)}}</td>
                         <td>
-                                                        <span class="badge capitalize" [ngClass]="getStatusClass(account.status)">
-                                                            {{ getStatusDisplay(account.status) }}
-                                                        </span>
+                            <span *ngIf="account.clientNomComplet">{{ account.clientNomComplet }}</span>
+                            <span *ngIf="!account.clientNomComplet" class="text-gray-400">Client #{{ account.clientId
+                                }}</span>
                         </td>
-                        <td class="text-gray-500 text-sm">{{account.openDate}}</td>
+                        <td>
+                            <span class="badge" [ngClass]="getStatusClass(account.actif)">
+                                {{ getStatusDisplay(account.actif) }}
+                            </span>
+                        </td>
+                        <td class="text-gray-500 text-sm">
+                            {{ account.dateCreation | date:'short' }}
+                        </td>
                         <td class="text-right font-mono font-bold">
-                            {{account.balance | currency:account.currency}}
+                            {{ account.solde | currency:'XOF':'symbol':'1.0-0' }}
+                        </td>
+                        <td>
+                            <button (click)="viewTransactions(account.numeroCompte)" class="btn btn-sm btn-secondary">
+                                Transactions
+                            </button>
                         </td>
                     </tr>
                 </tbody>
             </table>
         </div>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="!isLoading && accounts.length === 0 && !errorMessage" class="card p-12 text-center">
+        <p class="text-gray-500">No accounts found.</p>
     </div>
 </div>

@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   standalone: true,
@@ -12,9 +13,18 @@ import { Component } from '@angular/core';
       </div>
       <div style="display:flex;align-items:center;gap:12px;">
         <button style="background:transparent;border:0;cursor:pointer;">🔔</button>
-        <div style="width:40px;height:40px;border-radius:9999px;background:#f3f4f6;display:flex;align-items:center;justify-content:center;">U</div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div style="width:40px;height:40px;border-radius:9999px;background:#f3f4f6;display:flex;align-items:center;justify-content:center;">U</div>
+          <button (click)="logout()" style="background:transparent;border:0;cursor:pointer;color:#111;">Logout</button>
+        </div>
       </div>
     </header>
   `,
 })
-export class DashboardHeader {}
+export class DashboardHeader {
+  constructor(private auth: AuthService) {}
+
+  logout() {
+    this.auth.logout();
+  }
+}

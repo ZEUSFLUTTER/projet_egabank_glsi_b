@@ -628,3 +628,24 @@ td {
 	padding-top: 3rem;
 	padding-bottom: 3rem;
 }
+
+/* Icon Alignment Fix */
+i[class^="ri-"] {
+	vertical-align: middle;
+	line-height: 1;
+	display: inline-block;
+}
+
+.spinner-icon {
+	animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+	from {
+		transform: rotate(0deg);
+	}
+
+	to {
+		transform: rotate(360deg);
+	}
+}

@@ -1,15 +1,28 @@
-<aside class="sidebar">
-    <div class="logo-area">
-        <img src="/assets/logoega.svg" alt="EGA Bank Logo" style="height: 40px; width: auto;" />
-        <div class="font-bold text-lg">Ega Bank</div>
+<div class="sidebar">
+    <!-- Logo (Click goes to Dashboard /) -->
+    <!-- Logo (Click goes to Dashboard /) -->
+    <div class="logo-area" style="cursor: pointer; justify-content: center;" routerLink="/">
+        <img src="/assets/logoega.svg" alt="EGA Bank" style="height: 40px; width: auto;">
     </div>
+
+    <!-- Navigation -->
     <nav class="nav-area">
-        <a *ngFor="let it of items" (click)="navigate(it.href)" class="nav-item">
-            {{it.label}}
+        <a *ngFor="let item of navItems" [routerLink]="item.href" routerLinkActive="bg-gray-100 text-primary"
+            [routerLinkActiveOptions]="{exact: item.href === '/'}" class="nav-item">
+            <i [class]="item.icon" style="font-size: 1.25rem;"></i>
+            <span>{{ item.label }}</span>
         </a>
     </nav>
+
+    <!-- Footer Actions -->
     <div class="footer-area">
-        <button class="btn w-full btn-secondary mb-2">Settings</button>
-        <button class="btn w-full text-danger hover-red">Logout</button>
+        <a class="nav-item mb-2" style="color: var(--gray-500);">
+            <i class="ri-settings-3-line" style="font-size: 1.25rem;"></i>
+            <span>Settings</span>
+        </a>
+        <button (click)="logout()" class="nav-item w-full hover-red text-danger border-none bg-transparent">
+            <i class="ri-logout-box-line" style="font-size: 1.25rem;"></i>
+            <span>Logout</span>
+        </button>
     </div>
-</aside>
+</div>

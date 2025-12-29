@@ -4,13 +4,14 @@ import { AccountCreateComponent } from './pages/account-create.component';
 import { AccountsComponent } from './pages/accounts.component';
 import { ClientCreateComponent } from './pages/client-create.component';
 import { ClientsComponent } from './pages/clients.component';
+import { DashboardComponent } from './pages/dashboard.component';
 import { LoginComponent } from './pages/login.component';
 import { RegisterComponent } from './pages/register.component';
 import { TransactionFormComponent } from './pages/transaction-form.component';
 import { TransactionsComponent } from './pages/transactions.component';
 
 export const routes: Routes = [
-	{ path: '', redirectTo: 'clients', pathMatch: 'full' },
+	{ path: '', component: DashboardComponent, canActivate: [AuthGuard] },
 	{ path: 'login', component: LoginComponent },
 	{ path: 'register', component: RegisterComponent },
 	{ path: 'clients', component: ClientsComponent, canActivate: [AuthGuard] },

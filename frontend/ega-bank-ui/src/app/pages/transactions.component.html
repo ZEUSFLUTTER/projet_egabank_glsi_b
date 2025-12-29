@@ -4,10 +4,29 @@
         <p class="text-gray-500">A complete record of banking activities.</p>
     </div>
 
-    <!-- Loading State -->
-    <div *ngIf="isLoading" class="text-center py-12">
-        <div class="spinner-lg"></div>
-        <p class="text-gray-500 mt-4">Loading transactions...</p>
+    <!-- Loading State (Skeleton) -->
+    <div *ngIf="isLoading">
+        <!-- Account Summary Skeleton -->
+        <div class="flex gap-4 mb-6">
+            <div *ngFor="let i of [1,2,3]" class="card p-4 min-w-[200px]">
+                <div class="skeleton skeleton-text" style="width: 50%;"></div>
+                <div class="skeleton skeleton-text" style="height: 1.5rem; width: 70%;"></div>
+            </div>
+        </div>
+
+        <!-- Transactions List Skeleton -->
+        <div class="card overflow-hidden">
+            <div *ngFor="let i of [1,2,3,4,5]" class="p-4 border-b flex justify-between items-center">
+                <div style="width: 60%;">
+                    <div class="skeleton skeleton-text" style="width: 40%;"></div>
+                    <div class="skeleton skeleton-text" style="width: 70%;"></div>
+                </div>
+                <div style="width: 15%;">
+                    <div class="skeleton skeleton-text" style="height: 1.5rem;"></div>
+                    <div class="skeleton skeleton-text"></div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Error State -->

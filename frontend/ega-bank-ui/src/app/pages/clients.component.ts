@@ -41,6 +41,17 @@ export class ClientsComponent implements OnInit {
   }
 
   viewDetails(clientId: number) {
-    this.router.navigate(['/clients', clientId]);
+    this.router.navigate(['/clients/new'], { queryParams: { id: clientId } }); // Reuse create form for edit
+  }
+
+  deleteClient(id: number) {
+    if (!confirm('Are you sure you want to delete this client?')) return;
+
+    this.clientService.delete(id).subscribe({
+      next: () => {
+        this.loadClients(); // Reload list
+      },
+      error: (err) => alert('Failed to delete client')
+    });
   }
 }

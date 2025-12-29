@@ -4,15 +4,24 @@
         <p class="text-gray-500">View and manage your bank's clients and their associations.</p>
     </div>
 
-    <!-- Loading State -->
-    <div *ngIf="isLoading" class="text-center py-12">
-        <div class="spinner-lg"></div>
-        <p class="text-gray-500 mt-4">Loading clients...</p>
-    </div>
-
-    <!-- Error State -->
-    <div *ngIf="errorMessage && !isLoading" class="alert alert-danger mb-4">
-        {{ errorMessage }}
+    <!-- Loading State (Skeleton) -->
+    <div *ngIf="isLoading" class="grid-clients">
+        <div *ngFor="let i of [1,2,3,4,5,6]" class="card p-4 flex flex-col justify-between skeleton-card">
+            <div>
+                <div class="flex justify-between items-start mb-2">
+                    <div style="width: 100%;">
+                        <div class="skeleton skeleton-text" style="width: 60%; height: 1.5rem;"></div>
+                        <div class="skeleton skeleton-text" style="width: 30%;"></div>
+                    </div>
+                </div>
+                <div class="skeleton skeleton-text"></div>
+                <div class="skeleton skeleton-text" style="width: 80%;"></div>
+            </div>
+            <div class="flex gap-2 mt-4">
+                <div class="skeleton" style="height: 36px; flex: 1; border-radius: 4px;"></div>
+                <div class="skeleton" style="height: 36px; flex: 1; border-radius: 4px;"></div>
+            </div>
+        </div>
     </div>
 
     <!-- Clients Grid -->
@@ -33,10 +42,13 @@
             </div>
             <div class="flex gap-2 mt-4">
                 <button (click)="viewDetails(client.id)" class="btn btn-secondary text-sm flex-1">
-                    Details
+                    Edit
                 </button>
                 <button (click)="viewAccounts(client.id)" class="btn btn-primary text-sm flex-1">
                     Accounts
+                </button>
+                <button (click)="deleteClient(client.id)" class="btn btn-danger text-sm">
+                    🗑️
                 </button>
             </div>
         </div>

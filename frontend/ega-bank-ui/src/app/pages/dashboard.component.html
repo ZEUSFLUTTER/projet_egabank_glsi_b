@@ -1,0 +1,99 @@
+<div class="p-6">
+    <div class="mb-6">
+        <h1 class="text-2xl font-bold mb-2">Dashboard</h1>
+        <p class="text-gray-500">Overview of your bank's performance.</p>
+    </div>
+
+    <!-- Stats Grid -->
+    <div class="grid-dashboard">
+        <!-- Total Clients -->
+        <div class="card p-4">
+            <div class="text-sm text-gray-500 mb-1">Total Clients</div>
+            <div *ngIf="isLoading" class="skeleton skeleton-text" style="height: 2rem; width: 60%;"></div>
+            <div *ngIf="!isLoading" class="text-2xl font-bold">{{ stats.totalClients }}</div>
+        </div>
+
+        <!-- Total Accounts -->
+        <div class="card p-4">
+            <div class="text-sm text-gray-500 mb-1">Total Accounts</div>
+            <div *ngIf="isLoading" class="skeleton skeleton-text" style="height: 2rem; width: 60%;"></div>
+            <div *ngIf="!isLoading" class="text-2xl font-bold">{{ stats.totalAccounts }}</div>
+        </div>
+
+        <!-- Active Accounts Estimate -->
+        <div class="card p-4">
+            <div class="text-sm text-gray-500 mb-1">Active Accounts (Sample)</div>
+            <div *ngIf="isLoading" class="skeleton skeleton-text" style="height: 2rem; width: 60%;"></div>
+            <div *ngIf="!isLoading" class="text-2xl font-bold">{{ stats.activeAccounts }}</div>
+            <div *ngIf="!isLoading" class="text-xs text-gray-400 mt-1">From recent list</div>
+        </div>
+
+        <!-- Total Balance Estimate -->
+        <div class="card p-4">
+            <div class="text-sm text-gray-500 mb-1">Total Balance (Sample)</div>
+            <div *ngIf="isLoading" class="skeleton skeleton-text" style="height: 2rem; width: 60%;"></div>
+            <div *ngIf="!isLoading" class="text-2xl font-bold text-primary">{{ stats.totalBalance |
+                currency:'XOF':'symbol':'1.0-0' }}</div>
+            <div *ngIf="!isLoading" class="text-xs text-gray-400 mt-1">From recent list</div>
+        </div>
+    </div>
+
+    <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 1.5rem;">
+        <!-- Recent Clients -->
+        <div class="card overflow-hidden">
+            <div class="p-4 border-b flex justify-between items-center">
+                <h3 class="font-bold">Recent Clients</h3>
+                <a routerLink="/clients" class="text-sm text-primary" style="text-decoration: none;">View All</a>
+            </div>
+            <div>
+                <div *ngIf="isLoading">
+                    <div *ngFor="let i of [1,2,3]" class="p-4 border-b">
+                        <div class="skeleton skeleton-text mb-2" style="width: 50%;"></div>
+                        <div class="skeleton skeleton-text" style="width: 30%;"></div>
+                    </div>
+                </div>
+                <div *ngIf="!isLoading && recentClients.length > 0">
+                    <div *ngFor="let client of recentClients" class="p-4 border-b last:border-b-0 hover:bg-gray-50">
+                        <div class="font-medium">{{ client.prenom }} {{ client.nom }}</div>
+                        <div class="text-sm text-gray-500">{{ client.courriel || 'No email' }}</div>
+                    </div>
+                </div>
+                <div *ngIf="!isLoading && recentClients.length === 0" class="p-6 text-center text-gray-500">
+                    No clients yet.
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Accounts -->
+        <div class="card overflow-hidden">
+            <div class="p-4 border-b flex justify-between items-center">
+                <h3 class="font-bold">Recent Accounts</h3>
+                <a routerLink="/accounts" class="text-sm text-primary" style="text-decoration: none;">View All</a>
+            </div>
+            <div>
+                <div *ngIf="isLoading">
+                    <div *ngFor="let i of [1,2,3]" class="p-4 border-b">
+                        <div class="skeleton skeleton-text mb-2" style="width: 50%;"></div>
+                        <div class="skeleton skeleton-text" style="width: 30%;"></div>
+                    </div>
+                </div>
+                <div *ngIf="!isLoading && recentAccounts.length > 0">
+                    <div *ngFor="let account of recentAccounts" class="p-4 border-b last:border-b-0 hover:bg-gray-50">
+                        <div class="flex justify-between">
+                            <div>
+                                <div class="font-medium">{{ account.numeroCompte }}</div>
+                                <div class="text-sm text-gray-500">{{ account.typeCompte }}</div>
+                            </div>
+                            <div class="font-bold font-mono">
+                                {{ account.solde | currency:'XOF':'symbol':'1.0-0' }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div *ngIf="!isLoading && recentAccounts.length === 0" class="p-6 text-center text-gray-500">
+                    No accounts yet.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

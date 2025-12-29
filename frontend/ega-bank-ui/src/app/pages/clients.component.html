@@ -12,7 +12,7 @@
                         <div class="font-bold text-lg">{{client.firstName}} {{client.lastName}}</div>
                         <div class="text-xs text-gray-500">{{client.clientId}}</div>
                     </div>
-                    <div class="font-bold text-primary">{{getTotalBalance(client) | currency:'USD'}}</div>
+                    <div class="font-bold text-primary">{{clientBalances[client.clientId] | currency:'USD'}}</div>
                 </div>
                 <div class="text-sm text-gray-700 mb-4">{{client.email}}</div>
             </div>

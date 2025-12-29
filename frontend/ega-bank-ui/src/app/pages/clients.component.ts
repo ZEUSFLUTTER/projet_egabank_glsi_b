@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { mockAccounts, mockClients } from '../mock-data';
+import { Account, Client, mockAccounts, mockClients } from '../mock-data';
 
 @Component({
   standalone: true,
@@ -9,15 +9,22 @@ import { mockAccounts, mockClients } from '../mock-data';
   imports: [CommonModule],
   templateUrl: './clients.component.html',
 })
-export class ClientsComponent {
-  clients = mockClients;
-  accounts = mockAccounts;
+export class ClientsComponent implements OnInit {
+  clients: Client[] = mockClients;
+  accounts: Account[] = mockAccounts;
+  clientBalances: { [clientId: string]: number } = {};
 
   constructor(private router: Router) { }
 
-  getTotalBalance(client: any) {
-    const clientAccounts = this.accounts.filter((a) => client.accountIds.includes(a.accountId));
-    return clientAccounts.reduce((s, a) => s + a.balance, 0);
+  ngOnInit(): void {
+    this.calculateBalances();
+  }
+
+  private calculateBalances(): void {
+    this.clients.forEach(client => {
+      const clientAccounts = this.accounts.filter(a => client.accountIds.includes(a.accountId));
+      this.clientBalances[client.clientId] = clientAccounts.reduce((sum, account) => sum + account.balance, 0);
+    });
   }
 
   viewAccounts(clientId: string) {

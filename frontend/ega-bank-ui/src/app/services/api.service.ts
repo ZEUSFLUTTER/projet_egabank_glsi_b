@@ -4,7 +4,8 @@ import { Observable } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class ApiService {
-  private readonly base = '/api';
+  // Point to backend (adjust port if backend runs elsewhere)
+  private readonly base = 'http://localhost:8080/api';
 
   constructor(private http: HttpClient) {}
 

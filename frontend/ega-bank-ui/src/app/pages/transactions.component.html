@@ -1,0 +1,41 @@
+<div class="p-6">
+    <div class="mb-6">
+        <h1 class="text-2xl font-bold mb-2">Transaction History</h1>
+        <p class="text-gray-500">A complete record of banking activities.</p>
+    </div>
+
+    <div *ngIf="selectedAccount" class="flex gap-4 mb-6">
+        <div class="card p-4 min-w-[200px]">
+            <div class="text-xs text-gray-500 uppercase tracking-wide">Current Balance</div>
+            <div class="font-bold text-xl">{{selectedAccount.balance | currency:selectedAccount.currency}}</div>
+        </div>
+        <div class="card p-4 min-w-[200px]">
+            <div class="text-xs text-gray-500 uppercase tracking-wide">Account Type</div>
+            <div class="font-bold text-xl capitalize">{{selectedAccount.accountType}}</div>
+        </div>
+    </div>
+
+    <div class="card overflow-hidden">
+        <div *ngFor="let txn of filteredTransactions"
+            class="transaction-item p-4 border-b flex justify-between items-center last:border-b-0 hover:bg-gray-50 transition-colors">
+            <div>
+                <div class="font-medium">{{txn.description}}</div>
+                <div class="text-sm text-gray-500 mt-1">
+                    <span class="font-mono text-xs bg-gray-100 px-1 py-0.5 rounded">{{txn.transactionId}}</span> •
+                    {{txn.date}}
+                    <span *ngIf="!accountId">• {{txn.accountId}}</span>
+                </div>
+            </div>
+            <div class="text-right">
+                <div class="font-mono font-bold text-lg" [ngClass]="getTxnAmountClass(txn.type)">
+                    {{ getTxnSign(txn.type) }}{{txn.amount | currency:txn.currency}}
+                </div>
+                <div class="text-xs text-gray-500 mt-1">Bal: {{txn.balanceAfter | currency:txn.currency}}</div>
+            </div>
+        </div>
+
+        <div *ngIf="filteredTransactions.length === 0" class="p-12 text-center text-gray-500">
+            No transactions found.
+        </div>
+    </div>
+</div>

@@ -7,7 +7,7 @@ import { DashboardHeader } from './shared/dashboard-header.component';
   selector: 'app-root',
   imports: [RouterOutlet, AppSidebar, DashboardHeader],
   templateUrl: './app.html',
-  styleUrl: './app.css'
+  // Rely on global styles.css for theming and utilities
 })
 export class App {
   protected readonly title = signal('angular-app');

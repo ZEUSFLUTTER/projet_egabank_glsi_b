@@ -1,0 +1,15 @@
+<aside class="sidebar">
+    <div class="logo-area">
+        <div class="logo-box">EB</div>
+        <div class="font-bold text-lg">Ega Bank</div>
+    </div>
+    <nav class="nav-area">
+        <a *ngFor="let it of items" (click)="navigate(it.href)" class="nav-item">
+            {{it.label}}
+        </a>
+    </nav>
+    <div class="footer-area">
+        <button class="btn w-full btn-secondary mb-2">Settings</button>
+        <button class="btn w-full text-danger hover-red">Logout</button>
+    </div>
+</aside>

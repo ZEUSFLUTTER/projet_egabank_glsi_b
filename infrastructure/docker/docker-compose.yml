@@ -1,0 +1,58 @@
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: ega-db
+    environment:
+      POSTGRES_DB: egabank
+      POSTGRES_USER: egauser
+      POSTGRES_PASSWORD: egapassword
+    ports:
+      - "5435:5432" # Utilise 5435 sur ton PC pour éviter les conflits
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    networks:
+      - ega-network
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U egauser -d egabank" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ../../backend_ega
+      dockerfile: ../infrastructure/docker/backend/Dockerfile
+    container_name: ega-backend
+    ports:
+      - "8082:8080" # Utilise 8082 sur ton PC
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      - SPRING_PROFILES_ACTIVE=postgres
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/egabank
+      - SPRING_DATASOURCE_USERNAME=egauser
+      - SPRING_DATASOURCE_PASSWORD=egapassword
+      - JWT_SECRET=egaBankingSecretKeyForJWTTokenGeneration2024VerySecureAndLong
+    networks:
+      - ega-network
+
+  frontend:
+    build:
+      context: ../../frontend_ega
+      dockerfile: ../infrastructure/docker/frontend/Dockerfile
+    container_name: ega-frontend
+    ports:
+      - "4202:80" # Utilise 4202 sur ton PC
+    depends_on:
+      - backend
+    networks:
+      - ega-network
+
+volumes:
+  db-data:
+
+
+networks:
+  ega-network:
+    driver: bridge

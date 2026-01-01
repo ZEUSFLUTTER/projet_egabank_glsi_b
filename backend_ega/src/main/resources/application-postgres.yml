@@ -1,0 +1,15 @@
+spring:
+  # PostgreSQL configuration
+  datasource:
+    url: jdbc:postgresql://localhost:5432/egabank
+    driver-class-name: org.postgresql.Driver
+    username: postgres
+    password: postgres
+  
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true

@@ -1,0 +1,1137 @@
+{
+	"info": {
+		"_postman_id": "ega-banking-api-collection",
+		"name": "EGA Banking API",
+		"description": "Collection Postman pour tester l'API de gestion bancaire EGA",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8080/api"
+		},
+		{
+			"key": "token",
+			"value": ""
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{token}}",
+				"type": "string"
+			}
+		]
+	},
+	"item": [
+		{
+			"name": "🔐 Authentification",
+			"item": [
+				{
+					"name": "Login (Admin)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response has token\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('token');",
+									"    pm.collectionVariables.set(\"token\", jsonData.token);",
+									"});",
+									"",
+									"pm.test(\"Response has username\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.username).to.eql(\"admin\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"admin\",\n    \"password\": \"admin123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					}
+				},
+				{
+					"name": "Register New User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response has token\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('token');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"gestionnaire\",\n    \"email\": \"gestionnaire@ega-bank.com\",\n    \"password\": \"password123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/register",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"register"
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "👥 Clients",
+			"item": [
+				{
+					"name": "Créer un client",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test(\"Response has client id\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('id');",
+									"    pm.collectionVariables.set(\"client_id\", jsonData.id);",
+									"});",
+									"",
+									"pm.test(\"Client data is correct\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.nom).to.eql(\"Diallo\");",
+									"    pm.expect(jsonData.prenom).to.eql(\"Amadou\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"nom\": \"Diallo\",\n    \"prenom\": \"Amadou\",\n    \"email\": \"amadou.diallo@email.com\",\n    \"telephone\": \"+221771234567\",\n    \"adresse\": \"123 Rue de Dakar, Sénégal\",\n    \"nationalite\": \"Sénégalaise\",\n    \"dateNaissance\": \"1990-05-15\",\n    \"sexe\": \"M\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/clients",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"clients"
+							]
+						}
+					}
+				},
+				{
+					"name": "Obtenir tous les clients",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response is an array\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.be.an('array');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{base_url}}/clients",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"clients"
+							]
+						}
+					}
+				},
+				{
+					"name": "Obtenir un client par ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response has client data\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('id');",
+									"    pm.expect(jsonData).to.have.property('nom');",
+									"    pm.expect(jsonData).to.have.property('email');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{base_url}}/clients/{{client_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"clients",
+								"{{client_id}}"
+							]
+						}
+					}
+				},
+				{
+					"name": "Modifier un client",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Client updated\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.adresse).to.include(\"Nouvelle adresse\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"nom\": \"Diallo\",\n    \"prenom\": \"Amadou\",\n    \"email\": \"amadou.diallo@email.com\",\n    \"telephone\": \"+221771234567\",\n    \"adresse\": \"Nouvelle adresse, Dakar\",\n    \"nationalite\": \"Sénégalaise\",\n    \"dateNaissance\": \"1990-05-15\",\n    \"sexe\": \"M\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/clients/{{client_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"clients",
+								"{{client_id}}"
+							]
+						}
+					}
+				},
+				{
+					"name": "Obtenir les comptes d'un client",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response is an array\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.be.an('array');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{base_url}}/clients/{{client_id}}/comptes",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"clients",
+								"{{client_id}}",
+								"comptes"
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "💳 Comptes",
+			"item": [
+				{
+					"name": "Créer un compte courant",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test(\"Compte has IBAN\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('numeroCompte');",
+									"    pm.collectionVariables.set(\"compte_courant_id\", jsonData.id);",
+									"});",
+									"",
+									"pm.test(\"Solde initial is 0\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.solde).to.eql(0);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"clientId\": {{client_id}},\n    \"decouvertAutorise\": 50000\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/comptes/courant",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"comptes",
+								"courant"
+							]
+						}
+					}
+				},
+				{
+					"name": "Créer un compte épargne",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test(\"Compte has IBAN\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('numeroCompte');",
+									"    pm.collectionVariables.set(\"compte_epargne_id\", jsonData.id);",
+									"});",
+									"",
+									"pm.test(\"Solde initial is 0\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.solde).to.eql(0);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"clientId\": {{client_id}},\n    \"tauxInteret\": 3.5\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/comptes/epargne",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"comptes",
+								"epargne"
+							]
+						}
+					}
+				},
+				{
+					"name": "Obtenir tous les comptes",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response is an array\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.be.an('array');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{base_url}}/comptes",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"comptes"
+							]
+						}
+					}
+				},
+				{
+					"name": "Obtenir un compte par ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Compte has required fields\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('id');",
+									"    pm.expect(jsonData).to.have.property('numeroCompte');",
+									"    pm.expect(jsonData).to.have.property('solde');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{base_url}}/comptes/{{compte_courant_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"comptes",
+								"{{compte_courant_id}}"
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "💰 Transactions",
+			"item": [
+				{
+					"name": "Effectuer un dépôt",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test(\"Transaction type is DEPOT\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.type).to.eql(\"DEPOT\");",
+									"});",
+									"",
+									"pm.test(\"Montant is correct\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.montant).to.eql(100000);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"compteId\": {{compte_courant_id}},\n    \"montant\": 100000,\n    \"description\": \"Dépôt initial\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/transactions/depot",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"transactions",
+								"depot"
+							]
+						}
+					}
+				},
+				{
+					"name": "Effectuer un retrait",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test(\"Transaction type is RETRAIT\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.type).to.eql(\"RETRAIT\");",
+									"});",
+									"",
+									"pm.test(\"Montant is correct\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.montant).to.eql(25000);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"compteId\": {{compte_courant_id}},\n    \"montant\": 25000,\n    \"description\": \"Retrait DAB\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/transactions/retrait",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"transactions",
+								"retrait"
+							]
+						}
+					}
+				},
+				{
+					"name": "Effectuer un virement",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test(\"Transaction type is VIREMENT\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.type).to.eql(\"VIREMENT\");",
+									"});",
+									"",
+									"pm.test(\"Montant is correct\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.montant).to.eql(10000);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"compteSourceId\": {{compte_courant_id}},\n    \"compteDestinationId\": {{compte_epargne_id}},\n    \"montant\": 10000,\n    \"description\": \"Virement vers épargne\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/transactions/virement",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"transactions",
+								"virement"
+							]
+						}
+					}
+				},
+				{
+					"name": "Transactions d'un compte",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response is an array\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.be.an('array');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{base_url}}/transactions/compte/{{compte_courant_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"transactions",
+								"compte",
+								"{{compte_courant_id}}"
+							]
+						}
+					}
+				},
+				{
+					"name": "❌ Retrait avec solde insuffisant",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"pm.test(\"Error message about insufficient balance\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.message.toLowerCase()).to.include(\"solde\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"compteId\": {{compte_courant_id}},\n    \"montant\": 999999999,\n    \"description\": \"Tentative de retrait excessif\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/transactions/retrait",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"transactions",
+								"retrait"
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "📊 Relevés",
+			"item": [
+				{
+					"name": "Relevé mensuel (JSON)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response is an array\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.be.an('array');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{base_url}}/releves/{{compte_courant_id}}/mensuel?annee=2025&mois=12",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"releves",
+								"{{compte_courant_id}}",
+								"mensuel"
+							],
+							"query": [
+								{
+									"key": "annee",
+									"value": "2025"
+								},
+								{
+									"key": "mois",
+									"value": "12"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Relevé annuel (JSON)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response is an array\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.be.an('array');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{base_url}}/releves/{{compte_courant_id}}/annuel?annee=2025",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"releves",
+								"{{compte_courant_id}}",
+								"annuel"
+							],
+							"query": [
+								{
+									"key": "annee",
+									"value": "2025"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "📥 Télécharger relevé mensuel (PDF)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is PDF\", function () {",
+									"    pm.expect(pm.response.headers.get('Content-Type')).to.include('application/pdf');",
+									"});",
+									"",
+									"pm.test(\"Content-Disposition header is present\", function () {",
+									"    pm.expect(pm.response.headers.get('Content-Disposition')).to.include('attachment');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{base_url}}/releves/{{compte_courant_id}}/mensuel/pdf?annee=2025&mois=12",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"releves",
+								"{{compte_courant_id}}",
+								"mensuel",
+								"pdf"
+							],
+							"query": [
+								{
+									"key": "annee",
+									"value": "2025"
+								},
+								{
+									"key": "mois",
+									"value": "12"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "📥 Télécharger relevé annuel (PDF)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is PDF\", function () {",
+									"    pm.expect(pm.response.headers.get('Content-Type')).to.include('application/pdf');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{base_url}}/releves/{{compte_courant_id}}/annuel/pdf?annee=2025",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"releves",
+								"{{compte_courant_id}}",
+								"annuel",
+								"pdf"
+							],
+							"query": [
+								{
+									"key": "annee",
+									"value": "2025"
+								}
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "⚠️ Tests de Validation",
+			"item": [
+				{
+					"name": "❌ Créer client - Email invalide",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"pm.test(\"Validation error\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.error).to.eql(\"Validation Error\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"nom\": \"Test\",\n    \"prenom\": \"User\",\n    \"email\": \"invalid-email\",\n    \"telephone\": \"+221771234567\",\n    \"adresse\": \"Adresse test\",\n    \"nationalite\": \"Test\",\n    \"dateNaissance\": \"1990-01-01\",\n    \"sexe\": \"M\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/clients",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"clients"
+							]
+						}
+					}
+				},
+				{
+					"name": "❌ Créer client - Téléphone invalide",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"pm.test(\"Validation error for telephone\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.details.some(d => d.includes('telephone'))).to.be.true;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"nom\": \"Test\",\n    \"prenom\": \"User\",\n    \"email\": \"test@email.com\",\n    \"telephone\": \"invalid phone\",\n    \"adresse\": \"Adresse test\",\n    \"nationalite\": \"Test\",\n    \"dateNaissance\": \"1990-01-01\",\n    \"sexe\": \"M\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/clients",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"clients"
+							]
+						}
+					}
+				},
+				{
+					"name": "❌ Compte non trouvé",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404\", function () {",
+									"    pm.response.to.have.status(404);",
+									"});",
+									"",
+									"pm.test(\"Not Found error\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.error).to.eql(\"Not Found\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{base_url}}/comptes/99999",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"comptes",
+								"99999"
+							]
+						}
+					}
+				},
+				{
+					"name": "❌ Virement vers même compte",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"pm.test(\"Error about same account\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.message.toLowerCase()).to.include(\"même compte\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"compteSourceId\": {{compte_courant_id}},\n    \"compteDestinationId\": {{compte_courant_id}},\n    \"montant\": 1000,\n    \"description\": \"Test virement vers même compte\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/transactions/virement",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"transactions",
+								"virement"
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "🧹 Nettoyage",
+			"item": [
+				{
+					"name": "Supprimer compte épargne",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// First we need to empty the account before deleting"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Account with non-zero balance cannot be deleted",
+									"pm.test(\"Status code is 204 or 400\", function () {",
+									"    pm.expect([204, 400]).to.include(pm.response.code);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"url": {
+							"raw": "{{base_url}}/comptes/{{compte_epargne_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"comptes",
+								"{{compte_epargne_id}}"
+							]
+						}
+					}
+				}
+			]
+		}
+	]
+}

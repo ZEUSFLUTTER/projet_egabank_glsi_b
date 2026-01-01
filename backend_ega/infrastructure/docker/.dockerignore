@@ -1,0 +1,51 @@
+# Fichiers et répertoires à ignorer lors du build Docker
+
+# Maven build output
+target/
+!target/banking-1.0.0.jar
+
+# IDE files
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+.project
+.classpath
+.settings/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# Documentation (non nécessaire dans l'image)
+*.md
+!README.md
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+
+# Maven wrapper (optionnel)
+.mvn/
+mvnw
+mvnw.cmd
+
+# Test files
+src/test/
+
+# Configuration locale
+application-local.yml
+application-dev.yml

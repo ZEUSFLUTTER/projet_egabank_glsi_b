@@ -4,8 +4,8 @@ import { Observable } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class ApiService {
-  // Point to backend (adjust port if backend runs elsewhere)
-  private readonly base = 'http://localhost:8080/api';
+  // Utilise le proxy Angular pour les appels API
+  private readonly base = '/api';
 
   constructor(private http: HttpClient) {}
 

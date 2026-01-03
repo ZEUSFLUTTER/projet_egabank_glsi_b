@@ -13,7 +13,7 @@ import { AuthService } from '../services/auth.service';
       <div class="card login-card">
         <div class="header">
            <div class="logo-container">
-            <img src="/assets/logoega.png" alt="EGA Bank" class="app-logo" />
+            <img src="/assets/logoega.png" alt="EGA Bank" class="app-logo" width="120" height="48" />
            </div>
           <h2 class="text-2xl font-bold mb-2 text-center">Create Account</h2>
           <p class="text-gray-500 text-sm text-center">Join EGA Bank today</p>
@@ -21,6 +21,10 @@ import { AuthService } from '../services/auth.service';
 
         <div *ngIf="errorMessage" class="alert alert-danger">
            <span>⚠️</span> {{ errorMessage }}
+        </div>
+
+        <div *ngIf="successMessage" class="alert alert-success">
+           <span>✅</span> {{ successMessage }}
         </div>
 
         <form [formGroup]="form" (ngSubmit)="submit()">
@@ -62,7 +66,7 @@ import { AuthService } from '../services/auth.service';
                [class.error-border]="form.get('password')?.invalid && form.get('password')?.touched"
             />
             <div *ngIf="form.get('password')?.invalid && form.get('password')?.touched" class="text-xs text-danger mt-1">
-              Password is required
+              Password is required (min 6 characters)
             </div>
           </div>
 
@@ -150,6 +154,18 @@ import { AuthService } from '../services/auth.service';
       gap: 0.5rem;
       align-items: center;
     }
+    .alert-success {
+      background-color: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      color: #15803d;
+      padding: 0.75rem;
+      border-radius: var(--radius-md);
+      font-size: 0.875rem;
+      margin-bottom: 1.5rem;
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+    }
     .footer {
       margin-top: 2rem;
       text-align: center;
@@ -185,6 +201,7 @@ export class RegisterComponent {
   form: FormGroup;
   isLoading = false;
   errorMessage = '';
+  successMessage = '';
 
   constructor(private fb: FormBuilder, private auth: AuthService, private router: Router) {
     this.form = this.fb.group({
@@ -199,6 +216,7 @@ export class RegisterComponent {
 
     this.isLoading = true;
     this.errorMessage = '';
+    this.successMessage = '';
 
     this.auth.register(this.form.value).subscribe({
       next: (res: any) => {
@@ -212,8 +230,28 @@ export class RegisterComponent {
       error: (err) => {
         this.isLoading = false;
         console.error('Register failed', err);
-        this.errorMessage = 'Registration failed. Please try again.';
+
+        // Extraire le message d'erreur du backend
+        if (err.status === 409) {
+          // Conflit - utilisateur ou email existe déjà
+          this.errorMessage = err.error?.message || 'This username or email is already registered.';
+        } else if (err.status === 400) {
+          // Erreur de validation
+          if (err.error?.validationErrors) {
+            const errors = Object.values(err.error.validationErrors).join('. ');
+            this.errorMessage = errors;
+          } else {
+            this.errorMessage = err.error?.message || 'Invalid data provided. Please check your inputs.';
+          }
+        } else if (err.status === 0) {
+          // Pas de connexion au serveur
+          this.errorMessage = 'Unable to connect to server. Please check your connection.';
+        } else {
+          // Autre erreur
+          this.errorMessage = err.error?.message || 'Registration failed. Please try again.';
+        }
       },
     });
   }
 }
+

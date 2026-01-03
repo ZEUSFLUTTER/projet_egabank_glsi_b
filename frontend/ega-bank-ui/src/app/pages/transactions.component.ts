@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 import { AccountResponse } from '../models/account.model';
@@ -27,7 +27,8 @@ export class TransactionsComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private txService: TransactionService,
     private accountService: AccountService,
-    private store: AppStore
+    private store: AppStore,
+    private cdr: ChangeDetectorRef
   ) { }
 
   ngOnInit(): void {
@@ -61,15 +62,18 @@ export class TransactionsComponent implements OnInit, OnDestroy {
   private loadAccountAndTransactions(numeroCompte: string): void {
     this.isLoading = true;
     this.errorMessage = '';
+    this.cdr.detectChanges();
 
     // Load account details
     this.accountService.getByNumber(numeroCompte).subscribe({
       next: (account) => {
         this.selectedAccount = account;
+        this.cdr.detectChanges();
       },
       error: (err) => {
         console.error('Failed to load account', err);
         this.errorMessage = 'Failed to load account details.';
+        this.cdr.detectChanges();
       },
     });
 
@@ -80,11 +84,13 @@ export class TransactionsComponent implements OnInit, OnDestroy {
           (a, b) => new Date(b.dateTransaction).getTime() - new Date(a.dateTransaction).getTime()
         );
         this.isLoading = false;
+        this.cdr.detectChanges();
       },
       error: (err) => {
         console.error('Failed to load transactions', err);
         this.errorMessage = 'Failed to load transactions.';
         this.isLoading = false;
+        this.cdr.detectChanges();
       },
     });
   }

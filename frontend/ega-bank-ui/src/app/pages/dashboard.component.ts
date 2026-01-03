@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { catchError, forkJoin, of, Subject, takeUntil, timeout } from 'rxjs';
 import { AccountResponse } from '../models/account.model';
@@ -20,6 +20,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     isLoading = true;
     hasError = false;
     errorMessage = '';
+    private cdr: ChangeDetectorRef;
 
     stats = {
         totalClients: 0,
@@ -37,8 +38,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
         private clientService: ClientService,
         private accountService: AccountService,
         private dashboardService: DashboardService,
-        private store: AppStore
-    ) { }
+        private store: AppStore,
+        cdr: ChangeDetectorRef
+    ) {
+        this.cdr = cdr;
+    }
 
     ngOnInit() {
         this.loadData();
@@ -150,12 +154,14 @@ export class DashboardComponent implements OnInit, OnDestroy {
                 });
 
                 this.isLoading = false;
+                this.cdr.detectChanges();
             },
             error: (err: any) => {
                 console.error('[Dashboard] Fatal error loading data:', err);
                 this.isLoading = false;
                 this.hasError = true;
                 this.errorMessage = 'Failed to load dashboard data. Please check if the backend is running.';
+                this.cdr.detectChanges();
             }
         });
     }

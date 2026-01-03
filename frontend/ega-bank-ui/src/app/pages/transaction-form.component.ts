@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Subject } from 'rxjs';
@@ -258,7 +258,8 @@ export class TransactionFormComponent implements OnInit, OnDestroy {
     private accountService: AccountService,
     private router: Router,
     private route: ActivatedRoute,
-    private store: AppStore
+    private store: AppStore,
+    private cdr: ChangeDetectorRef
   ) {
     this.form = this.fb.group({
       type: ['DEPOT', Validators.required],
@@ -299,6 +300,9 @@ export class TransactionFormComponent implements OnInit, OnDestroy {
 
   loadAccounts(): void {
     this.isLoadingAccounts = true;
+    this.errorMessage = '';
+    this.cdr.detectChanges();
+    
     this.accountService.getAll(0, 200).subscribe({
       next: (response) => {
         this.accounts = (response.content || []).filter(a => a.actif);
@@ -308,11 +312,13 @@ export class TransactionFormComponent implements OnInit, OnDestroy {
         if (this.returnAccountId) {
           this.sourceAccount = this.accounts.find(a => a.numeroCompte === this.returnAccountId) || null;
         }
+        this.cdr.detectChanges();
       },
       error: (err) => {
         console.error('Failed to load accounts', err);
         this.errorMessage = 'Failed to load accounts. Please try again.';
         this.isLoadingAccounts = false;
+        this.cdr.detectChanges();
       }
     });
   }

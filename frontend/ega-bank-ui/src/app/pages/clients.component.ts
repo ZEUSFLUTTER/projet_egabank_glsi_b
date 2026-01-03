@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 import { ClientResponse } from '../models/client.model';
@@ -22,7 +22,8 @@ export class ClientsComponent implements OnInit, OnDestroy {
   constructor(
     private router: Router, 
     private clientService: ClientService,
-    private store: AppStore
+    private store: AppStore,
+    private cdr: ChangeDetectorRef
   ) { }
 
   ngOnInit(): void {
@@ -47,17 +48,21 @@ export class ClientsComponent implements OnInit, OnDestroy {
   loadClients(): void {
     this.isLoading = true;
     this.errorMessage = '';
+    this.cdr.detectChanges();
+    
     this.clientService.getAll(0, 100).subscribe({
       next: (response) => {
         this.clients = response.content || [];
         this.isLoading = false;
         // Mettre à jour le store
         this.store.setClients(this.clients, response.totalElements);
+        this.cdr.detectChanges();
       },
       error: (err) => {
         console.error('Failed to load clients', err);
         this.errorMessage = 'Failed to load clients. Please try again.';
         this.isLoading = false;
+        this.cdr.detectChanges();
       },
     });
   }

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 import { AccountResponse } from '../models/account.model';
@@ -27,7 +27,8 @@ export class AccountsComponent implements OnInit, OnDestroy {
     private router: Router,
     private accountService: AccountService,
     private clientService: ClientService,
-    private store: AppStore
+    private store: AppStore,
+    private cdr: ChangeDetectorRef
   ) { }
 
   ngOnInit(): void {
@@ -56,6 +57,7 @@ export class AccountsComponent implements OnInit, OnDestroy {
   loadAccounts(): void {
     this.isLoading = true;
     this.errorMessage = '';
+    this.cdr.detectChanges();
 
     if (this.clientId) {
       // Load accounts for specific client
@@ -63,11 +65,13 @@ export class AccountsComponent implements OnInit, OnDestroy {
         next: (accounts) => {
           this.accounts = accounts;
           this.isLoading = false;
+          this.cdr.detectChanges();
         },
         error: (err) => {
           console.error('Failed to load accounts', err);
           this.errorMessage = 'Failed to load accounts.';
           this.isLoading = false;
+          this.cdr.detectChanges();
         },
       });
     } else {
@@ -76,11 +80,13 @@ export class AccountsComponent implements OnInit, OnDestroy {
         next: (response) => {
           this.accounts = response.content || [];
           this.isLoading = false;
+          this.cdr.detectChanges();
         },
         error: (err) => {
           console.error('Failed to load accounts', err);
           this.errorMessage = 'Failed to load accounts.';
           this.isLoading = false;
+          this.cdr.detectChanges();
         },
       });
     }

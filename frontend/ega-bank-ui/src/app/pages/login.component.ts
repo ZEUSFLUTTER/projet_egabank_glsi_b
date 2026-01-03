@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 
 @Component({
@@ -17,6 +17,11 @@ import { AuthService } from '../services/auth.service';
           </div>
           <h2 class="text-2xl font-bold mb-2 text-center">Welcome Back</h2>
           <p class="text-gray-500 text-sm text-center">Sign in to access your account</p>
+        </div>
+
+        <!-- Message de session expirée -->
+        <div *ngIf="sessionExpired" class="alert alert-warning">
+          <span>🔒</span> Your session has expired. Please sign in again.
         </div>
 
         <div *ngIf="errorMessage" class="alert alert-danger">
@@ -115,6 +120,18 @@ import { AuthService } from '../services/auth.service';
       gap: 0.5rem;
       align-items: center;
     }
+    .alert-warning {
+      background-color: #fffbeb;
+      border: 1px solid #fef3c7;
+      color: #b45309;
+      padding: 0.75rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.875rem;
+      margin-bottom: 1rem;
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+    }
     .footer {
       margin-top: 1.5rem;
       text-align: center;
@@ -142,15 +159,44 @@ import { AuthService } from '../services/auth.service';
     }
   `]
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
   form: FormGroup;
   isLoading = false;
   errorMessage = '';
+  sessionExpired = false;
+  private returnUrl = '/';
 
-  constructor(private fb: FormBuilder, private auth: AuthService, private router: Router) {
+  constructor(
+    private fb: FormBuilder,
+    private auth: AuthService,
+    private router: Router,
+    private route: ActivatedRoute
+  ) {
     this.form = this.fb.group({
       username: ['', Validators.required],
       password: ['', Validators.required],
+    });
+  }
+
+  ngOnInit(): void {
+    // Vérifier si l'utilisateur est déjà connecté
+    if (this.auth.isAuthenticated()) {
+      this.router.navigateByUrl('/');
+      return;
+    }
+
+    // Récupérer l'URL de retour depuis les query params
+    this.route.queryParams.subscribe(params => {
+      this.returnUrl = params['returnUrl'] || '/';
+
+      // Vérifier si la session a expiré (présence d'un returnUrl indique une redirection)
+      if (params['returnUrl'] && !this.auth.isAuthenticated()) {
+        // Vérifier s'il y avait un token avant (session expirée)
+        const hadToken = localStorage.getItem('accessToken') !== null;
+        if (!hadToken && params['expired'] === 'true') {
+          this.sessionExpired = true;
+        }
+      }
     });
   }
 
@@ -159,18 +205,26 @@ export class LoginComponent {
 
     this.isLoading = true;
     this.errorMessage = '';
+    this.sessionExpired = false;
     const { username, password } = this.form.value;
 
     this.auth.login({ username, password }).subscribe({
       next: () => {
         this.isLoading = false;
-        this.router.navigateByUrl('/');
+        // Rediriger vers l'URL de retour après connexion réussie
+        this.router.navigateByUrl(this.returnUrl);
       },
       error: (err) => {
         this.isLoading = false;
         console.error('Login failed', err);
         // Display a friendly error message
-        this.errorMessage = 'Invalid username or password. Please try again.';
+        if (err.status === 401) {
+          this.errorMessage = 'Invalid username or password. Please try again.';
+        } else if (err.status === 0) {
+          this.errorMessage = 'Unable to connect to server. Please check your connection.';
+        } else {
+          this.errorMessage = err.error?.message || 'An error occurred. Please try again.';
+        }
       },
     });
   }

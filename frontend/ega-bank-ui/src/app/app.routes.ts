@@ -12,9 +12,12 @@ import { TransactionFormComponent } from './pages/transaction-form.component';
 import { TransactionsComponent } from './pages/transactions.component';
 
 export const routes: Routes = [
-	{ path: '', component: DashboardComponent, canActivate: [AuthGuard] },
+	// Routes publiques (pas de guard)
 	{ path: 'login', component: LoginComponent },
 	{ path: 'register', component: RegisterComponent },
+
+	// Routes protégées (nécessitent authentification)
+	{ path: '', component: DashboardComponent, canActivate: [AuthGuard] },
 	{ path: 'clients', component: ClientsComponent, canActivate: [AuthGuard] },
 	{ path: 'clients/new', component: ClientCreateComponent, canActivate: [AuthGuard] },
 	{ path: 'accounts', component: AccountsComponent, canActivate: [AuthGuard] },
@@ -22,5 +25,7 @@ export const routes: Routes = [
 	{ path: 'transactions', component: TransactionsComponent, canActivate: [AuthGuard] },
 	{ path: 'transactions/new', component: TransactionFormComponent, canActivate: [AuthGuard] },
 	{ path: 'settings', component: SettingsComponent, canActivate: [AuthGuard] },
-	{ path: '**', redirectTo: 'clients' },
+
+	// Route wildcard - redirige vers la page d'accueil (qui redirigera vers login si non authentifié)
+	{ path: '**', redirectTo: '' },
 ];

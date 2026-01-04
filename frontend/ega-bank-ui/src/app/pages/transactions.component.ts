@@ -37,7 +37,8 @@ export class TransactionsComponent implements OnInit, OnDestroy {
       if (this.accountId) {
         this.loadAccountAndTransactions(this.accountId);
       } else {
-        this.isLoading = false;
+        // Charger toutes les transactions de tous les comptes
+        this.loadAllTransactions();
       }
     });
     
@@ -49,6 +50,8 @@ export class TransactionsComponent implements OnInit, OnDestroy {
       if (event.type === 'transaction' || event.type === 'system') {
         if (this.accountId) {
           this.loadAccountAndTransactions(this.accountId);
+        } else {
+          this.loadAllTransactions();
         }
       }
     });
@@ -57,6 +60,32 @@ export class TransactionsComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  /**
+   * Charge toutes les transactions de tous les comptes
+   */
+  private loadAllTransactions(): void {
+    this.isLoading = true;
+    this.errorMessage = '';
+    this.selectedAccount = null;
+    this.cdr.detectChanges();
+
+    this.txService.getAll().subscribe({
+      next: (transactions) => {
+        this.transactions = transactions.sort(
+          (a, b) => new Date(b.dateTransaction).getTime() - new Date(a.dateTransaction).getTime()
+        );
+        this.isLoading = false;
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('Failed to load all transactions', err);
+        this.errorMessage = 'Failed to load transactions.';
+        this.isLoading = false;
+        this.cdr.detectChanges();
+      },
+    });
   }
 
   private loadAccountAndTransactions(numeroCompte: string): void {

@@ -2,12 +2,19 @@
     <div class="mb-6 flex justify-between items-center">
         <div>
             <h1 class="text-2xl font-bold mb-2">Transaction History</h1>
-            <p class="text-gray-500">A complete record of banking activities.</p>
+            <p class="text-gray-500">
+                {{ accountId ? 'Transactions for account ' + accountId : 'All transactions across all accounts' }}
+            </p>
         </div>
-        <a *ngIf="accountId" [routerLink]="['/transactions/new']" [queryParams]="{accountId: accountId}"
-            class="btn btn-primary">
-            <i class="ri-add-line" style="margin-right: 0.5rem;"></i> New Transaction
-        </a>
+        <div class="flex gap-2">
+            <a *ngIf="accountId" routerLink="/transactions" class="btn btn-secondary">
+                <i class="ri-list-check"></i> View All
+            </a>
+            <a [routerLink]="['/transactions/new']" [queryParams]="accountId ? {accountId: accountId} : {}"
+                class="btn btn-primary">
+                <i class="ri-add-line" style="margin-right: 0.5rem;"></i> New Transaction
+            </a>
+        </div>
     </div>
 
     <!-- Loading State (Skeleton) -->
@@ -79,7 +86,8 @@
     <div *ngIf="!isLoading && transactions.length > 0" class="card overflow-hidden">
         <div class="p-4 border-b bg-gray-50 flex justify-between items-center">
             <h3 class="font-bold flex items-center gap-2">
-                <i class="ri-history-line text-primary"></i> Recent Transactions
+                <i class="ri-history-line text-primary"></i> 
+                {{ accountId ? 'Account Transactions' : 'All Transactions' }}
             </h3>
             <span class="text-sm text-gray-500">{{ transactions.length }} transaction(s)</span>
         </div>
@@ -95,8 +103,12 @@
                     <i [class]="getTypeIcon(txn.type)"></i>
                 </div>
                 <div>
-                    <div class="font-medium">
+                    <div class="font-medium flex items-center gap-2">
                         {{ getTypeDisplay(txn.type) }}
+                        <!-- Afficher le numéro de compte si on affiche toutes les transactions -->
+                        <span *ngIf="!accountId && txn.numeroCompte" class="text-xs font-mono bg-gray-100 px-2 py-0.5 rounded">
+                            {{ txn.numeroCompte }}
+                        </span>
                     </div>
                     <div class="text-sm text-gray-500">
                         <span *ngIf="txn.description" class="mr-2">{{ txn.description }}</span>
@@ -118,7 +130,7 @@
         </div>
     </div>
 
-    <!-- Empty State -->
+    <!-- Empty State - With Account -->
     <div *ngIf="!isLoading && transactions.length === 0 && !errorMessage && accountId" class="card p-12 text-center">
         <div style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.3;">
             <i class="ri-exchange-dollar-line"></i>
@@ -130,15 +142,15 @@
         </a>
     </div>
 
-    <!-- No Account Selected -->
-    <div *ngIf="!isLoading && !accountId && !errorMessage" class="card p-12 text-center">
+    <!-- Empty State - All Transactions -->
+    <div *ngIf="!isLoading && transactions.length === 0 && !errorMessage && !accountId" class="card p-12 text-center">
         <div style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.3;">
-            <i class="ri-bank-card-2-line"></i>
+            <i class="ri-exchange-dollar-line"></i>
         </div>
-        <h3 class="font-bold text-lg mb-2 text-gray-700">No Account Selected</h3>
-        <p class="text-gray-500 mb-4">Please select an account to view its transaction history.</p>
-        <a routerLink="/accounts" class="btn btn-primary">
-            <i class="ri-bank-card-line" style="margin-right: 0.5rem;"></i> View Accounts
+        <h3 class="font-bold text-lg mb-2 text-gray-700">No Transactions Yet</h3>
+        <p class="text-gray-500 mb-4">No transactions have been made in the system yet.</p>
+        <a routerLink="/transactions/new" class="btn btn-primary">
+            <i class="ri-add-line" style="margin-right: 0.5rem;"></i> Make First Transaction
         </a>
     </div>
 </div>

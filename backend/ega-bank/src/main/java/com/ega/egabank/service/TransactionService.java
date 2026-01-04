@@ -21,4 +21,9 @@ public interface TransactionService {
     List<TransactionResponse> getTransactionHistory(String numeroCompte, LocalDate debut, LocalDate fin);
 
     List<TransactionResponse> getAllTransactionsByAccount(String numeroCompte);
+
+    /**
+     * Récupère toutes les transactions de tous les comptes
+     */
+    List<TransactionResponse> getAllTransactions();
 }

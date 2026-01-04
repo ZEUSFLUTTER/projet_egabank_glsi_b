@@ -61,6 +61,12 @@ public class TransactionController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
+    @Operation(summary = "Récupérer toutes les transactions de tous les comptes")
+    @GetMapping
+    public ResponseEntity<List<TransactionResponse>> getAllTransactions() {
+        return ResponseEntity.ok(transactionService.getAllTransactions());
+    }
+
     @Operation(summary = "Récupérer l'historique des transactions d'un compte sur une période")
     @GetMapping("/{numeroCompte}/history")
     public ResponseEntity<List<TransactionResponse>> getTransactionHistory(

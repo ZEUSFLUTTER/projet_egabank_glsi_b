@@ -26,4 +26,11 @@ export class TransactionService {
   getAllByAccount(numeroCompte: string): Observable<TransactionResponse[]> {
     return this.api.get<TransactionResponse[]>(`/transactions/${encodeURIComponent(numeroCompte)}`);
   }
+
+  /**
+   * Récupère toutes les transactions de tous les comptes
+   */
+  getAll(): Observable<TransactionResponse[]> {
+    return this.api.get<TransactionResponse[]>(`/transactions`);
+  }
 }

@@ -41,4 +41,14 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
     java.math.BigDecimal sumByCompteAndType(
             @Param("compteId") Long compteId,
             @Param("type") TypeTransaction type);
+
+    /**
+     * Récupère toutes les transactions triées par date décroissante
+     */
+    List<Transaction> findAllByOrderByDateTransactionDesc();
+
+    /**
+     * Récupère toutes les transactions avec pagination
+     */
+    Page<Transaction> findAllByOrderByDateTransactionDesc(Pageable pageable);
 }

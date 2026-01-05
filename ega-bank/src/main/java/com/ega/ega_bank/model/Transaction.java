@@ -9,13 +9,10 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "transactions")
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@ToString(exclude = "compte")
-@EqualsAndHashCode(exclude = "compte")
 public class Transaction {
 
     @Id

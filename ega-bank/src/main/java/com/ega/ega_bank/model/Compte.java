@@ -55,10 +55,10 @@ public abstract class Compte {
         }
     }
 
-    // Génération d'un numéro IBAN aléatoire pour le Togo (TG)
+    // Génération d'un numéro IBAN pour la Côte d'Ivoire (CI)
     private String genererNumeroCompte() {
         Iban iban = new Iban.Builder()
-                .countryCode(CountryCode.FR) // Utilisons FR car TG n'est pas disponible dans iban4j
+                .countryCode(CountryCode.CI) // Côte d'Ivoire
                 .bankCode("12345")
                 .branchCode("67890")
                 .accountNumber(String.format("%011d", System.currentTimeMillis() % 100000000000L))

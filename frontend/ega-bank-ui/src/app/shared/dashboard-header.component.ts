@@ -18,10 +18,10 @@ import { ClientService } from '../services/client.service';
       <!-- Centered Search -->
       <div style="max-width:480px;width:100%;position:relative;">
         <div style="position:relative;">
-            <input 
-                [(ngModel)]="searchQuery" 
+            <input
+                [(ngModel)]="searchQuery"
                 (ngModelChange)="onSearch()"
-                placeholder="Search clients or accounts..." 
+                placeholder="Search clients or accounts..."
                 style="width:100%;padding:10px 16px 10px 40px;border-radius:24px;border:1px solid #e5e7eb;background:#f9fafb;outline:none;transition:all 0.2s;"
                 (focus)="showSearch = true"
             />
@@ -33,7 +33,7 @@ import { ClientService } from '../services/client.service';
             <div *ngIf="isSearching" class="p-4 text-center text-gray-400 text-sm">
                 <i class="ri-loader-4-line spinner-icon"></i> Searching...
             </div>
-            
+
             <div *ngIf="!isSearching">
                 <!-- Clients -->
                 <div *ngIf="foundClients.length > 0">
@@ -72,59 +72,6 @@ import { ClientService } from '../services/client.service';
 
       <!-- Right Actions -->
       <div style="flex:1;display:flex;justify-content:flex-end;align-items:center;gap:12px;">
-        <!-- Notifications -->
-        <div style="position:relative;">
-            <button (click)="toggleNotifications()" class="header-icon-btn">
-                <i class="ri-notification-3-line"></i>
-                <span *ngIf="unreadNotifications" class="notification-badge">
-                    <span class="notification-count">2</span>
-                </span>
-            </button>
-            
-            <div *ngIf="showNotifications" class="dropdown-menu notification-dropdown">
-                <div class="dropdown-header">
-                    <span>Notifications</span>
-                    <a class="mark-read-link">Tout marquer lu</a>
-                </div>
-                
-                <div class="notification-list">
-                    <div class="notification-item unread">
-                        <div class="notif-icon primary">
-                            <i class="ri-bank-card-line"></i>
-                        </div>
-                        <div class="notif-body">
-                            <p class="notif-text"><strong>Nouveau virement reçu</strong> de 150 000 XOF sur le compte EGA-2024-001</p>
-                            <span class="notif-time">Il y a 25 min</span>
-                        </div>
-                    </div>
-                    
-                    <div class="notification-item unread">
-                        <div class="notif-icon accent">
-                            <i class="ri-user-add-line"></i>
-                        </div>
-                        <div class="notif-body">
-                            <p class="notif-text"><strong>Nouveau client</strong> Jean Dupont ajouté avec succès</p>
-                            <span class="notif-time">Il y a 2h</span>
-                        </div>
-                    </div>
-                    
-                    <div class="notification-item">
-                        <div class="notif-icon secondary">
-                            <i class="ri-exchange-funds-line"></i>
-                        </div>
-                        <div class="notif-body">
-                            <p class="notif-text">Transaction #TRX-4521 effectuée - Retrait de 75 000 XOF</p>
-                            <span class="notif-time">Hier, 14:30</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="dropdown-footer">
-                    <a class="see-all-link" routerLink="/notifications">Voir toutes les notifications</a>
-                </div>
-            </div>
-        </div>
-
         <!-- User Profile -->
         <div style="position:relative;">
            <button (click)="toggleProfile()" class="profile-btn">
@@ -145,9 +92,9 @@ import { ClientService } from '../services/client.service';
                        <span class="user-email">admin&#64;egabank.com</span>
                    </div>
                </div>
-               
+
                <div class="dropdown-divider"></div>
-               
+
                <div class="menu-items">
                    <a (click)="goSettings()" class="menu-item">
                        <i class="ri-settings-3-line"></i>
@@ -162,9 +109,9 @@ import { ClientService } from '../services/client.service';
                        <span>Support</span>
                    </a>
                </div>
-               
+
                <div class="menu-divider"></div>
-               
+
                <div class="menu-items">
                    <a (click)="logout()" class="menu-item logout">
                        <i class="ri-logout-box-r-line"></i>
@@ -175,9 +122,9 @@ import { ClientService } from '../services/client.service';
         </div>
       </div>
     </header>
-    
+
     <!-- Click overlay to close dropdowns -->
-    <div *ngIf="showSearch || showNotifications || showProfile" (click)="closeAll()" style="position:fixed;top:0;left:0;right:0;bottom:0;z-index:30;"></div>
+    <div *ngIf="showSearch || showProfile" (click)="closeAll()" style="position:fixed;top:0;left:0;right:0;bottom:0;z-index:30;"></div>
   `,
   styles: [`
     .search-results {
@@ -201,48 +148,7 @@ import { ClientService } from '../services/client.service';
     .search-item:hover {
         background-color: #f9fafb;
     }
-    
-    /* Header Icon Button */
-    .header-icon-btn {
-      position: relative;
-      background: transparent;
-      border: none;
-      width: 40px;
-      height: 40px;
-      border-radius: 10px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.2rem;
-      color: var(--gray-500);
-      transition: all 0.15s ease;
-    }
-    .header-icon-btn:hover {
-      background: var(--gray-100);
-      color: var(--gray-800);
-    }
-    
-    /* Notification Badge */
-    .notification-badge {
-      position: absolute;
-      top: 4px;
-      right: 4px;
-      min-width: 16px;
-      height: 16px;
-      background: var(--danger);
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border: 2px solid white;
-    }
-    .notification-count {
-      font-size: 9px;
-      font-weight: 600;
-      color: white;
-    }
-    
+
     /* Profile Button */
     .profile-btn {
       background: transparent;
@@ -288,7 +194,7 @@ import { ClientService } from '../services/client.service';
     .profile-arrow.rotated {
       transform: rotate(180deg);
     }
-    
+
     /* Dropdown Menu Base */
     .dropdown-menu {
       position: absolute;
@@ -299,116 +205,7 @@ import { ClientService } from '../services/client.service';
       z-index: 100;
       overflow: hidden;
     }
-    
-    /* Notification Dropdown */
-    .notification-dropdown {
-      width: 340px;
-      right: 0;
-      top: calc(100% + 6px);
-    }
-    .dropdown-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 14px 16px;
-      border-bottom: 1px solid var(--gray-100);
-      font-weight: 600;
-      font-size: 0.9rem;
-      color: var(--gray-800);
-    }
-    .mark-read-link {
-      font-size: 0.75rem;
-      font-weight: 500;
-      color: var(--primary);
-      cursor: pointer;
-    }
-    .mark-read-link:hover {
-      text-decoration: underline;
-    }
-    
-    /* Notification List */
-    .notification-list {
-      max-height: 320px;
-      overflow-y: auto;
-    }
-    .notification-item {
-      display: flex;
-      align-items: flex-start;
-      gap: 12px;
-      padding: 12px 16px;
-      cursor: pointer;
-      transition: background 0.15s;
-      border-bottom: 1px solid var(--gray-50);
-    }
-    .notification-item:last-child {
-      border-bottom: none;
-    }
-    .notification-item:hover {
-      background: var(--gray-50);
-    }
-    .notification-item.unread {
-      background: oklch(95% 0.02 263);
-    }
-    .notification-item.unread:hover {
-      background: oklch(92% 0.03 263);
-    }
-    .notif-icon {
-      width: 36px;
-      height: 36px;
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      font-size: 1rem;
-    }
-    .notif-icon.primary {
-      background: oklch(92% 0.05 263);
-      color: var(--primary);
-    }
-    .notif-icon.accent {
-      background: oklch(92% 0.05 332);
-      color: var(--accent);
-    }
-    .notif-icon.secondary {
-      background: oklch(92% 0.05 296);
-      color: var(--secondary);
-    }
-    .notif-body {
-      flex: 1;
-      min-width: 0;
-    }
-    .notif-text {
-      font-size: 0.8rem;
-      color: var(--gray-600);
-      line-height: 1.4;
-      margin: 0;
-    }
-    .notif-text strong {
-      color: var(--gray-800);
-    }
-    .notif-time {
-      font-size: 0.7rem;
-      color: var(--gray-400);
-      margin-top: 4px;
-    }
-    
-    /* Dropdown Footer */
-    .dropdown-footer {
-      padding: 12px 16px;
-      border-top: 1px solid var(--gray-100);
-      text-align: center;
-    }
-    .see-all-link {
-      font-size: 0.8rem;
-      font-weight: 500;
-      color: var(--primary);
-      cursor: pointer;
-    }
-    .see-all-link:hover {
-      text-decoration: underline;
-    }
-    
+
     /* Profile Dropdown */
     .profile-dropdown {
       width: 220px;
@@ -447,7 +244,7 @@ import { ClientService } from '../services/client.service';
       font-size: 0.75rem;
       color: var(--gray-500);
     }
-    
+
     /* Menu Items */
     .menu-items {
       padding: 6px;
@@ -479,7 +276,7 @@ import { ClientService } from '../services/client.service';
     .menu-item.logout:hover {
       background: oklch(95% 0.03 15);
     }
-    
+
     /* Menu Divider */
     .menu-divider {
       height: 1px;
@@ -495,9 +292,7 @@ export class DashboardHeader {
   foundClients: any[] = [];
   foundAccounts: any[] = [];
 
-  showNotifications = false;
   showProfile = false;
-  unreadNotifications = true;
 
   constructor(
     private auth: AuthService,
@@ -543,21 +338,13 @@ export class DashboardHeader {
     this.closeAll();
   }
 
-  toggleNotifications() {
-    this.showNotifications = !this.showNotifications;
-    this.showProfile = false;
-    this.showSearch = false;
-  }
-
   toggleProfile() {
     this.showProfile = !this.showProfile;
-    this.showNotifications = false;
     this.showSearch = false;
   }
 
   closeAll() {
     this.showSearch = false;
-    this.showNotifications = false;
     this.showProfile = false;
   }
 

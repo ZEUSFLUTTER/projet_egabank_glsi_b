@@ -76,20 +76,21 @@ import { ClientService } from '../services/client.service';
         <div style="position:relative;">
            <button (click)="toggleProfile()" class="profile-btn">
              <div class="profile-avatar">
-               <i class="ri-user-3-line"></i>
+               <span *ngIf="userInfo">{{ userInfo.initial }}</span>
+               <i *ngIf="!userInfo" class="ri-user-3-line"></i>
              </div>
              <div class="profile-info">
-               <span class="profile-name">Admin</span>
+               <span class="profile-name">{{ userInfo?.username || 'User' }}</span>
                <i class="ri-arrow-down-s-line profile-arrow" [class.rotated]="showProfile"></i>
              </div>
            </button>
 
            <div *ngIf="showProfile" class="dropdown-menu profile-dropdown">
                <div class="profile-menu-header">
-                   <div class="user-avatar-lg">A</div>
+                   <div class="user-avatar-lg">{{ userInfo?.initial || 'U' }}</div>
                    <div class="user-details">
-                       <span class="user-fullname">Administrateur</span>
-                       <span class="user-email">admin&#64;egabank.com</span>
+                       <span class="user-fullname">{{ userInfo?.username || 'Utilisateur' }}</span>
+                       <span class="user-email">{{ userInfo?.email || '' }}</span>
                    </div>
                </div>
 
@@ -294,12 +295,33 @@ export class DashboardHeader {
 
   showProfile = false;
 
+  // Informations utilisateur
+  userInfo: { username: string; email: string; initial: string } | null = null;
+
   constructor(
     private auth: AuthService,
     private router: Router,
     private clientService: ClientService,
     private accountService: AccountService
-  ) { }
+  ) {
+    this.loadUserInfo();
+  }
+
+  private loadUserInfo() {
+    const info = this.auth.getUserInfo();
+    if (info) {
+      // Extraire l'email si le username est un email
+      const isEmail = info.username.includes('@');
+      const username = isEmail ? info.username.split('@')[0] : info.username;
+      const initial = username.charAt(0).toUpperCase();
+
+      this.userInfo = {
+        username: username.charAt(0).toUpperCase() + username.slice(1),
+        email: info.username,
+        initial: initial
+      };
+    }
+  }
 
   onSearch() {
     if (this.searchQuery.length < 2) {

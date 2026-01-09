@@ -8,7 +8,7 @@ import { ApiService } from './api.service';
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   constructor(
-    private api: ApiService, 
+    private api: ApiService,
     private router: Router,
     private store: AppStore
   ) { }
@@ -18,6 +18,9 @@ export class AuthService {
       tap((res: any) => {
         if (res?.accessToken) localStorage.setItem('accessToken', res.accessToken);
         if (res?.refreshToken) localStorage.setItem('refreshToken', res.refreshToken);
+        // Sauvegarder les infos utilisateur
+        if (res?.username) localStorage.setItem('username', res.username);
+        if (res?.email) localStorage.setItem('email', res.email);
       })
     );
   }
@@ -27,6 +30,9 @@ export class AuthService {
       tap((res: any) => {
         if (res?.accessToken) localStorage.setItem('accessToken', res.accessToken);
         if (res?.refreshToken) localStorage.setItem('refreshToken', res.refreshToken);
+        // Sauvegarder les infos utilisateur
+        if (res?.username) localStorage.setItem('username', res.username);
+        if (res?.email) localStorage.setItem('email', res.email);
       })
     );
   }
@@ -38,10 +44,12 @@ export class AuthService {
   logout() {
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
-    
+    localStorage.removeItem('username');
+    localStorage.removeItem('email');
+
     // Réinitialiser le store pour nettoyer l'état
     this.store.reset();
-    
+
     this.router.navigateByUrl('/login');
   }
 
@@ -106,9 +114,26 @@ export class AuthService {
   }
 
   /**
-   * Récupère les informations de l'utilisateur depuis le token
+   * Récupère les informations de l'utilisateur depuis le token et le localStorage
    */
-  getUserInfo(): { username: string; exp: number } | null {
+  getUserInfo(): { username: string; email: string; exp: number } | null {
+    // Priorité au localStorage pour username et email (plus fiable)
+    const username = localStorage.getItem('username');
+    const email = localStorage.getItem('email');
+
+    if (username && email) {
+      const token = localStorage.getItem('accessToken');
+      if (token) {
+        const payload = this.decodeToken(token);
+        return {
+          username: username,
+          email: email,
+          exp: payload?.exp || 0,
+        };
+      }
+    }
+
+    // Fallback sur le token si pas dans localStorage
     const token = localStorage.getItem('accessToken');
     if (!token) return null;
 
@@ -117,6 +142,7 @@ export class AuthService {
 
     return {
       username: payload.sub || '',
+      email: payload.sub || '', // Le sub contient généralement le username
       exp: payload.exp || 0,
     };
   }

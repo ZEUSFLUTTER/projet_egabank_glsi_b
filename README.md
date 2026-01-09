@@ -1,4 +1,4 @@
-# ✅ EGA Bank - Projet Complet
+# EGA Bank - Projet Complet
 
 ## 📦 Contenu du Projet
 
@@ -287,7 +287,7 @@ Redirige `/api` vers `http://localhost:8080`
 
 ---
 
-## 👥 Auteurs
+##  Auteurs
 
 **Groupe**: PEKPELI KEVIN
 **Année**: 2026

@@ -2,11 +2,9 @@ package com.ega.bank_backend.controller;
 
 import com.ega.bank_backend.dto.LoginRequest;
 import com.ega.bank_backend.dto.LoginResponse;
-import com.ega.bank_backend.security.JwtUtils;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
+import com.ega.bank_backend.dto.RegisterRequest;
+import com.ega.bank_backend.service.AuthService;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,23 +14,19 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/auth")
 public class AuthController {
 
-    private final AuthenticationManager authenticationManager;
-    private final UserDetailsService userDetailsService;
-    private final JwtUtils jwtUtils;
+    private final AuthService authService;
 
-    public AuthController(AuthenticationManager authenticationManager, UserDetailsService userDetailsService,
-            JwtUtils jwtUtils) {
-        this.authenticationManager = authenticationManager;
-        this.userDetailsService = userDetailsService;
-        this.jwtUtils = jwtUtils;
+    public AuthController(AuthService authService) {
+        this.authService = authService;
     }
 
     @PostMapping("/login")
-    public LoginResponse login(@RequestBody LoginRequest request) {
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.username(), request.password()));
-        UserDetails userDetails = userDetailsService.loadUserByUsername(request.username());
-        String token = jwtUtils.generateToken(userDetails);
-        return new LoginResponse(token);
+    public LoginResponse login(@Valid @RequestBody LoginRequest request) {
+        return authService.login(request);
+    }
+
+    @PostMapping("/register")
+    public String register(@Valid @RequestBody RegisterRequest request) {
+        return authService.register(request);
     }
 }

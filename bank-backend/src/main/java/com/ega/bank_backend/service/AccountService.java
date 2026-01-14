@@ -53,6 +53,14 @@ public class AccountService {
                 .collect(Collectors.toList());
     }
 
+    public List<AccountResponseDTO> getAccountsByUsername(String username) {
+        return accountRepository.findAll().stream()
+                .filter(acc -> acc.getOwner().getUser() != null
+                        && acc.getOwner().getUser().getUsername().equals(username))
+                .map(this::mapToResponseDTO)
+                .collect(Collectors.toList());
+    }
+
     private String generateUniqueAccountNumber() {
         String accountNumber;
         do {

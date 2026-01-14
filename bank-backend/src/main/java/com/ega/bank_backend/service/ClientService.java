@@ -49,6 +49,14 @@ public class ClientService {
         return mapToResponseDTO(client);
     }
 
+    public ClientResponseDTO getClientByUsername(String username) {
+        Client client = clientRepository.findAll().stream()
+                .filter(c -> c.getUser() != null && c.getUser().getUsername().equals(username))
+                .findFirst()
+                .orElseThrow(() -> new ResourceNotFoundException("Client introuvable pour l'utilisateur: " + username));
+        return mapToResponseDTO(client);
+    }
+
     public void deleteClient(Long id) {
         if (!clientRepository.existsById(id)) {
             throw new ResourceNotFoundException("Client introuvable avec l'ID: " + id);

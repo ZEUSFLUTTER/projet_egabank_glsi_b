@@ -41,4 +41,13 @@ public interface TransactionsRepository extends JpaRepository<Transaction, Long>
             LocalDateTime startDate,
             LocalDateTime endDate
     );
+
+    /**
+     * Find all transactions for a specific client (from all their accounts)
+     * This includes transactions from all accounts belonging to the client
+     */
+    @Query("SELECT t FROM Transaction t " +
+           "WHERE t.sourceAccount.owner.id = :clientId OR t.destinationAccount.owner.id = :clientId " +
+           "ORDER BY t.transactionDate DESC")
+    List<Transaction> findTransactionsByClientId(@Param("clientId") Long clientId);
 }

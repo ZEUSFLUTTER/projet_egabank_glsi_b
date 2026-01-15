@@ -152,7 +152,7 @@ export class DepositComponent implements OnInit {
 
     const transaction = {
       amount,
-      transactionType: 'CREDIT',
+      transactionType: 'DEPOSIT',
       description,
       sourceAccount: { id: parseInt(accountId) },
       transactionDate: new Date().toISOString()

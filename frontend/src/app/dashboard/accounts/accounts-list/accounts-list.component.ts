@@ -1,34 +1,41 @@
 import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 import { BankService, Account } from '../../../core/services/bank.service';
 import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-accounts-list',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, FormsModule],
   template: `
     <div class="space-y-10 animate-in fade-in duration-700">
       <!-- Header Section -->
-      <div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
-        <div class="space-y-1">
-          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-100 text-blue-600 text-xs font-black uppercase tracking-widest">
-            Tableau de bord
+      <div class="flex flex-col gap-6">
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
+          <div class="space-y-1">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-100 text-blue-600 text-xs font-black uppercase tracking-widest">
+              Tableau de bord
+            </div>
+            <h2 class="text-4xl font-black text-slate-900 tracking-tight leading-none">Mes Comptes</h2>
+            <p class="text-slate-500 font-medium">Consultez l'état de vos actifs en temps réel.</p>
           </div>
-          <h2 class="text-4xl font-black text-slate-900 tracking-tight leading-none">Mes Comptes</h2>
-          <p class="text-slate-500 font-medium">Consultez l'état de vos actifs en temps réel.</p>
+          
+          <a routerLink="/dashboard/accounts/new" 
+             class="group flex items-center justify-center gap-3 bg-blue-600 text-white px-8 py-4 rounded-2xl font-black hover:bg-blue-700 transition-all hover:scale-105 active:scale-95 shadow-2xl shadow-blue-200">
+            <div class="bg-white/20 p-1.5 rounded-lg group-hover:rotate-90 transition-transform">
+              <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+              </svg>
+            </div>
+            Ouvrir un compte
+          </a>
         </div>
-        
-        <a routerLink="/dashboard/accounts/new" 
-           class="group flex items-center justify-center gap-3 bg-blue-600 text-white px-8 py-4 rounded-2xl font-black hover:bg-blue-700 transition-all hover:scale-105 active:scale-95 shadow-2xl shadow-blue-200">
-          <div class="bg-white/20 p-1.5 rounded-lg group-hover:rotate-90 transition-transform">
-            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-            </svg>
-          </div>
-          Ouvrir un compte
-        </a>
+        <input type="text" 
+          [(ngModel)]="searchQuery" 
+          placeholder="Rechercher par numéro de compte ou type..." 
+          class="px-4 py-3 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm w-full md:w-80"/>
       </div>
 
       <!-- Stats Summary (Quick View) -->
@@ -50,8 +57,8 @@ import { AuthService } from '../../../core/services/auth.service';
       </div>
 
       <!-- Accounts Grid -->
-      <div *ngIf="!loading && accounts.length > 0" class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-        <div *ngFor="let acc of accounts" 
+      <div *ngIf="!loading && getFilteredAccounts().length > 0" class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+        <div *ngFor="let acc of getFilteredAccounts()" 
              class="group relative bg-white/60 backdrop-blur-xl rounded-[2.5rem] p-8 shadow-xl shadow-slate-200/50 border border-white hover:border-blue-600/20 hover:shadow-2xl hover:shadow-blue-900/5 hover:-translate-y-2 transition-all duration-500 overflow-hidden">
           
           <!-- Animated Background -->
@@ -123,6 +130,7 @@ export class AccountsListComponent implements OnInit {
 
   accounts: Account[] = [];
   loading = true;
+  searchQuery = '';
 
   ngOnInit(): void {
     const userId = this.authService.getUserId();
@@ -147,6 +155,15 @@ export class AccountsListComponent implements OnInit {
         this.cdr.detectChanges();
       }
     });
+  }
+
+  getFilteredAccounts(): Account[] {
+    if (!this.searchQuery.trim()) return this.accounts;
+    const q = this.searchQuery.toLowerCase();
+    return this.accounts.filter(acc => 
+      acc.accountNumber?.toLowerCase().includes(q) || 
+      acc.accountType?.toLowerCase().includes(q)
+    );
   }
 
   getTotalBalance(): number {

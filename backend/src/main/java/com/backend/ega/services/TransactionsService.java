@@ -154,4 +154,14 @@ public class TransactionsService {
         
         return new ResponseEntity<>(transactions, HttpStatus.OK);
     }
+
+    /**
+     * Get all transactions for a specific client (from all their accounts)
+     * Used by admins to view client transaction history
+     * @param clientId The client ID
+     * @return List of all transactions for all accounts belonging to the client
+     */
+    public List<Transaction> getTransactionsByClient(Long clientId) {
+        return transactionsRepository.findTransactionsByClientId(clientId);
+    }
 }

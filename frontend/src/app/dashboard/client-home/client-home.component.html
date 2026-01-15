@@ -130,31 +130,31 @@
           class="flex-1 flex flex-col justify-center items-center text-center p-8 border-2 border-slate-50 border-dashed rounded-3xl bg-slate-50/50 group">
           <div [class]="
               'w-16 h-16 rounded-2xl flex items-center justify-center mb-5 transition-transform group-hover:scale-110 duration-500 shadow-lg ' +
-              (lastTransaction.transactionType !== 'DEBIT'
+              (lastTransaction.transactionType !== 'WITHDRAWAL'
                 ? 'bg-green-100 text-green-600 shadow-green-100'
                 : 'bg-red-100 text-red-600 shadow-red-100')
             ">
-            <svg *ngIf="lastTransaction.transactionType !== 'DEBIT'" xmlns="http://www.w3.org/2000/svg" fill="none"
+            <svg *ngIf="lastTransaction.transactionType !== 'WITHDRAWAL'" xmlns="http://www.w3.org/2000/svg" fill="none"
               viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-8 h-8">
               <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
             </svg>
-            <svg *ngIf="lastTransaction.transactionType === 'DEBIT'" xmlns="http://www.w3.org/2000/svg" fill="none"
+            <svg *ngIf="lastTransaction.transactionType === 'WITHDRAWAL'" xmlns="http://www.w3.org/2000/svg" fill="none"
               viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-8 h-8">
               <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 12h-15" />
             </svg>
           </div>
           <p class="text-slate-500 text-xs font-bold uppercase tracking-widest mb-1">
             {{ lastTransaction.transactionType === 'TRANSFER' ? 'Virement effectué' : (lastTransaction.transactionType
-            === 'CREDIT' ? 'Dépôt reçu' : 'Paiement effectué') }}
+            === 'DEPOSIT' ? 'Dépôt reçu' : 'Paiement effectué') }}
           </p>
           <p class="text-slate-900 font-display font-bold text-lg px-2">
             {{ lastTransaction.description || 'Transaction bancaire' }}
           </p>
           <p [class]="
               'font-black text-2xl mt-2 ' +
-              (lastTransaction.transactionType !== 'DEBIT' ? 'text-green-600' : 'text-red-600')
+              (lastTransaction.transactionType !== 'WITHDRAWAL' ? 'text-green-600' : 'text-red-600')
             ">
-            {{ lastTransaction.transactionType !== 'DEBIT' ? '+' : '-' }}{{ lastTransaction.amount | number: '1.2-2' }}
+            {{ lastTransaction.transactionType !== 'WITHDRAWAL' ? '+' : '-' }}{{ lastTransaction.amount | number: '1.2-2' }}
             <span class="text-sm">FCFA</span>
           </p>
           <div class="mt-6 flex items-center gap-2 text-slate-400">

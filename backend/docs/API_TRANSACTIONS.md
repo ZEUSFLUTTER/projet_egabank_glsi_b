@@ -107,3 +107,58 @@ Retrieves filtered history for an account within a date range.
 ### Response Body
 
 Returns a list of transactions matching the criteria.
+
+---
+
+# Admin API Documentation
+
+Base URL: `/api/admin`
+
+These endpoints are for administrative operations. Admins can view detailed information about clients and their transactions.
+
+## 1. Get Client Transactions
+
+Retrieves all transactions for a specific client across all their accounts.
+
+- **Endpoint**: `/clients/{clientId}/transactions`
+- **Method**: `GET`
+- **Path Variables**:
+  - `clientId` (Long): The ID of the client
+
+### Response Body
+
+Returns a JSON array of Transaction objects for the specified client, sorted by transaction date (newest first).
+
+**Example Response:**
+```json
+[
+  {
+    "id": 5001,
+    "amount": 500.0,
+    "transactionDate": "2024-03-15T10:30:00",
+    "transactionType": "DEPOSIT",
+    "description": "Salary",
+    "sourceAccount": {
+      "id": 101,
+      "accountNumber": "FR7612345678"
+    },
+    "destinationAccount": null
+  },
+  {
+    "id": 5002,
+    "amount": 200.0,
+    "transactionDate": "2024-03-14T15:45:00",
+    "transactionType": "WITHDRAWAL",
+    "description": "ATM Withdrawal",
+    "sourceAccount": {
+      "id": 101,
+      "accountNumber": "FR7612345678"
+    },
+    "destinationAccount": null
+  }
+]
+```
+
+### Errors
+- `200 OK`: Returns empty list if client has no transactions
+- `404 Not Found`: If the client does not exist (implementation may vary)

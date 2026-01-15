@@ -1,6 +1,7 @@
 package com.backend.ega.services;
 
 import com.backend.ega.dto.CreateClientRequest;
+import com.backend.ega.dto.ErrorResponse;
 import com.backend.ega.entities.Client;
 import com.backend.ega.repositories.ClientsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -196,11 +197,82 @@ public class ClientsService {
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-    public ResponseEntity<Void> deleteClient(Long id) {
-        if (clientsRepository.existsById(id)) {
-            clientsRepository.deleteById(id);
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    public ResponseEntity<?> deleteClient(Long id) {
+        Optional<Client> clientOpt = clientsRepository.findById(id);
+        
+        if (clientOpt.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        
+        Client client = clientOpt.get();
+        
+        // Check if client has any accounts with remaining balance
+        if (client.getAccounts() != null && !client.getAccounts().isEmpty()) {
+            double totalBalance = client.getAccounts().stream()
+                    .mapToDouble(account -> account.getBalance() != null ? account.getBalance() : 0.0)
+                    .sum();
+            
+            if (totalBalance > 0) {
+                // Return conflict error - client must empty all accounts first
+                String detailedMessage = "Vous devez d'abord vider tous vos comptes avant de supprimer votre compte. "
+                        + "Solde total: " + String.format("%.2f", totalBalance) + " FCFA";
+                
+                ErrorResponse errorResponse = new ErrorResponse(
+                    HttpStatus.CONFLICT.value(),
+                    "Impossible de supprimer le compte",
+                    "Account balance not empty",
+                    "/api/clients/" + id,
+                    java.util.List.of(detailedMessage)
+                );
+                return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
+            }
+        }
+        
+        // All checks passed, delete the client
+        clientsRepository.deleteById(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    public ResponseEntity<?> changePassword(Long id, String newPassword, String confirmPassword) {
+        // Validate passwords match
+        if (!newPassword.equals(confirmPassword)) {
+            return new ResponseEntity<>(
+                new ErrorResponse(
+                    HttpStatus.BAD_REQUEST.value(),
+                    "Les mots de passe ne correspondent pas",
+                    "Passwords do not match",
+                    "/api/clients/" + id + "/password",
+                    java.util.List.of("New password and confirm password must be identical")
+                ),
+                HttpStatus.BAD_REQUEST
+            );
+        }
+
+        // Find and update client
+        return clientsRepository.findById(id)
+                .map(client -> {
+                    client.setPassword(passwordEncoder.encode(newPassword));
+                    clientsRepository.save(client);
+                    return new ResponseEntity<>(
+                        new ErrorResponse(
+                            HttpStatus.OK.value(),
+                            "Mot de passe modifié avec succès",
+                            null,
+                            "/api/clients/" + id + "/password",
+                            null
+                        ),
+                        HttpStatus.OK
+                    );
+                })
+                .orElse(new ResponseEntity<>(
+                    new ErrorResponse(
+                        HttpStatus.NOT_FOUND.value(),
+                        "Client non trouvé",
+                        "Client not found",
+                        "/api/clients/" + id + "/password",
+                        null
+                    ),
+                    HttpStatus.NOT_FOUND
+                ));
     }
 }

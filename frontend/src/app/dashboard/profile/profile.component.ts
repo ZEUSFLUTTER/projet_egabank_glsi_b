@@ -209,8 +209,8 @@ export class ProfileComponent implements OnInit {
   }
 
   changePassword(): void {
-    if (!this.passwords.new || this.passwords.new.length < 8) {
-      this.notificationService.warning('Le mot de passe doit contenir au moins 8 caractères.');
+    if (!this.passwords.new) {
+      this.notificationService.warning('Veuillez entrer un nouveau mot de passe.');
       return;
     }
     if (this.passwords.new !== this.passwords.confirm) {
@@ -224,13 +224,7 @@ export class ProfileComponent implements OnInit {
     this.savingPassword = true;
     this.cdr.detectChanges();
 
-    // We use the same update profile endpoint, assuming it accepts 'password' field
-    // or a dedicated logic, since we don't have a specific endpoint.
-    // If the backend doesn't support this via PUT /clients/{id}, this might fail or ignore it.
-    // But this is the best effort without backend changes.
-    const payload = { ...this.client, password: this.passwords.new };
-
-    this.bankService.updateClientProfile(userId, payload).subscribe({
+    this.bankService.changePassword(userId, this.passwords.new, this.passwords.confirm).subscribe({
       next: () => {
         this.savingPassword = false;
         this.passwords = { new: '', confirm: '' };

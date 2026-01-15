@@ -73,11 +73,11 @@ import { finalize } from 'rxjs/operators';
                 </td>
                 <td class="px-8 py-6">
                   <div class="flex items-center gap-3">
-                    <div [class]="tx.transactionType === 'DEBIT' ? 'bg-red-50 text-red-600' : 'bg-green-50 text-green-600'" class="w-8 h-8 rounded-lg flex items-center justify-center transition-transform group-hover:scale-110">
-                       <svg *ngIf="tx.transactionType === 'DEBIT'" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4">
+                    <div [class]="tx.transactionType === 'WITHDRAWAL' ? 'bg-red-50 text-red-600' : 'bg-green-50 text-green-600'" class="w-8 h-8 rounded-lg flex items-center justify-center transition-transform group-hover:scale-110">
+                       <svg *ngIf="tx.transactionType === 'WITHDRAWAL'" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4">
                          <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 13.5L12 21m0 0l-7.5-7.5M12 21V3" />
                        </svg>
-                       <svg *ngIf="tx.transactionType !== 'DEBIT'" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4">
+                       <svg *ngIf="tx.transactionType !== 'WITHDRAWAL'" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4">
                          <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 10.5L12 3m0 0l7.5 7.5M12 3v18" />
                        </svg>
                     </div>
@@ -91,16 +91,16 @@ import { finalize } from 'rxjs/operators';
                 </td>
                 <td class="px-8 py-6">
                   <span [ngClass]="{
-                    'bg-green-100 text-green-700 shadow-sm shadow-green-100': tx.transactionType === 'CREDIT',
-                    'bg-rose-100 text-rose-700 shadow-sm shadow-rose-100': tx.transactionType === 'DEBIT',
+                    'bg-green-100 text-green-700 shadow-sm shadow-green-100': tx.transactionType === 'DEPOSIT',
+                    'bg-rose-100 text-rose-700 shadow-sm shadow-rose-100': tx.transactionType === 'WITHDRAWAL',
                     'bg-indigo-100 text-indigo-700 shadow-sm shadow-indigo-100': tx.transactionType === 'TRANSFER'
                   }" class="inline-flex items-center rounded-full px-3 py-1 text-[10px] font-black uppercase tracking-wider">
                     {{ tx.transactionType }}
                   </span>
                 </td>
-                <td class="px-8 py-6 text-right font-black transition-all group-hover:pr-10" [ngClass]="tx.transactionType === 'DEBIT' ? 'text-rose-600' : 'text-emerald-600'">
+                <td class="px-8 py-6 text-right font-black transition-all group-hover:pr-10" [ngClass]="tx.transactionType === 'WITHDRAWAL' ? 'text-rose-600' : 'text-emerald-600'">
                   <div class="flex items-center justify-end gap-1">
-                    <span class="text-xs">{{ tx.transactionType === 'DEBIT' ? '-' : '+' }}</span>
+                    <span class="text-xs">{{ tx.transactionType === 'WITHDRAWAL' ? '-' : '+' }}</span>
                     <span class="text-lg">{{ tx.amount | number:'1.2-2' }}</span>
                     <span class="text-[10px] text-slate-400 font-bold ml-1 uppercase">FCFA</span>
                   </div>

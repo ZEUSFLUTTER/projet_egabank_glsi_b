@@ -132,13 +132,125 @@ Fields to update. ID in body is ignored in favor of path variable.
 
 ## 5. Delete Client
 
-Deletes a client from the system.
+Deletes a client from the system. **Important: Client must empty all accounts before deletion.**
 
 - **Endpoint**: `/{id}`
 - **Method**: `DELETE`
 - **Path Variables**:
   - `id` (Long): Client ID to delete
 
-### Response
+### Validation
 
-Returns HTTP `200 OK` or `204 No Content` on success.
+Before a client can be deleted, the system checks:
+- Client must have **zero balance** across all accounts
+- If client has funds in any account, deletion is rejected with HTTP 409 Conflict
+
+### Success Response
+
+Returns HTTP `204 No Content` on successful deletion.
+
+### Error Response (Account Has Funds)
+
+Returns HTTP `409 Conflict` if client has remaining balance:
+
+```json
+{
+  "status": 409,
+  "message": "Impossible de supprimer le compte",
+  "error": "Account balance not empty",
+  "timestamp": "2026-01-15T10:30:00",
+  "path": "/api/clients/1",
+  "details": [
+    "Vous devez d'abord vider tous vos comptes avant de supprimer votre compte. Solde total: 1500.00 FCFA"
+  ]
+}
+```
+
+### Error Response (Client Not Found)
+
+Returns HTTP `404 Not Found` if the client doesn't exist.
+
+---
+
+## 6. Change Password
+
+Allows a client to change their password.
+
+- **Endpoint**: `/{id}/password`
+- **Method**: `PUT`
+- **Path Variables**:
+  - `id` (Long): Client ID whose password to change
+- **Content-Type**: `application/json`
+
+### Request Body (`ChangePasswordRequest`)
+
+| Field | Type | Required | Description |
+| :--- | :--- | :--- | :--- |
+| `newPassword` | String | Yes | New password |
+| `confirmPassword` | String | Yes | Password confirmation (must match newPassword) |
+
+**Example Request:**
+```json
+{
+  "newPassword": "newSecurePassword123",
+  "confirmPassword": "newSecurePassword123"
+}
+```
+
+### Success Response
+
+Returns HTTP `200 OK` with a success message:
+
+```json
+{
+  "status": 200,
+  "message": "Mot de passe modifié avec succès",
+  "error": null,
+  "timestamp": "2026-01-15T10:30:00",
+  "path": "/api/clients/1/password",
+  "details": null
+}
+```
+
+### Error Responses
+
+#### Passwords Don't Match (HTTP 400)
+```json
+{
+  "status": 400,
+  "message": "Les mots de passe ne correspondent pas",
+  "error": "Passwords do not match",
+  "timestamp": "2026-01-15T10:30:00",
+  "path": "/api/clients/1/password",
+  "details": [
+    "New password and confirm password must be identical"
+  ]
+}
+```
+
+#### Password Too Short (HTTP 400)
+```json
+{
+  "status": 400,
+  "message": "Le mot de passe doit contenir au moins 8 caractères",
+  "error": "Password too short",
+  "timestamp": "2026-01-15T10:30:00",
+  "path": "/api/clients/1/password",
+  "details": [
+    "Password must be at least 8 characters long"
+  ]
+}
+```
+
+#### Client Not Found (HTTP 404)
+```json
+{
+  "status": 404,
+  "message": "Client non trouvé",
+  "error": "Client not found",
+  "timestamp": "2026-01-15T10:30:00",
+  "path": "/api/clients/1/password",
+  "details": null
+}
+```
+

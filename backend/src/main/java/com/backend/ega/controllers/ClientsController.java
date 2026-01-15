@@ -1,5 +1,6 @@
 package com.backend.ega.controllers;
 
+import com.backend.ega.dto.ChangePasswordRequest;
 import com.backend.ega.dto.CreateClientRequest;
 import com.backend.ega.entities.Client;
 import com.backend.ega.services.ClientsService;
@@ -42,7 +43,14 @@ public class ClientsController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteClient(@PathVariable Long id) {
+    public ResponseEntity<?> deleteClient(@PathVariable Long id) {
         return clientsService.deleteClient(id);
+    }
+
+    @PutMapping("/{id}/password")
+    public ResponseEntity<?> changePassword(
+            @PathVariable Long id,
+            @Valid @RequestBody ChangePasswordRequest request) {
+        return clientsService.changePassword(id, request.getNewPassword(), request.getConfirmPassword());
     }
 }

@@ -1,7 +1,8 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { BankService, Client } from '../../../core/services/bank.service';
+import { FormsModule } from '@angular/forms';
+import { BankService, Client, Account, Transaction } from '../../../core/services/bank.service';
 import { NotificationService } from '../../../core/services/notification.service';
 import { Observable, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
@@ -9,21 +10,27 @@ import { catchError } from 'rxjs/operators';
 @Component({
   selector: 'app-admin-clients-list',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, FormsModule],
   template: `
-    <div class="space-y-6" *ngIf="clients$ | async as clients">
-      <div class="flex justify-between items-center">
-        <h2 class="text-2xl font-bold text-slate-800">Gestion des Clients</h2>
-        <span
-          class="bg-indigo-100 text-indigo-700 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider"
-        >
-          {{ clients.length }} Clients total
-        </span>
+    <div class="space-y-6" *ngIf="clients$ | async as allClients">
+      <div class="flex flex-col gap-4">
+        <div class="flex justify-between items-center">
+          <h2 class="text-2xl font-bold text-slate-800">Gestion des Clients</h2>
+          <span
+            class="bg-indigo-100 text-indigo-700 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider"
+          >
+            {{ getFilteredClients(allClients).length }}/{{ allClients.length }} Clients
+          </span>
+        </div>
+        <input type="text" 
+          [(ngModel)]="searchQuery" 
+          placeholder="Rechercher par nom ou email..." 
+          class="px-4 py-3 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm"/>
       </div>
 
       <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
         <div class="overflow-x-auto">
-          <table class="w-full text-left border-collapse" *ngIf="clients.length > 0">
+          <table class="w-full text-left border-collapse" *ngIf="getFilteredClients(allClients).length > 0">
             <thead>
               <tr class="bg-slate-50 border-b border-slate-200">
                 <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">
@@ -49,7 +56,7 @@ import { catchError } from 'rxjs/operators';
               </tr>
             </thead>
             <tbody class="divide-y divide-slate-200">
-              <tr *ngFor="let client of clients" class="hover:bg-slate-50 transition-colors group">
+              <tr *ngFor="let client of getFilteredClients(allClients)" class="hover:bg-slate-50 transition-colors group">
                 <td class="px-6 py-4">
                   <div class="flex items-center space-x-3">
                     <div
@@ -93,7 +100,34 @@ import { catchError } from 'rxjs/operators';
                   </div>
                 </td>
                 <td class="px-6 py-4 text-right">
-                  <div class="flex items-center justify-end space-x-2">
+                  <div class="flex items-center justify-end gap-1">
+                    <button
+                      (click)="openDepositModal(client)"
+                      class="text-slate-400 hover:text-green-600 transition-colors p-2 rounded-lg hover:bg-green-50"
+                      title="Dépôt"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                      </svg>
+                    </button>
+                    <button
+                      (click)="openWithdrawalModal(client)"
+                      class="text-slate-400 hover:text-orange-600 transition-colors p-2 rounded-lg hover:bg-orange-50"
+                      title="Retrait"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 12h-15" />
+                      </svg>
+                    </button>
+                    <button
+                      (click)="openHistoryModal(client)"
+                      class="text-slate-400 hover:text-purple-600 transition-colors p-2 rounded-lg hover:bg-purple-50"
+                      title="Historique"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5-12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                    </button>
                     <button
                       [routerLink]="['/dashboard/admin/edit-client', client.id]"
                       class="text-slate-400 hover:text-blue-600 transition-colors p-2 rounded-lg hover:bg-blue-50"
@@ -141,7 +175,7 @@ import { catchError } from 'rxjs/operators';
           </table>
         </div>
 
-        <div *ngIf="clients.length === 0" class="p-16 text-center">
+        <div *ngIf="getFilteredClients(allClients).length === 0" class="p-16 text-center">
           <div
             class="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4"
           >
@@ -160,7 +194,120 @@ import { catchError } from 'rxjs/operators';
               />
             </svg>
           </div>
-          <p class="text-slate-500 font-medium">Aucun client trouvé.</p>
+          <p class="text-slate-500 font-medium">{{ searchQuery ? 'Aucun résultat trouvé.' : 'Aucun client trouvé.' }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Deposit Modal -->
+    <div *ngIf="showDepositModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full mx-4">
+        <h3 class="text-xl font-bold text-slate-900 mb-6">Effectuer un Dépôt</h3>
+        <div *ngIf="selectedClient" class="space-y-4">
+          <p class="text-sm text-slate-600"><strong>Client:</strong> {{ selectedClient.firstName }} {{ selectedClient.lastName }}</p>
+          
+          <div>
+            <label class="block text-xs font-bold text-slate-600 mb-2">Compte</label>
+            <select [(ngModel)]="transactionForm.accountId" class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+              <option value="">Sélectionner un compte</option>
+              <option *ngFor="let acc of selectedClient.accounts" [value]="acc.id">
+                {{ acc.accountNumber }} - {{ acc.accountType }} ({{ acc.balance | number:'1.2-2' }} FCFA)
+              </option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-600 mb-2">Montant</label>
+            <input type="number" [(ngModel)]="transactionForm.amount" placeholder="0.00" class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"/>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-600 mb-2">Description</label>
+            <input type="text" [(ngModel)]="transactionForm.description" placeholder="Dépôt physique..." class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"/>
+          </div>
+
+          <div class="flex gap-3 pt-4">
+            <button (click)="closeModals()" class="flex-1 px-4 py-2 border border-slate-200 rounded-lg hover:bg-slate-50">Annuler</button>
+            <button (click)="submitDeposit()" [disabled]="depositLoading" class="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50">
+              {{ depositLoading ? 'En cours...' : 'Valider' }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Withdrawal Modal -->
+    <div *ngIf="showWithdrawalModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full mx-4">
+        <h3 class="text-xl font-bold text-slate-900 mb-6">Effectuer un Retrait</h3>
+        <div *ngIf="selectedClient" class="space-y-4">
+          <p class="text-sm text-slate-600"><strong>Client:</strong> {{ selectedClient.firstName }} {{ selectedClient.lastName }}</p>
+          
+          <div>
+            <label class="block text-xs font-bold text-slate-600 mb-2">Compte</label>
+            <select [(ngModel)]="transactionForm.accountId" class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+              <option value="">Sélectionner un compte</option>
+              <option *ngFor="let acc of selectedClient.accounts" [value]="acc.id">
+                {{ acc.accountNumber }} - {{ acc.accountType }} ({{ acc.balance | number:'1.2-2' }} FCFA)
+              </option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-600 mb-2">Montant</label>
+            <input type="number" [(ngModel)]="transactionForm.amount" placeholder="0.00" class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"/>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-600 mb-2">Description</label>
+            <input type="text" [(ngModel)]="transactionForm.description" placeholder="Retrait physique..." class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"/>
+          </div>
+
+          <div class="flex gap-3 pt-4">
+            <button (click)="closeModals()" class="flex-1 px-4 py-2 border border-slate-200 rounded-lg hover:bg-slate-50">Annuler</button>
+            <button (click)="submitWithdrawal()" [disabled]="withdrawalLoading" class="flex-1 px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 disabled:opacity-50">
+              {{ withdrawalLoading ? 'En cours...' : 'Valider' }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- History Modal -->
+    <div *ngIf="showHistoryModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 overflow-y-auto">
+      <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-2xl w-full mx-4 my-8">
+        <div class="flex justify-between items-center mb-6">
+          <h3 class="text-xl font-bold text-slate-900">Historique des Transactions</h3>
+          <button (click)="closeModals()" class="text-slate-400 hover:text-slate-600">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        <div *ngIf="selectedClient" class="space-y-4">
+          <p class="text-sm text-slate-600 mb-4"><strong>Client:</strong> {{ selectedClient.firstName }} {{ selectedClient.lastName }}</p>
+
+          <div *ngIf="historyLoading" class="text-center py-8 text-slate-500">Chargement...</div>
+          
+          <div *ngIf="!historyLoading && clientTransactions.length > 0" class="space-y-3 max-h-96 overflow-y-auto">
+            <div *ngFor="let tx of clientTransactions" class="border border-slate-200 rounded-lg p-4">
+              <div class="flex justify-between items-start mb-2">
+                <div>
+                  <p class="font-semibold text-slate-800">{{ tx.description || (tx.transactionType === 'TRANSFER' ? 'Virement' : tx.transactionType) }}</p>
+                  <p class="text-xs text-slate-500">{{ tx.transactionDate | date:'dd/MM/yyyy HH:mm' }}</p>
+                </div>
+                <p [class]="tx.transactionType === 'WITHDRAWAL' ? 'text-red-600 font-bold' : 'text-green-600 font-bold'">
+                  {{ tx.transactionType === 'WITHDRAWAL' ? '-' : '+' }}{{ tx.amount | number:'1.2-2' }} FCFA
+                </p>
+              </div>
+              <p class="text-xs text-slate-600">Compte: {{ tx.sourceAccount.accountNumber }}</p>
+            </div>
+          </div>
+
+          <div *ngIf="!historyLoading && clientTransactions.length === 0" class="text-center py-8 text-slate-500">
+            Aucune transaction trouvée
+          </div>
         </div>
       </div>
     </div>
@@ -171,6 +318,20 @@ export class AdminClientsListComponent implements OnInit {
   private bankService = inject(BankService);
   private notificationService = inject(NotificationService);
   clients$: Observable<Client[]> = of([]);
+  searchQuery = '';
+
+  // Modal states
+  showDepositModal = false;
+  showWithdrawalModal = false;
+  showHistoryModal = false;
+  selectedClient: Client | null = null;
+  
+  // Form data
+  transactionForm = { accountId: '', amount: 0, description: '' };
+  depositLoading = false;
+  withdrawalLoading = false;
+  historyLoading = false;
+  clientTransactions: Transaction[] = [];
 
   ngOnInit(): void {
     this.fetchClients();
@@ -183,6 +344,109 @@ export class AdminClientsListComponent implements OnInit {
         return of([]);
       }),
     );
+  }
+
+  openDepositModal(client: Client): void {
+    this.selectedClient = client;
+    this.transactionForm = { accountId: '', amount: 0, description: 'Dépôt physique' };
+    this.showDepositModal = true;
+  }
+
+  openWithdrawalModal(client: Client): void {
+    this.selectedClient = client;
+    this.transactionForm = { accountId: '', amount: 0, description: 'Retrait physique' };
+    this.showWithdrawalModal = true;
+  }
+
+  openHistoryModal(client: Client): void {
+    this.selectedClient = client;
+    this.showHistoryModal = true;
+    this.historyLoading = true;
+    this.bankService.getClientTransactions(client.id).subscribe({
+      next: (txs) => {
+        this.clientTransactions = txs.sort((a, b) => 
+          new Date(b.transactionDate).getTime() - new Date(a.transactionDate).getTime()
+        );
+        this.historyLoading = false;
+      },
+      error: (err) => {
+        console.error('Error loading transactions', err);
+        this.notificationService.error('Erreur lors du chargement des transactions');
+        this.historyLoading = false;
+      }
+    });
+  }
+
+  submitDeposit(): void {
+    if (!this.transactionForm.accountId || !this.transactionForm.amount || this.transactionForm.amount <= 0) {
+      this.notificationService.error('Veuillez remplir tous les champs correctement');
+      return;
+    }
+
+    this.depositLoading = true;
+    const payload = {
+      amount: this.transactionForm.amount,
+      transactionType: 'DEPOSIT',
+      description: this.transactionForm.description,
+      sourceAccount: { id: parseInt(this.transactionForm.accountId as any) }
+    };
+
+    this.bankService.createTransaction(payload).subscribe({
+      next: () => {
+        this.notificationService.success('Dépôt effectué avec succès');
+        this.closeModals();
+        this.depositLoading = false;
+        this.fetchClients();
+      },
+      error: (err) => {
+        console.error('Deposit error', err);
+        this.notificationService.error('Erreur lors du dépôt');
+        this.depositLoading = false;
+      }
+    });
+  }
+
+  submitWithdrawal(): void {
+    if (!this.transactionForm.accountId || !this.transactionForm.amount || this.transactionForm.amount <= 0) {
+      this.notificationService.error('Veuillez remplir tous les champs correctement');
+      return;
+    }
+
+    const account = this.selectedClient?.accounts?.find(a => a.id === parseInt(this.transactionForm.accountId as any));
+    if (account && account.balance < this.transactionForm.amount) {
+      this.notificationService.error('Solde insuffisant');
+      return;
+    }
+
+    this.withdrawalLoading = true;
+    const payload = {
+      amount: this.transactionForm.amount,
+      transactionType: 'WITHDRAWAL',
+      description: this.transactionForm.description,
+      sourceAccount: { id: parseInt(this.transactionForm.accountId as any) }
+    };
+
+    this.bankService.createTransaction(payload).subscribe({
+      next: () => {
+        this.notificationService.success('Retrait effectué avec succès');
+        this.closeModals();
+        this.withdrawalLoading = false;
+        this.fetchClients();
+      },
+      error: (err) => {
+        console.error('Withdrawal error', err);
+        this.notificationService.error('Erreur lors du retrait');
+        this.withdrawalLoading = false;
+      }
+    });
+  }
+
+  closeModals(): void {
+    this.showDepositModal = false;
+    this.showWithdrawalModal = false;
+    this.showHistoryModal = false;
+    this.selectedClient = null;
+    this.transactionForm = { accountId: '', amount: 0, description: '' };
   }
 
   onDeleteClient(clientId: number): void {
@@ -203,5 +467,15 @@ export class AdminClientsListComponent implements OnInit {
   getTotalBalance(client: Client): number {
     if (!client.accounts) return 0;
     return client.accounts.reduce((sum, account) => sum + (account.balance || 0), 0);
+  }
+
+  getFilteredClients(clients: Client[]): Client[] {
+    if (!this.searchQuery.trim()) return clients;
+    const q = this.searchQuery.toLowerCase();
+    return clients.filter(c => 
+      c.firstName?.toLowerCase().includes(q) || 
+      c.lastName?.toLowerCase().includes(q) || 
+      c.email?.toLowerCase().includes(q)
+    );
   }
 }

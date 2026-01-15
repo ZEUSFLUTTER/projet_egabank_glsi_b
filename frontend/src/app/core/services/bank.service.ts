@@ -33,7 +33,7 @@ export interface Transaction {
   id: number;
   amount: number;
   transactionDate: string;
-  transactionType: 'CREDIT' | 'DEBIT' | 'TRANSFER';
+  transactionType: 'DEPOSIT' | 'WITHDRAWAL' | 'TRANSFER';
   description: string;
   sourceAccount: Account;
   destinationAccount?: Account | null;
@@ -110,6 +110,13 @@ export class BankService {
     return this.http.put<any>(`${this.API_BASE}/clients/${clientId}`, clientData);
   }
 
+  changePassword(clientId: number, newPassword: string, confirmPassword: string): Observable<any> {
+    return this.http.put<any>(`${this.API_BASE}/clients/${clientId}/password`, {
+      newPassword,
+      confirmPassword
+    });
+  }
+
   createTransaction(transaction: any): Observable<Transaction> {
     return this.http.post<Transaction>(`${this.API_BASE}/transactions`, transaction);
   }
@@ -126,6 +133,10 @@ export class BankService {
     return this.http.get<Transaction[]>(`${this.API_BASE}/transactions/account/${accountId}/period`, {
       params: { startDate, endDate }
     });
+  }
+
+  getClientTransactions(clientId: number): Observable<Transaction[]> {
+    return this.http.get<Transaction[]>(`${this.API_BASE}/admin/clients/${clientId}/transactions`);
   }
 
   createAccount(accountData: any): Observable<Account> {

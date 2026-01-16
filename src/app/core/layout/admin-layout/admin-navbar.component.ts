@@ -1,9 +1,15 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { AuthService } from '../../../core/auth/auth.service';
+import { Router } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { Observable } from 'rxjs';
+import { AuthUser } from '../../../core/auth/auth.model';
 
 @Component({
-    selector: 'app-admin-navbar',
-    standalone: true,
-    template: `
+  selector: 'app-admin-navbar',
+  standalone: true,
+  imports: [CommonModule],
+  template: `
     <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom sticky-top shadow-sm px-4">
       <div class="container-fluid">
         <button type="button" class="btn btn-light d-md-none me-2">
@@ -15,7 +21,7 @@ import { Component } from '@angular/core';
             <input type="text" class="form-control bg-light border-0" placeholder="Search...">
           </div>
         </div>
-        <div class="ms-auto d-flex align-items-center">
+        <div class="ms-auto d-flex align-items-center" *ngIf="user$ | async as user">
           <div class="dropdown me-3">
             <button class="btn btn-light position-relative rounded-circle p-2">
               <i class="bi bi-bell"></i>
@@ -23,19 +29,41 @@ import { Component } from '@angular/core';
             </button>
           </div>
           <div class="d-flex align-items-center">
-            <div class="text-end me-2 d-none d-sm-block">
-              <div class="fw-bold small">Admin User</div>
-              <div class="text-muted extra-small">Super Admin</div>
+            <div class="dropdown">
+              <div class="d-flex align-items-center dropdown-toggle" style="cursor:pointer" id="adminDropdown" data-bs-toggle="dropdown">
+                <div class="text-end me-2 d-none d-sm-block">
+                  <div class="fw-bold small">{{ user.prenom }} {{ user.nom }}</div>
+                  <div class="text-muted extra-small">Administrateur</div>
+                </div>
+                <img [src]="'https://i.pravatar.cc/35?u=' + user.username" class="rounded-circle border" alt="Profile">
+              </div>
+              <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-3" aria-labelledby="adminDropdown">
+                <li><a class="dropdown-item py-2" (click)="logout()" style="cursor:pointer">
+                  <i class="bi bi-box-arrow-right me-2"></i> Déconnexion
+                </a></li>
+              </ul>
             </div>
-            <img src="https://i.pravatar.cc/35?u=admin" class="rounded-circle border" alt="Profile">
           </div>
         </div>
       </div>
     </nav>
   `,
-    styles: [`
+  styles: [`
     .extra-small { font-size: 0.75rem; }
     .search-box .form-control:focus { box-shadow: none; background-color: #f1f3f5; }
   `]
 })
-export class AdminNavbarComponent { }
+export class AdminNavbarComponent implements OnInit {
+  user$: Observable<AuthUser | null>;
+
+  constructor(private authService: AuthService, private router: Router) {
+    this.user$ = this.authService.currentUser$;
+  }
+
+  ngOnInit(): void { }
+
+  logout() {
+    this.authService.logout();
+    this.router.navigate(['/auth/login']);
+  }
+}

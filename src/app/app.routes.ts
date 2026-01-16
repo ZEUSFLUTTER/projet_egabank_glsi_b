@@ -1,12 +1,19 @@
 import { Routes } from '@angular/router';
 import { AdminLayoutComponent } from './core/layout/admin-layout/admin-layout.component';
 import { ClientLayoutComponent } from './core/layout/client-layout/client-layout.component';
+import { AuthGuard } from './core/auth/auth.guard';
+import { RoleGuard } from './core/auth/role.guard';
 
 export const routes: Routes = [
-    { path: '', redirectTo: 'client/dashboard', pathMatch: 'full' },
+    {
+        path: 'auth',
+        loadChildren: () => import('./modules/auth/auth.module').then(m => m.AuthModule)
+    },
     {
         path: 'admin',
         component: AdminLayoutComponent,
+        canActivate: [AuthGuard, RoleGuard],
+        data: { role: 'ADMIN' },
         children: [
             {
                 path: '',
@@ -17,6 +24,8 @@ export const routes: Routes = [
     {
         path: 'client',
         component: ClientLayoutComponent,
+        canActivate: [AuthGuard, RoleGuard],
+        data: { role: 'CLIENT' },
         children: [
             {
                 path: '',
@@ -24,5 +33,6 @@ export const routes: Routes = [
             }
         ]
     },
-    { path: '**', redirectTo: 'client/dashboard' }
+    { path: '', redirectTo: 'auth/login', pathMatch: 'full' },
+    { path: '**', redirectTo: 'auth/login' }
 ];

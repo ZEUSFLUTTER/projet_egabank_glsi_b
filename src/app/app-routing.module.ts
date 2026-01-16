@@ -2,11 +2,19 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AdminLayoutComponent } from './core/layout/admin-layout/admin-layout.component';
 import { ClientLayoutComponent } from './core/layout/client-layout/client-layout.component';
+import { AuthGuard } from './core/auth/auth.guard';
+import { RoleGuard } from './core/auth/role.guard';
 
 const routes: Routes = [
     {
+        path: 'auth',
+        loadChildren: () => import('./modules/auth/auth.module').then(m => m.AuthModule)
+    },
+    {
         path: 'admin',
         component: AdminLayoutComponent,
+        canActivate: [AuthGuard, RoleGuard],
+        data: { role: 'ADMIN' },
         children: [
             {
                 path: '',
@@ -17,6 +25,8 @@ const routes: Routes = [
     {
         path: 'client',
         component: ClientLayoutComponent,
+        canActivate: [AuthGuard, RoleGuard],
+        data: { role: 'CLIENT' },
         children: [
             {
                 path: '',
@@ -24,8 +34,8 @@ const routes: Routes = [
             }
         ]
     },
-    { path: '', redirectTo: 'client', pathMatch: 'full' },
-    { path: '**', redirectTo: 'client' }
+    { path: '', redirectTo: 'auth/login', pathMatch: 'full' },
+    { path: '**', redirectTo: 'auth/login' }
 ];
 
 @NgModule({

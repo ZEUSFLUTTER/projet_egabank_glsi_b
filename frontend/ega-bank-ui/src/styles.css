@@ -532,8 +532,6 @@ body {
 .active-nav-item {
 	background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(59, 130, 246, 0.1));
 	color: var(--white);
-	border-left: 3px solid var(--primary);
-	margin-left: -3px;
 }
 
 .active-nav-item i {

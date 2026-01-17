@@ -14,212 +14,817 @@ import { AppStore } from '../stores/app.store';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, RouterLink],
   template: `
-    <div class="p-6">
-      <div class="mb-6 animate-slide-in">
-        <h1 class="text-3xl font-bold mb-2 tracking-tight">Nouvelle Transaction</h1>
-        <p class="text-gray-500 text-lg">Effectuez un dépôt, retrait ou virement sécurisé entre comptes.</p>
-      </div>
-
-      <div class="card p-8 animate-slide-in mx-auto max-w-3xl">
-        <!-- Error Message -->
-        <div *ngIf="errorMessage" class="alert alert-danger mb-6 shadow-sm">
-          <i class="ri-error-warning-line text-lg"></i> 
-          <span>{{ errorMessage }}</span>
-        </div>
-
-        <!-- Success Message -->
-        <div *ngIf="successMessage" class="alert alert-success mb-6 shadow-sm">
-          <i class="ri-checkbox-circle-line text-lg"></i> 
-          <span>{{ successMessage }}</span>
-        </div>
-
-        <form [formGroup]="form" (ngSubmit)="submit()">
-          <!-- Transaction Type -->
-          <div class="mb-8">
-            <label class="block text-sm font-bold text-gray-700 mb-3 uppercase tracking-wide">
-              Type de Transaction
-            </label>
-            <div class="grid gap-4 grid-cols-3">
-              <label class="cursor-pointer group">
-                <input type="radio" formControlName="type" value="DEPOT" class="sr-only peer">
-                <div class="p-4 border-2 border-gray-100 rounded-lg peer-checked:bg-green-50 peer-checked:border-success peer-checked:text-success hover:border-success/50 transition-all text-center h-full flex flex-col items-center justify-center">
-                  <div class="w-12 h-12 rounded-full bg-green-100 text-success flex items-center justify-center mb-2 text-2xl group-hover:scale-110 transition-transform">
-                      <i class="ri-add-line"></i>
-                  </div>
-                  <div class="font-bold text-lg">Dépôt</div>
-                </div>
-              </label>
-              <label class="cursor-pointer group">
-                <input type="radio" formControlName="type" value="RETRAIT" class="sr-only peer">
-                <div class="p-4 border-2 border-gray-100 rounded-lg peer-checked:bg-red-50 peer-checked:border-danger peer-checked:text-danger hover:border-danger/50 transition-all text-center h-full flex flex-col items-center justify-center">
-                  <div class="w-12 h-12 rounded-full bg-red-100 text-danger flex items-center justify-center mb-2 text-2xl group-hover:scale-110 transition-transform">
-                      <i class="ri-subtract-line"></i>
-                  </div>
-                  <div class="font-bold text-lg">Retrait</div>
-                </div>
-              </label>
-              <label class="cursor-pointer group">
-                <input type="radio" formControlName="type" value="VIREMENT" class="sr-only peer">
-                <div class="p-4 border-2 border-gray-100 rounded-lg peer-checked:bg-blue-50 peer-checked:border-primary peer-checked:text-primary hover:border-primary/50 transition-all text-center h-full flex flex-col items-center justify-center">
-                  <div class="w-12 h-12 rounded-full bg-blue-100 text-primary flex items-center justify-center mb-2 text-2xl group-hover:scale-110 transition-transform">
-                      <i class="ri-arrow-left-right-line"></i>
-                  </div>
-                  <div class="font-bold text-lg">Virement</div>
-                </div>
-              </label>
-            </div>
+    <div class="tx-container">
+      <div class="tx-layout">
+        <!-- Left Panel - Transaction Type -->
+        <div class="tx-sidebar animate-slide-in">
+          <a [routerLink]="returnAccountId ? '/transactions' : '/accounts'" 
+             [queryParams]="returnAccountId ? { accountId: returnAccountId } : {}"
+             class="back-btn">
+            <i class="ri-arrow-left-line"></i>
+          </a>
+          
+          <div class="sidebar-header">
+            <h1 class="sidebar-title">Nouvelle Transaction</h1>
+            <p class="sidebar-subtitle">Sélectionnez le type d'opération</p>
           </div>
 
-          <div class="grid gap-6 mb-6">
-              <!-- Source Account -->
-              <div>
-                <label class="block text-sm font-bold text-gray-700 mb-2 uppercase tracking-wide">
-                  {{ form.value.type === 'VIREMENT' ? 'Compte Source' : 'Compte' }} *
-                </label>
-                
-                <!-- Loading accounts -->
-                <div *ngIf="isLoadingAccounts" class="skeleton h-12 rounded-lg"></div>
-                
-                <!-- No accounts available -->
-                <div *ngIf="!isLoadingAccounts && accounts.length === 0" class="p-6 bg-gray-50 rounded-lg border border-dashed border-gray-300 text-center">
-                  <div class="text-3xl text-gray-300 mb-2"><i class="ri-bank-card-2-line"></i></div>
-                  <p class="text-gray-500 mb-4 font-medium">Aucun compte trouvé.</p>
-                  <a routerLink="/accounts/new" class="btn btn-primary btn-sm">
-                    Créer un compte d'abord
-                  </a>
-                </div>
-    
-                <!-- Account dropdown -->
-                <div *ngIf="!isLoadingAccounts && accounts.length > 0" class="relative">
-                    <i class="ri-bank-card-line absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-lg"></i>
-                    <select formControlName="accountNumber" 
-                            class="w-full p-3 pl-10 border rounded-lg appearance-none bg-white focus:ring-2 focus:ring-primary focus:border-primary transition-shadow cursor-pointer">
-                      <option value="">Sélectionnez un compte...</option>
-                      <option *ngFor="let account of accounts" [value]="account.numeroCompte">
-                        {{ account.numeroCompte }} ({{ getTypeDisplay(account.typeCompte) }})
-                      </option>
-                    </select>
-                    <i class="ri-arrow-down-s-line absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none"></i>
-                </div>
-                
-                <!-- Selected account info -->
-                <div *ngIf="sourceAccount" class="mt-3 p-4 bg-blue-50 rounded-lg border border-blue-100 flex justify-between items-center animate-slide-in">
-                    <div>
-                        <div class="text-xs text-blue-800 uppercase font-bold tracking-wide mb-1">Solde Actuel</div>
-                        <div class="font-mono font-bold text-2xl" [class.text-success]="sourceAccount.solde > 0" [class.text-danger]="sourceAccount.solde <= 0">
-                            {{ sourceAccount.solde | currency:'XOF':'symbol':'1.0-0' }}
-                        </div>
-                    </div>
-                    <div class="text-right">
-                         <div class="text-sm font-medium text-blue-900">{{ sourceAccount.clientNomComplet }}</div>
-                         <div class="text-xs text-blue-700">{{ getTypeDisplay(sourceAccount.typeCompte) }}</div>
-                    </div>
-                </div>
+          <div class="tx-type-list">
+            <label class="tx-type-option" [class.active]="selectedType === 'DEPOT'" (click)="selectType('DEPOT')">
+              <input type="radio" name="txType" [checked]="selectedType === 'DEPOT'">
+              <div class="tx-type-icon deposit">
+                <i class="ri-add-line"></i>
               </div>
-    
-              <!-- Target Account (only for transfers) -->
-              <div *ngIf="form.value.type === 'VIREMENT'" class="animate-slide-in">
-                <label class="block text-sm font-bold text-gray-700 mb-2 uppercase tracking-wide">
-                   Compte Destinataire *
-                </label>
-                <div class="relative">
-                    <i class="ri-arrow-right-line absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-lg"></i>
-                    <select formControlName="targetAccountNumber" 
-                            class="w-full p-3 pl-10 border rounded-lg appearance-none bg-white focus:ring-2 focus:ring-primary focus:border-primary transition-shadow cursor-pointer">
-                      <option value="">Sélectionnez le compte destinataire...</option>
-                      <option *ngFor="let account of getTargetAccounts()" [value]="account.numeroCompte">
-                         {{ account.numeroCompte }} ({{ getTypeDisplay(account.typeCompte) }}) - {{ account.clientNomComplet }}
-                      </option>
-                    </select>
-                     <i class="ri-arrow-down-s-line absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none"></i>
-                </div>
+              <div class="tx-type-info">
+                <span class="tx-type-name">Dépôt</span>
+                <span class="tx-type-desc">Alimenter un compte</span>
               </div>
-    
-              <!-- Amount -->
-              <div>
-                <label class="block text-sm font-bold text-gray-700 mb-2 uppercase tracking-wide">
-                   Montant (FCFA) *
-                </label>
-                <div class="relative">
-                  <input type="number" 
-                         formControlName="amount" 
-                         class="w-full p-4 pl-4 pr-16 border rounded-lg text-2xl font-mono font-bold focus:ring-2 focus:ring-primary focus:border-primary transition-shadow"
-                         placeholder="0"
-                         min="1"
-                         step="1">
-                  <span class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 font-bold bg-gray-100 px-2 py-1 rounded text-sm">FCFA</span>
+              <i class="ri-arrow-right-s-line tx-type-arrow"></i>
+            </label>
+
+            <label class="tx-type-option" [class.active]="selectedType === 'RETRAIT'" (click)="selectType('RETRAIT')">
+              <input type="radio" name="txType" [checked]="selectedType === 'RETRAIT'">
+              <div class="tx-type-icon withdrawal">
+                <i class="ri-subtract-line"></i>
+              </div>
+              <div class="tx-type-info">
+                <span class="tx-type-name">Retrait</span>
+                <span class="tx-type-desc">Retirer des fonds</span>
+              </div>
+              <i class="ri-arrow-right-s-line tx-type-arrow"></i>
+            </label>
+
+            <label class="tx-type-option" [class.active]="selectedType === 'VIREMENT'" (click)="selectType('VIREMENT')">
+              <input type="radio" name="txType" [checked]="selectedType === 'VIREMENT'">
+              <div class="tx-type-icon transfer">
+                <i class="ri-arrow-left-right-line"></i>
+              </div>
+              <div class="tx-type-info">
+                <span class="tx-type-name">Virement</span>
+                <span class="tx-type-desc">Transférer entre comptes</span>
+              </div>
+              <i class="ri-arrow-right-s-line tx-type-arrow"></i>
+            </label>
+          </div>
+        </div>
+
+        <!-- Right Panel - Form -->
+        <div class="tx-main animate-slide-in" style="animation-delay: 100ms">
+          <!-- Alerts -->
+          <div *ngIf="errorMessage" class="alert alert-danger">
+            <i class="ri-error-warning-line"></i>
+            <span>{{ errorMessage }}</span>
+          </div>
+
+          <div *ngIf="successMessage" class="alert alert-success">
+            <i class="ri-checkbox-circle-line"></i>
+            <span>{{ successMessage }}</span>
+          </div>
+
+          <form [formGroup]="form" (ngSubmit)="submit()">
+            <!-- Account Selection -->
+            <div class="form-section">
+              <h2 class="section-title">
+                <i class="ri-wallet-3-line"></i>
+                {{ selectedType === 'VIREMENT' ? 'Compte Source' : 'Compte' }}
+              </h2>
+
+              <div *ngIf="isLoadingAccounts" class="skeleton-select"></div>
+
+              <div *ngIf="!isLoadingAccounts && accounts.length === 0" class="empty-accounts">
+                <i class="ri-bank-card-2-line"></i>
+                <p>Aucun compte disponible</p>
+                <a routerLink="/accounts/new" class="btn btn-primary btn-sm">
+                  <i class="ri-add-line"></i> Créer un compte
+                </a>
+              </div>
+
+              <div *ngIf="!isLoadingAccounts && accounts.length > 0" class="account-select-wrapper">
+                <select formControlName="accountNumber" class="account-select">
+                  <option value="">Sélectionnez un compte...</option>
+                  <option *ngFor="let account of accounts" [value]="account.numeroCompte">
+                    {{ account.numeroCompte }} • {{ getTypeDisplay(account.typeCompte) }} • {{ account.clientNomComplet }}
+                  </option>
+                </select>
+                <i class="ri-arrow-down-s-line select-arrow"></i>
+              </div>
+
+              <!-- Source Account Card -->
+              <div *ngIf="sourceAccount" class="account-card animate-fade-in">
+                <div class="account-card-header">
+                  <div class="account-avatar">
+                    {{ sourceAccount.clientNomComplet?.charAt(0) || 'C' }}
+                  </div>
+                  <div class="account-info">
+                    <span class="account-holder">{{ sourceAccount.clientNomComplet }}</span>
+                    <span class="account-number">{{ sourceAccount.numeroCompte }}</span>
+                  </div>
+                  <span class="account-type-badge">{{ getTypeDisplay(sourceAccount.typeCompte) }}</span>
                 </div>
-                
-                <!-- Feedback messages -->
-                <div *ngIf="form.get('amount')?.value > 0 && sourceAccount" class="mt-3 flex items-center gap-2 text-sm font-medium animate-slide-in">
-                   <ng-container *ngIf="form.value.type !== 'DEPOT'">
-                        <i [class]="sourceAccount.solde >= form.get('amount')?.value ? 'ri-checkbox-circle-fill text-success' : 'ri-close-circle-fill text-danger'"></i>
-                        <span [class.text-success]="sourceAccount.solde >= form.get('amount')?.value" 
-                             [class.text-danger]="sourceAccount.solde < form.get('amount')?.value">
-                         {{ sourceAccount.solde >= form.get('amount')?.value ? 'Solde suffisant' : 'Solde insuffisant pour cette opération' }}
-                        </span>
-                   </ng-container>
-                  <span *ngIf="form.value.type === 'DEPOT'" class="text-success flex items-center gap-2">
-                    <i class="ri-arrow-up-circle-fill"></i> 
-                    <span>Nouveau solde: {{ (sourceAccount.solde + form.get('amount')?.value) | number:'1.0-0' }} FCFA</span>
+                <div class="account-card-balance">
+                  <span class="balance-label">Solde disponible</span>
+                  <span class="balance-amount" [class.positive]="sourceAccount.solde > 0" [class.negative]="sourceAccount.solde <= 0">
+                    {{ sourceAccount.solde | number:'1.0-0' }} FCFA
                   </span>
                 </div>
               </div>
-    
-              <!-- Description -->
-              <div>
-                <label class="block text-sm font-bold text-gray-700 mb-2 uppercase tracking-wide">
-                   Description <span class="text-gray-400 font-normal normal-case">(Optionnel)</span>
-                </label>
-                <input type="text" 
-                       formControlName="description" 
-                       class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-shadow"
-                       placeholder="Ex: Paiement loyer mensuel">
-              </div>
-          </div>
+            </div>
 
-          <!-- Actions -->
-          <div class="flex gap-4 pt-4 border-t border-gray-100">
-            <a routerLink="/transactions" class="btn btn-secondary flex-1 py-3 text-base" *ngIf="returnAccountId">
-              Annuler
-            </a>
-            <a routerLink="/accounts" class="btn btn-secondary flex-1 py-3 text-base" *ngIf="!returnAccountId">
-              Annuler
-            </a>
-            <button type="submit" 
-                    [disabled]="form.invalid || isSubmitting || accounts.length === 0 || !isBalanceSufficient()" 
-                    class="btn flex-[2] py-3 text-base shadow-lg transition-transform active:scale-95"
-                    [class.btn-success]="form.value.type === 'DEPOT'"
-                    [class.btn-danger]="form.value.type === 'RETRAIT'"
-                    [class.btn-primary]="form.value.type === 'VIREMENT'">
-              <span *ngIf="isSubmitting" class="flex items-center gap-2">
-                <i class="ri-loader-4-line spinner-icon text-xl"></i> Traitement...
-              </span>
-              <span *ngIf="!isSubmitting" class="flex items-center gap-2">
-                <i [class]="getSubmitIcon() + ' text-xl'"></i> 
-                {{ getSubmitLabel() }}
-              </span>
-            </button>
-          </div>
-        </form>
+            <!-- Target Account (Transfer only) -->
+            <div *ngIf="selectedType === 'VIREMENT'" class="form-section animate-fade-in">
+              <h2 class="section-title">
+                <i class="ri-arrow-right-line"></i>
+                Compte Destinataire
+              </h2>
+
+              <div class="account-select-wrapper">
+                <select formControlName="targetAccountNumber" class="account-select">
+                  <option value="">Sélectionnez le destinataire...</option>
+                  <option *ngFor="let account of getTargetAccounts()" [value]="account.numeroCompte">
+                    {{ account.numeroCompte }} • {{ getTypeDisplay(account.typeCompte) }} • {{ account.clientNomComplet }}
+                  </option>
+                </select>
+                <i class="ri-arrow-down-s-line select-arrow"></i>
+              </div>
+            </div>
+
+            <!-- Amount Section -->
+            <div class="form-section">
+              <h2 class="section-title">
+                <i class="ri-money-dollar-circle-line"></i>
+                Montant
+              </h2>
+
+              <div class="amount-input-wrapper">
+                <input 
+                  type="number" 
+                  formControlName="amount"
+                  class="amount-input"
+                  placeholder="0"
+                  min="1"
+                  step="1">
+                <span class="amount-currency">FCFA</span>
+              </div>
+
+              <!-- Balance Feedback -->
+              <div *ngIf="form.get('amount')?.value > 0 && sourceAccount" class="balance-feedback animate-fade-in">
+                <ng-container *ngIf="selectedType !== 'DEPOT'">
+                  <div class="feedback-item" [class.success]="isBalanceSufficient()" [class.error]="!isBalanceSufficient()">
+                    <i [class]="isBalanceSufficient() ? 'ri-checkbox-circle-fill' : 'ri-close-circle-fill'"></i>
+                    <span>{{ isBalanceSufficient() ? 'Solde suffisant' : 'Solde insuffisant' }}</span>
+                  </div>
+                </ng-container>
+                <div *ngIf="selectedType === 'DEPOT'" class="feedback-item success">
+                  <i class="ri-arrow-up-circle-fill"></i>
+                  <span>Nouveau solde : {{ (sourceAccount.solde + form.get('amount')?.value) | number:'1.0-0' }} FCFA</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Description Section -->
+            <div class="form-section">
+              <h2 class="section-title">
+                <i class="ri-file-text-line"></i>
+                Description <span class="optional">(optionnel)</span>
+              </h2>
+              <input 
+                type="text" 
+                formControlName="description"
+                class="description-input"
+                placeholder="Ex: Paiement loyer mensuel">
+            </div>
+
+            <!-- Submit Button -->
+            <div class="form-actions">
+              <button 
+                type="submit" 
+                [disabled]="form.invalid || isSubmitting || accounts.length === 0 || !isBalanceSufficient()"
+                class="submit-btn"
+                [class.deposit]="selectedType === 'DEPOT'"
+                [class.withdrawal]="selectedType === 'RETRAIT'"
+                [class.transfer]="selectedType === 'VIREMENT'">
+                <span *ngIf="isSubmitting" class="btn-content">
+                  <span class="spinner"></span>
+                  Traitement en cours...
+                </span>
+                <span *ngIf="!isSubmitting" class="btn-content">
+                  <i [class]="getSubmitIcon()"></i>
+                  {{ getSubmitLabel() }}
+                </span>
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   `,
   styles: [`
-    .sr-only {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      padding: 0;
-      margin: -1px;
-      overflow: hidden;
-      clip: rect(0, 0, 0, 0);
-      border: 0;
+    .tx-container {
+      min-height: calc(100vh - 70px);
+      padding: 1.5rem;
+      background: #f8fafc;
     }
-    .skeleton {
-        background: linear-gradient(110deg, #f1f5f9 8%, #f8fafc 18%, #f1f5f9 33%);
-        background-size: 200% 100%;
-        animation: 1.5s shiny linear infinite;
+
+    .tx-layout {
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      gap: 1.5rem;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    /* ===== SIDEBAR ===== */
+    .tx-sidebar {
+      background: white;
+      border: 1px solid #e2e8f0;
+      border-radius: 1rem;
+      padding: 1.5rem;
+      height: fit-content;
+      position: sticky;
+      top: 1.5rem;
+    }
+
+    .back-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #64748b;
+      font-size: 1.25rem;
+      transition: all 0.15s;
+      margin-bottom: 1.5rem;
+    }
+
+    .back-btn:hover {
+      background: #f1f5f9;
+      color: #1e293b;
+    }
+
+    .sidebar-header {
+      margin-bottom: 1.5rem;
+    }
+
+    .sidebar-title {
+      font-size: 1.375rem;
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 0.25rem;
+    }
+
+    .sidebar-subtitle {
+      font-size: 0.875rem;
+      color: #64748b;
+    }
+
+    .tx-type-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .tx-type-option {
+      display: flex;
+      align-items: center;
+      gap: 0.875rem;
+      padding: 1rem;
+      border: 2px solid #e2e8f0;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+    }
+
+    .tx-type-option input {
+      position: absolute;
+      opacity: 0;
+    }
+
+    .tx-type-option:hover {
+      border-color: #cbd5e1;
+      background: #fafafa;
+    }
+
+    .tx-type-option.active {
+      border-color: #3b82f6;
+      background: rgba(59, 130, 246, 0.05);
+    }
+
+    .tx-type-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      flex-shrink: 0;
+    }
+
+    .tx-type-icon.deposit {
+      background: rgba(16, 185, 129, 0.1);
+      color: #10b981;
+    }
+
+    .tx-type-icon.withdrawal {
+      background: rgba(239, 68, 68, 0.1);
+      color: #ef4444;
+    }
+
+    .tx-type-icon.transfer {
+      background: rgba(59, 130, 246, 0.1);
+      color: #3b82f6;
+    }
+
+    .tx-type-info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .tx-type-name {
+      font-weight: 600;
+      color: #1e293b;
+      font-size: 0.9375rem;
+    }
+
+    .tx-type-desc {
+      font-size: 0.75rem;
+      color: #64748b;
+      margin-top: 0.125rem;
+    }
+
+    .tx-type-arrow {
+      color: #cbd5e1;
+      font-size: 1.25rem;
+      transition: all 0.2s;
+    }
+
+    .tx-type-option.active .tx-type-arrow {
+      color: #3b82f6;
+      transform: translateX(4px);
+    }
+
+    /* ===== MAIN PANEL ===== */
+    .tx-main {
+      background: white;
+      border: 1px solid #e2e8f0;
+      border-radius: 1rem;
+      padding: 2rem;
+    }
+
+    .alert {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 1rem;
+      border-radius: 12px;
+      margin-bottom: 1.5rem;
+      font-size: 0.875rem;
+    }
+
+    .alert i {
+      font-size: 1.25rem;
+    }
+
+    .alert-danger {
+      background: #fef2f2;
+      border: 1px solid #fee2e2;
+      color: #dc2626;
+    }
+
+    .alert-success {
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      color: #15803d;
+    }
+
+    /* Form Sections */
+    .form-section {
+      margin-bottom: 2rem;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.9375rem;
+      font-weight: 600;
+      color: #334155;
+      margin-bottom: 1rem;
+    }
+
+    .section-title i {
+      color: #3b82f6;
+    }
+
+    .optional {
+      font-weight: 400;
+      color: #94a3b8;
+      font-size: 0.8125rem;
+    }
+
+    /* Account Select */
+    .account-select-wrapper {
+      position: relative;
+    }
+
+    .account-select {
+      width: 100%;
+      padding: 0.875rem 2.5rem 0.875rem 1rem;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      font-size: 0.9375rem;
+      color: #1e293b;
+      background: white;
+      cursor: pointer;
+      appearance: none;
+      transition: all 0.15s;
+    }
+
+    .account-select:focus {
+      outline: none;
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+    }
+
+    .select-arrow {
+      position: absolute;
+      right: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #94a3b8;
+      pointer-events: none;
+      font-size: 1.25rem;
+    }
+
+    .skeleton-select {
+      height: 52px;
+      border-radius: 12px;
+      background: linear-gradient(110deg, #f1f5f9 8%, #f8fafc 18%, #f1f5f9 33%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s linear infinite;
+    }
+
+    @keyframes shimmer {
+      from { background-position: 200% 0; }
+      to { background-position: -200% 0; }
+    }
+
+    /* Empty Accounts */
+    .empty-accounts {
+      text-align: center;
+      padding: 2rem;
+      background: #f8fafc;
+      border: 2px dashed #e2e8f0;
+      border-radius: 12px;
+    }
+
+    .empty-accounts i {
+      font-size: 2.5rem;
+      color: #cbd5e1;
+      margin-bottom: 0.75rem;
+    }
+
+    .empty-accounts p {
+      color: #64748b;
+      margin-bottom: 1rem;
+    }
+
+    /* Account Card */
+    .account-card {
+      margin-top: 1rem;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .account-card-header {
+      display: flex;
+      align-items: center;
+      gap: 0.875rem;
+      padding: 1rem;
+      background: #f8fafc;
+    }
+
+    .account-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #3b82f6, #2563eb);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.9375rem;
+    }
+
+    .account-info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .account-holder {
+      font-weight: 600;
+      color: #1e293b;
+      font-size: 0.9375rem;
+    }
+
+    .account-number {
+      font-size: 0.75rem;
+      color: #64748b;
+      font-family: 'SF Mono', Monaco, monospace;
+    }
+
+    .account-type-badge {
+      padding: 0.25rem 0.625rem;
+      border-radius: 20px;
+      font-size: 0.6875rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      background: rgba(59, 130, 246, 0.1);
+      color: #3b82f6;
+    }
+
+    .account-card-balance {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem;
+    }
+
+    .balance-label {
+      font-size: 0.8125rem;
+      color: #64748b;
+    }
+
+    .balance-amount {
+      font-size: 1.25rem;
+      font-weight: 700;
+      font-family: 'SF Mono', Monaco, monospace;
+    }
+
+    .balance-amount.positive {
+      color: #10b981;
+    }
+
+    .balance-amount.negative {
+      color: #ef4444;
+    }
+
+    /* Amount Input */
+    .amount-input-wrapper {
+      position: relative;
+    }
+
+    .amount-input {
+      width: 100%;
+      padding: 1.25rem 5rem 1.25rem 1.25rem;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      font-size: 2rem;
+      font-weight: 700;
+      font-family: 'SF Mono', Monaco, monospace;
+      color: #1e293b;
+      text-align: right;
+      transition: all 0.15s;
+    }
+
+    .amount-input::placeholder {
+      color: #cbd5e1;
+    }
+
+    .amount-input:focus {
+      outline: none;
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+    }
+
+    .amount-currency {
+      position: absolute;
+      right: 1.25rem;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: #94a3b8;
+      background: #f1f5f9;
+      padding: 0.375rem 0.75rem;
+      border-radius: 6px;
+    }
+
+    /* Balance Feedback */
+    .balance-feedback {
+      margin-top: 0.75rem;
+    }
+
+    .feedback-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.875rem;
+      font-weight: 500;
+    }
+
+    .feedback-item.success {
+      color: #10b981;
+    }
+
+    .feedback-item.error {
+      color: #ef4444;
+    }
+
+    /* Description Input */
+    .description-input {
+      width: 100%;
+      padding: 0.875rem 1rem;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      font-size: 0.9375rem;
+      color: #1e293b;
+      transition: all 0.15s;
+    }
+
+    .description-input::placeholder {
+      color: #94a3b8;
+    }
+
+    .description-input:focus {
+      outline: none;
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+    }
+
+    /* Submit Button */
+    .form-actions {
+      margin-top: 2rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid #f1f5f9;
+    }
+
+    .submit-btn {
+      width: 100%;
+      padding: 1rem 1.5rem;
+      border: none;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .submit-btn .btn-content {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.625rem;
+    }
+
+    .submit-btn.deposit {
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: white;
+      box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4);
+    }
+
+    .submit-btn.deposit:hover:not(:disabled) {
+      box-shadow: 0 6px 20px rgba(16, 185, 129, 0.5);
+      transform: translateY(-2px);
+    }
+
+    .submit-btn.withdrawal {
+      background: linear-gradient(135deg, #ef4444, #dc2626);
+      color: white;
+      box-shadow: 0 4px 14px rgba(239, 68, 68, 0.4);
+    }
+
+    .submit-btn.withdrawal:hover:not(:disabled) {
+      box-shadow: 0 6px 20px rgba(239, 68, 68, 0.5);
+      transform: translateY(-2px);
+    }
+
+    .submit-btn.transfer {
+      background: linear-gradient(135deg, #3b82f6, #2563eb);
+      color: white;
+      box-shadow: 0 4px 14px rgba(59, 130, 246, 0.4);
+    }
+
+    .submit-btn.transfer:hover:not(:disabled) {
+      box-shadow: 0 6px 20px rgba(59, 130, 246, 0.5);
+      transform: translateY(-2px);
+    }
+
+    .submit-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none !important;
+      box-shadow: none !important;
+    }
+
+    .spinner {
+      width: 1.25rem;
+      height: 1.25rem;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Animations */
+    .animate-slide-in {
+      animation: slideIn 0.4s ease-out;
+    }
+
+    .animate-fade-in {
+      animation: fadeIn 0.3s ease-out;
+    }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    /* Button styles */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.15s;
+    }
+
+    .btn-primary {
+      background: #3b82f6;
+      color: white;
+    }
+
+    .btn-sm {
+      padding: 0.5rem 0.875rem;
+      font-size: 0.8125rem;
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 900px) {
+      .tx-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .tx-sidebar {
+        position: static;
+      }
+
+      .tx-type-list {
+        flex-direction: row;
+        overflow-x: auto;
+        gap: 0.5rem;
+        padding-bottom: 0.5rem;
+      }
+
+      .tx-type-option {
+        flex-shrink: 0;
+        min-width: 140px;
+        flex-direction: column;
+        text-align: center;
+        padding: 1rem 0.75rem;
+      }
+
+      .tx-type-arrow {
+        display: none;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .tx-container {
+        padding: 1rem;
+      }
+
+      .tx-main {
+        padding: 1.5rem;
+      }
+
+      .amount-input {
+        font-size: 1.5rem;
+        padding: 1rem 4rem 1rem 1rem;
+      }
     }
   `]
 })
@@ -233,6 +838,7 @@ export class TransactionFormComponent implements OnInit, OnDestroy {
   errorMessage = '';
   successMessage = '';
   returnAccountId: string | null = null;
+  selectedType: 'DEPOT' | 'RETRAIT' | 'VIREMENT' = 'DEPOT';
 
   private destroy$ = new Subject<void>();
 
@@ -253,7 +859,6 @@ export class TransactionFormComponent implements OnInit, OnDestroy {
       description: [''],
     });
 
-    // Watch for account selection changes
     this.form.get('accountNumber')?.valueChanges.subscribe(accountNumber => {
       this.sourceAccount = this.accounts.find(a => a.numeroCompte === accountNumber) || null;
     });
@@ -262,7 +867,6 @@ export class TransactionFormComponent implements OnInit, OnDestroy {
       this.targetAccount = this.accounts.find(a => a.numeroCompte === accountNumber) || null;
     });
 
-    // Reset target when type changes
     this.form.get('type')?.valueChanges.subscribe(type => {
       if (type !== 'VIREMENT') {
         this.form.patchValue({ targetAccountNumber: '' });
@@ -275,7 +879,6 @@ export class TransactionFormComponent implements OnInit, OnDestroy {
     this.route.queryParamMap.subscribe(params => {
       this.returnAccountId = params.get('accountId');
       if (this.returnAccountId) {
-        // Pre-select account if coming from transactions page
         this.form.patchValue({ accountNumber: this.returnAccountId });
       }
     });
@@ -292,7 +895,6 @@ export class TransactionFormComponent implements OnInit, OnDestroy {
         this.accounts = (response.content || []).filter(a => a.actif);
         this.isLoadingAccounts = false;
 
-        // If pre-selected account
         if (this.returnAccountId) {
           this.sourceAccount = this.accounts.find(a => a.numeroCompte === this.returnAccountId) || null;
         }
@@ -312,6 +914,15 @@ export class TransactionFormComponent implements OnInit, OnDestroy {
     return this.accounts.filter(a => a.numeroCompte !== sourceNum);
   }
 
+  selectType(type: 'DEPOT' | 'RETRAIT' | 'VIREMENT'): void {
+    this.selectedType = type;
+    this.form.patchValue({ type });
+    if (type !== 'VIREMENT') {
+      this.form.patchValue({ targetAccountNumber: '' });
+      this.targetAccount = null;
+    }
+  }
+
   getTypeDisplay(typeCompte: string): string {
     const types: Record<string, string> = {
       EPARGNE: 'Épargne',
@@ -321,13 +932,13 @@ export class TransactionFormComponent implements OnInit, OnDestroy {
   }
 
   isBalanceSufficient(): boolean {
-    if (this.form.value.type === 'DEPOT') return true;
+    if (this.selectedType === 'DEPOT') return true;
     if (!this.sourceAccount) return false;
     return this.sourceAccount.solde >= (this.form.value.amount || 0);
   }
 
   getSubmitIcon(): string {
-    switch (this.form.value.type) {
+    switch (this.selectedType) {
       case 'DEPOT': return 'ri-add-circle-line';
       case 'RETRAIT': return 'ri-subtract-line';
       case 'VIREMENT': return 'ri-arrow-left-right-line';
@@ -336,7 +947,7 @@ export class TransactionFormComponent implements OnInit, OnDestroy {
   }
 
   getSubmitLabel(): string {
-    switch (this.form.value.type) {
+    switch (this.selectedType) {
       case 'DEPOT': return 'Effectuer le Dépôt';
       case 'RETRAIT': return 'Effectuer le Retrait';
       case 'VIREMENT': return 'Effectuer le Virement';
@@ -349,7 +960,6 @@ export class TransactionFormComponent implements OnInit, OnDestroy {
 
     const v = this.form.value;
 
-    // Validate transfer target
     if (v.type === 'VIREMENT' && !v.targetAccountNumber) {
       this.errorMessage = 'Veuillez sélectionner un compte destinataire pour le virement.';
       return;
@@ -397,26 +1007,19 @@ export class TransactionFormComponent implements OnInit, OnDestroy {
     this.successMessage = message;
     this.isSubmitting = false;
 
-    // Mettre à jour le store avec les nouveaux soldes
     if (transaction && transaction.soldeApres !== undefined) {
       const accountNumber = this.form.value.accountNumber;
       this.store.updateAccountBalance(accountNumber, transaction.soldeApres);
 
-      // Pour les virements, mettre à jour aussi le compte destination
       if (this.form.value.type === 'VIREMENT' && this.targetAccount) {
-        // Le backend retourne soldeApres du compte source
-        // On déclenche un refresh complet pour les virements
         this.store.triggerFullRefresh();
       }
     } else {
-      // Si pas de transaction response, déclencher un refresh complet
       this.store.triggerFullRefresh();
     }
 
-    // Incrémenter le compteur de transactions
     this.store.incrementTransactionCount();
 
-    // Navigate after showing success
     setTimeout(() => {
       if (this.returnAccountId) {
         this.router.navigate(['/transactions'], { queryParams: { accountId: this.returnAccountId } });

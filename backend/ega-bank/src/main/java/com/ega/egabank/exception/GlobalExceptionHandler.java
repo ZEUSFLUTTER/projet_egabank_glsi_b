@@ -138,6 +138,30 @@ public class GlobalExceptionHandler {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
         }
 
+        @ExceptionHandler(AccountGenerationException.class)
+        public ResponseEntity<ApiError> handleAccountGeneration(
+                        AccountGenerationException ex, HttpServletRequest request) {
+                log.error("Erreur de génération de compte: {}", ex.getMessage());
+                ApiError error = ApiError.of(
+                                HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                                "Erreur de Génération",
+                                ex.getMessage(),
+                                request.getRequestURI());
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
+        }
+
+        @ExceptionHandler(StatementGenerationException.class)
+        public ResponseEntity<ApiError> handleStatementGeneration(
+                        StatementGenerationException ex, HttpServletRequest request) {
+                log.error("Erreur de génération de relevé: {}", ex.getMessage());
+                ApiError error = ApiError.of(
+                                HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                                "Erreur de Génération de Relevé",
+                                ex.getMessage(),
+                                request.getRequestURI());
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
+        }
+
         @ExceptionHandler(Exception.class)
         public ResponseEntity<ApiError> handleGenericException(
                         Exception ex, HttpServletRequest request) {

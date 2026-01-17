@@ -15,6 +15,7 @@ import com.ega.egabank.dto.response.AccountResponse;
 import com.ega.egabank.dto.response.PageResponse;
 import com.ega.egabank.entity.Account;
 import com.ega.egabank.entity.Client;
+import com.ega.egabank.exception.AccountGenerationException;
 import com.ega.egabank.exception.OperationNotAllowedException;
 import com.ega.egabank.exception.ResourceNotFoundException;
 import com.ega.egabank.mapper.AccountMapper;
@@ -147,7 +148,8 @@ public class AccountServiceImpl implements AccountService {
             iban = ibanGenerator.generate();
             attempts++;
             if (attempts > 100) {
-                throw new RuntimeException("Impossible de générer un numéro de compte unique");
+                throw new AccountGenerationException(
+                        "Impossible de générer un numéro de compte unique après 100 tentatives");
             }
         } while (accountRepository.existsByNumeroCompte(iban));
         return iban;

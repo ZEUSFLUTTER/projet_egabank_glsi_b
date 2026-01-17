@@ -25,6 +25,10 @@
 		{
 			"key": "accountNumber",
 			"value": ""
+		},
+		{
+			"key": "accountNumber2",
+			"value": ""
 		}
 	],
 	"item": [
@@ -128,8 +132,13 @@
 						"header": [],
 						"url": {
 							"raw": "{{baseUrl}}/auth/refresh?refreshToken={{refreshToken}}",
-							"host": ["{{baseUrl}}"],
-							"path": ["auth", "refresh"],
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"refresh"
+							],
 							"query": [
 								{
 									"key": "refreshToken",
@@ -216,11 +225,21 @@
 						],
 						"url": {
 							"raw": "{{baseUrl}}/clients?page=0&size=10",
-							"host": ["{{baseUrl}}"],
-							"path": ["clients"],
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"clients"
+							],
 							"query": [
-								{"key": "page", "value": "0"},
-								{"key": "size", "value": "10"}
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "size",
+									"value": "10"
+								}
 							]
 						}
 					}
@@ -342,8 +361,15 @@
 							"listen": "test",
 							"script": {
 								"exec": [
+									"var jsonData = pm.response.json();",
+									"pm.collectionVariables.set('accountNumber2', jsonData.numeroCompte);",
+									"",
 									"pm.test('Status code is 201', function () {",
 									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test('Account type is COURANT', function () {",
+									"    pm.expect(jsonData.typeCompte).to.eql('COURANT');",
 									"});"
 								],
 								"type": "text/javascript"
@@ -573,13 +599,108 @@
 						],
 						"url": {
 							"raw": "{{baseUrl}}/transactions/{{accountNumber}}/history?debut=2024-01-01&fin=2025-12-31",
-							"host": ["{{baseUrl}}"],
-							"path": ["transactions", "{{accountNumber}}", "history"],
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"transactions",
+								"{{accountNumber}}",
+								"history"
+							],
 							"query": [
-								{"key": "debut", "value": "2024-01-01"},
-								{"key": "fin", "value": "2025-12-31"}
+								{
+									"key": "debut",
+									"value": "2024-01-01"
+								},
+								{
+									"key": "fin",
+									"value": "2025-12-31"
+								}
 							]
 						}
+					}
+				},
+				{
+					"name": "4.5 Virement",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 201', function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test('Transaction type is VIREMENT_SORTANT', function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.type).to.eql('VIREMENT_SORTANT');",
+									"});",
+									"",
+									"pm.test('Destination account is set', function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.compteDestination).to.not.be.null;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"compteSource\": \"{{accountNumber}}\",\n    \"compteDestination\": \"{{accountNumber2}}\",\n    \"montant\": 10000,\n    \"description\": \"Virement test entre comptes\"\n}"
+						},
+						"url": "{{baseUrl}}/transactions/transfer"
+					}
+				},
+				{
+					"name": "4.6 Virement Même Compte (Erreur)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 400', function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"pm.test('Error message about same account', function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.message).to.include('identiques');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"compteSource\": \"{{accountNumber}}\",\n    \"compteDestination\": \"{{accountNumber}}\",\n    \"montant\": 5000,\n    \"description\": \"Test transfert même compte\"\n}"
+						},
+						"url": "{{baseUrl}}/transactions/transfer"
 					}
 				}
 			]
@@ -616,11 +737,22 @@
 						],
 						"url": {
 							"raw": "{{baseUrl}}/statements/{{accountNumber}}?debut=2024-01-01&fin=2025-12-31",
-							"host": ["{{baseUrl}}"],
-							"path": ["statements", "{{accountNumber}}"],
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"statements",
+								"{{accountNumber}}"
+							],
 							"query": [
-								{"key": "debut", "value": "2024-01-01"},
-								{"key": "fin", "value": "2025-12-31"}
+								{
+									"key": "debut",
+									"value": "2024-01-01"
+								},
+								{
+									"key": "fin",
+									"value": "2025-12-31"
+								}
 							]
 						}
 					}

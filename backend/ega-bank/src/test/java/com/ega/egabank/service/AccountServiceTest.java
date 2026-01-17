@@ -27,6 +27,7 @@ import com.ega.egabank.dto.response.PageResponse;
 import com.ega.egabank.entity.Account;
 import com.ega.egabank.entity.Client;
 import com.ega.egabank.enums.TypeCompte;
+import com.ega.egabank.exception.AccountGenerationException;
 import com.ega.egabank.exception.OperationNotAllowedException;
 import com.ega.egabank.exception.ResourceNotFoundException;
 import com.ega.egabank.mapper.AccountMapper;
@@ -108,7 +109,7 @@ class AccountServiceTest {
             List<Account> accounts = List.of(account);
             Page<Account> accountPage = new PageImpl<>(accounts, PageRequest.of(0, 10), 1);
 
-            when(accountRepository.findAllActive(any(Pageable.class))).thenReturn(accountPage);
+            when(accountRepository.findAll(any(Pageable.class))).thenReturn(accountPage);
             when(accountMapper.toResponseList(accounts)).thenReturn(List.of(accountResponse));
 
             // Act
@@ -118,7 +119,7 @@ class AccountServiceTest {
             assertThat(result).isNotNull();
             assertThat(result.getContent()).hasSize(1);
             assertThat(result.getTotalElements()).isEqualTo(1);
-            verify(accountRepository).findAllActive(any(Pageable.class));
+            verify(accountRepository).findAll(any(Pageable.class));
         }
     }
 
@@ -228,6 +229,23 @@ class AccountServiceTest {
             // Assert
             assertThat(result).isNotNull();
             verify(ibanGenerator, times(2)).generate();
+        }
+
+        @Test
+        @DisplayName("Devrait lancer une exception si le nombre maximum de tentatives est atteint")
+        void shouldThrowExceptionIfMaxAttemptsReached() {
+            // Arrange
+            when(clientRepository.findById(1L)).thenReturn(Optional.of(client));
+            when(ibanGenerator.generate()).thenReturn(IBAN);
+            when(accountRepository.existsByNumeroCompte(IBAN)).thenReturn(true);
+
+            // Act & Assert
+            assertThatThrownBy(() -> accountService.createAccount(accountRequest))
+                    .isInstanceOf(AccountGenerationException.class)
+                    .hasMessageContaining("Impossible de générer un numéro de compte");
+
+            verify(ibanGenerator, atLeast(101)).generate();
+
         }
 
         @Test

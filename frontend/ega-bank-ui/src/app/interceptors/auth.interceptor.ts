@@ -9,6 +9,7 @@ import { Injectable, Injector } from '@angular/core';
 import { Router } from '@angular/router';
 import { BehaviorSubject, Observable, throwError } from 'rxjs';
 import { catchError, filter, switchMap, take } from 'rxjs/operators';
+import { AuthResponse } from '../models/auth.models';
 import { AuthService } from '../services/auth.service';
 
 @Injectable()
@@ -19,7 +20,7 @@ export class AuthInterceptor implements HttpInterceptor {
 
   constructor(private injector: Injector, private router: Router) { }
 
-  // Lazy load AuthService to avoid circular dependency
+  // Chargement lazy de AuthService pour éviter la dépendance circulaire
   private getAuthService(): AuthService {
     if (!this.authService) {
       this.authService = this.injector.get(AuthService);
@@ -27,7 +28,7 @@ export class AuthInterceptor implements HttpInterceptor {
     return this.authService;
   }
 
-  intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+  intercept(req: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     // Ne pas ajouter de token pour les endpoints d'authentification
     if (this.isAuthEndpoint(req.url)) {
       return next.handle(req);
@@ -42,10 +43,10 @@ export class AuthInterceptor implements HttpInterceptor {
 
     return next.handle(authReq).pipe(
       catchError((error: HttpErrorResponse) => {
-        console.log('[AuthInterceptor] HTTP Error:', error.status, error.url);
+        console.log('[AuthInterceptor] Erreur HTTP:', error.status, error.url);
 
         if (error.status === 401 && !this.isAuthEndpoint(req.url)) {
-          console.log('[AuthInterceptor] Attempting to handle 401 error...');
+          console.log('[AuthInterceptor] Tentative de gestion de l\'erreur 401...');
           return this.handle401Error(authReq, next);
         }
         return throwError(() => error);
@@ -53,7 +54,7 @@ export class AuthInterceptor implements HttpInterceptor {
     );
   }
 
-  private addTokenToRequest(request: HttpRequest<any>, token: string): HttpRequest<any> {
+  private addTokenToRequest(request: HttpRequest<unknown>, token: string): HttpRequest<unknown> {
     return request.clone({
       setHeaders: {
         Authorization: `Bearer ${token}`,
@@ -67,7 +68,7 @@ export class AuthInterceptor implements HttpInterceptor {
       url.includes('/auth/refresh');
   }
 
-  private handle401Error(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+  private handle401Error(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     if (!this.isRefreshing) {
       this.isRefreshing = true;
       this.refreshTokenSubject.next(null);
@@ -75,11 +76,11 @@ export class AuthInterceptor implements HttpInterceptor {
       const refreshToken = localStorage.getItem('refreshToken');
 
       if (refreshToken) {
-        console.log('[AuthInterceptor] Attempting token refresh...');
+        console.log('[AuthInterceptor] Tentative de rafraîchissement du token...');
         return this.getAuthService().refreshToken(refreshToken).pipe(
-          switchMap((response: any) => {
+          switchMap((response: AuthResponse) => {
             this.isRefreshing = false;
-            console.log('[AuthInterceptor] Token refresh response:', response);
+            console.log('[AuthInterceptor] Réponse de rafraîchissement du token:', response);
 
             if (response?.accessToken) {
               localStorage.setItem('accessToken', response.accessToken);
@@ -87,34 +88,34 @@ export class AuthInterceptor implements HttpInterceptor {
                 localStorage.setItem('refreshToken', response.refreshToken);
               }
               this.refreshTokenSubject.next(response.accessToken);
-              console.log('[AuthInterceptor] Token refreshed successfully, retrying request');
+              console.log('[AuthInterceptor] Token rafraîchi avec succès, relance de la requête');
               return next.handle(this.addTokenToRequest(request, response.accessToken));
             }
 
             // Si pas de token dans la réponse, déconnecter
-            console.log('[AuthInterceptor] No token in refresh response, logging out');
+            console.log('[AuthInterceptor] Pas de token dans la réponse, déconnexion');
             this.handleLogout();
-            return throwError(() => new Error('Token refresh failed'));
+            return throwError(() => new Error('Échec du rafraîchissement du token'));
           }),
           catchError((err) => {
             this.isRefreshing = false;
-            console.error('[AuthInterceptor] Token refresh failed:', err);
+            console.error('[AuthInterceptor] Échec du rafraîchissement du token:', err);
             this.handleLogout();
             return throwError(() => err);
           })
         );
       } else {
         // Pas de refresh token, déconnecter
-        console.log('[AuthInterceptor] No refresh token available, logging out');
+        console.log('[AuthInterceptor] Pas de refresh token disponible, déconnexion');
         this.isRefreshing = false;
         this.handleLogout();
-        return throwError(() => new Error('No refresh token available'));
+        return throwError(() => new Error('Pas de refresh token disponible'));
       }
     }
 
     // Une autre requête est déjà en train de rafraîchir le token
     // Attendre que le nouveau token soit disponible
-    console.log('[AuthInterceptor] Waiting for token refresh from another request...');
+    console.log('[AuthInterceptor] En attente du rafraîchissement du token par une autre requête...');
     return this.refreshTokenSubject.pipe(
       filter((token) => token !== null),
       take(1),

@@ -20,15 +20,17 @@ import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /**
  * Entité représentant un client
  */
 @Entity
 @Table(name = "clients")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -70,10 +72,12 @@ public class Client {
 	public String getNomComplet() {
 		String p = prenom == null ? "" : prenom.trim();
 		String n = nom == null ? "" : nom.trim();
-		if (p.isEmpty() && n.isEmpty()) return "";
-		if (p.isEmpty()) return n;
-		if (n.isEmpty()) return p;
+		if (p.isEmpty() && n.isEmpty())
+			return "";
+		if (p.isEmpty())
+			return n;
+		if (n.isEmpty())
+			return p;
 		return p + " " + n;
 	}
 }
- 

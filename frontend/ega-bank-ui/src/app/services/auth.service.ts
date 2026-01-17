@@ -2,46 +2,47 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
+import { AuthResponse, LoginPayload, RegisterPayload, UserInfo } from '../models/auth.models';
 import { AppStore } from '../stores/app.store';
 import { ApiService } from './api.service';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   constructor(
-    private api: ApiService, 
+    private api: ApiService,
     private router: Router,
     private store: AppStore
   ) { }
 
-  register(payload: any): Observable<any> {
-    return this.api.post('/auth/register', payload).pipe(
-      tap((res: any) => {
+  register(payload: RegisterPayload): Observable<AuthResponse> {
+    return this.api.post<AuthResponse>('/auth/register', payload).pipe(
+      tap((res: AuthResponse) => {
         if (res?.accessToken) localStorage.setItem('accessToken', res.accessToken);
         if (res?.refreshToken) localStorage.setItem('refreshToken', res.refreshToken);
       })
     );
   }
 
-  login(payload: any): Observable<any> {
-    return this.api.post('/auth/login', payload).pipe(
-      tap((res: any) => {
+  login(payload: LoginPayload): Observable<AuthResponse> {
+    return this.api.post<AuthResponse>('/auth/login', payload).pipe(
+      tap((res: AuthResponse) => {
         if (res?.accessToken) localStorage.setItem('accessToken', res.accessToken);
         if (res?.refreshToken) localStorage.setItem('refreshToken', res.refreshToken);
       })
     );
   }
 
-  refreshToken(refreshToken: string): Observable<any> {
-    return this.api.post(`/auth/refresh?refreshToken=${encodeURIComponent(refreshToken)}`, null);
+  refreshToken(refreshToken: string): Observable<AuthResponse> {
+    return this.api.post<AuthResponse>(`/auth/refresh?refreshToken=${encodeURIComponent(refreshToken)}`, null);
   }
 
-  logout() {
+  logout(): void {
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
-    
+
     // Réinitialiser le store pour nettoyer l'état
     this.store.reset();
-    
+
     this.router.navigateByUrl('/login');
   }
 
@@ -82,7 +83,7 @@ export class AuthService {
   /**
    * Décode le payload d'un token JWT
    */
-  private decodeToken(token: string): any {
+  private decodeToken(token: string): { sub?: string; exp?: number } | null {
     try {
       const parts = token.split('.');
       if (parts.length !== 3) {
@@ -108,7 +109,7 @@ export class AuthService {
   /**
    * Récupère les informations de l'utilisateur depuis le token
    */
-  getUserInfo(): { username: string; exp: number } | null {
+  getUserInfo(): UserInfo | null {
     const token = localStorage.getItem('accessToken');
     if (!token) return null;
 

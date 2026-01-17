@@ -13,6 +13,8 @@ import com.ega.egabank.dto.response.AuthResponse;
 import com.ega.egabank.entity.User;
 import com.ega.egabank.enums.Role;
 import com.ega.egabank.exception.DuplicateResourceException;
+import com.ega.egabank.exception.InvalidTokenException;
+import com.ega.egabank.exception.ResourceNotFoundException;
 import com.ega.egabank.repository.UserRepository;
 import com.ega.egabank.security.JwtTokenProvider;
 import com.ega.egabank.service.AuthService;
@@ -84,7 +86,8 @@ public class AuthServiceImpl implements AuthService {
                         request.getPassword()));
 
         User user = userRepository.findByUsername(request.getUsername())
-                .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
+                .orElseThrow(
+                        () -> new ResourceNotFoundException("Utilisateur", "nom d'utilisateur", request.getUsername()));
 
         String accessToken = tokenProvider.generateAccessToken(authentication);
         String refreshToken = tokenProvider.generateRefreshToken(user.getUsername());
@@ -105,12 +108,12 @@ public class AuthServiceImpl implements AuthService {
         log.info("Rafraîchissement du token");
 
         if (!tokenProvider.validateToken(refreshToken)) {
-            throw new RuntimeException("Token de rafraîchissement invalide");
+            throw new InvalidTokenException("de rafraîchissement", "expiré ou malformé");
         }
 
         String username = tokenProvider.getUsernameFromToken(refreshToken);
         User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
+                .orElseThrow(() -> new ResourceNotFoundException("Utilisateur", "nom d'utilisateur", username));
 
         String newAccessToken = tokenProvider.generateAccessToken(username);
         String newRefreshToken = tokenProvider.generateRefreshToken(username);

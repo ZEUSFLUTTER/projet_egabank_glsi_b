@@ -6,36 +6,28 @@ Avant de démarrer l'application, assurez-vous d'avoir installé:
 
 - ✅ **Java 17+** (pour le backend Spring Boot)
 - ✅ **Node.js 18+** et **npm** (pour le frontend Angular)
-- ✅ **PostgreSQL 14+** (base de données)
 - ✅ **Maven** (inclus dans le projet via Maven Wrapper)
 
-## 🗄️ Configuration de la base de données
+> **Note :** Ce projet utilise une base de données **H2 en mémoire**. Aucune installation de base de données n'est requise !
 
-### 1. Créer la base de données PostgreSQL
+## 🗄️ Base de Données
 
-```sql
--- Se connecter à PostgreSQL
-psql -U postgres
+### Configuration H2 (Base en mémoire)
 
--- Créer la base de données
-CREATE DATABASE egabank;
+Le projet utilise **H2**, une base de données en mémoire. Cela signifie :
 
--- Créer un utilisateur (optionnel)
-CREATE USER egabank_user WITH PASSWORD 'votremotdepasse';
+- ✅ **Aucune installation requise**
+- ✅ **Données pré-initialisées** au démarrage (utilisateur admin + clients de test)
+- ⚠️ **Données non persistées** : les données sont réinitialisées à chaque redémarrage
 
--- Donner les privilèges
-GRANT ALL PRIVILEGES ON DATABASE egabank TO egabank_user;
-```
+### Console H2 (Visualisation des données)
 
-### 2. Configuration du backend
+Une fois le backend démarré, vous pouvez accéder à la console H2 :
 
-Si vous utilisez des identifiants différents, modifiez `backend/ega-bank/src/main/resources/application.properties`:
-
-```properties
-spring.datasource.url=jdbc:postgresql://localhost:5432/egabank
-spring.datasource.username=postgres
-spring.datasource.password=root  # Changez selon vos paramètres
-```
+- **URL :** http://localhost:8080/h2-console
+- **JDBC URL :** `jdbc:h2:mem:egabank`
+- **Username :** `sa`
+- **Password :** *(laisser vide)*
 
 ## 🔧 Installation
 
@@ -76,10 +68,7 @@ Documentation Swagger: **http://localhost:8080/swagger-ui.html**
 ```bash
 cd frontend/ega-bank-ui
 
-# Option A: Avec proxy (recommandé)
-npm start -- --proxy-config proxy.conf.json
-
-# Option B: Sans proxy
+# Démarrage avec proxy (recommandé)
 npm start
 ```
 
@@ -100,70 +89,53 @@ call mvnw.cmd spring-boot:run
 ```batch
 @echo off
 cd frontend\ega-bank-ui
-call npm start -- --proxy-config proxy.conf.json
+call npm start
 ```
 
 Exécutez les deux fichiers dans des terminaux séparés.
+
+## 🔐 Compte Utilisateur par Défaut
+
+Au démarrage, un compte administrateur est créé automatiquement :
+
+| Champ | Valeur |
+|-------|--------|
+| **Nom d'utilisateur** | `admin` |
+| **Mot de passe** | `admin123` |
+| **Email** | `admin@egabank.com` |
+
+Deux clients de test sont également créés :
+- Jean Dupont (Lomé, Togo)
+- Marie Curie (Kara, Togo)
 
 ## ✅ Vérification de la connexion
 
 ### 1. Vérifier le backend
 
 Ouvrez votre navigateur et accédez à:
-- API Health: http://localhost:8080/actuator/health (si actuator est activé)
 - Swagger UI: http://localhost:8080/swagger-ui.html
+- Console H2: http://localhost:8080/h2-console
 
-### 2. Tester la connexion Backend-Frontend
-
-Accédez à la page de test:
-**http://localhost:4200/connection-test**
-
-Cette page vous permet de:
-- ✅ Vérifier l'état de la connexion au backend
-- ✅ Tester l'inscription et la connexion
-- ✅ Tester les appels API (clients, comptes, transactions)
-- 📋 Voir les logs détaillés en temps réel
-
-### 3. Vérification manuelle avec Swagger
+### 2. Tester la connexion via Swagger
 
 1. Accédez à http://localhost:8080/swagger-ui.html
-2. Testez l'endpoint `/api/auth/register` pour créer un utilisateur
-3. Testez l'endpoint `/api/auth/login` pour vous connecter
-4. Copiez le token JWT retourné
-5. Cliquez sur "Authorize" dans Swagger
-6. Entrez `Bearer <votre-token>`
-7. Testez les autres endpoints protégés
+2. Testez l'endpoint `/api/auth/login` avec :
+   ```json
+   {
+     "username": "admin",
+     "password": "admin123"
+   }
+   ```
+3. Copiez le `accessToken` retourné
+4. Cliquez sur "Authorize" dans Swagger
+5. Entrez `Bearer <votre-token>`
+6. Testez les autres endpoints protégés
 
-## 🔐 Créer un utilisateur de test
+### 3. Tester via l'interface Angular
 
-### Via Swagger UI
-1. Accédez à http://localhost:8080/swagger-ui.html
-2. Allez dans la section "Authentification"
-3. Utilisez l'endpoint POST `/api/auth/register`:
-
-```json
-{
-  "username": "admin",
-  "email": "admin@egabank.com",
-  "password": "admin123"
-}
-```
-
-### Via cURL
-```bash
-curl -X POST http://localhost:8080/api/auth/register \
-  -H "Content-Type: application/json" \
-  -d '{
-    "username": "admin",
-    "email": "admin@egabank.com",
-    "password": "admin123"
-  }'
-```
-
-### Via l'interface Angular
-1. Accédez à http://localhost:4200/register
-2. Remplissez le formulaire
-3. Cliquez sur "S'inscrire"
+1. Accédez à http://localhost:4200
+2. Connectez-vous avec `admin` / `admin123`
+3. Explorez le dashboard, les clients, les comptes et les transactions
 
 ## 📁 Structure du projet
 
@@ -174,38 +146,32 @@ TP_JEE_GLSI_B_Bogue_Komla_Armel_2026/
 │       ├── src/
 │       │   ├── main/
 │       │   │   ├── java/com/ega/egabank/
-│       │   │   │   ├── config/          # Configuration (Security, CORS)
-│       │   │   │   ├── controller/      # REST Controllers
-│       │   │   │   ├── dto/             # Data Transfer Objects
+│       │   │   │   ├── config/          # Configuration (Security, CORS, DataInitializer)
+│       │   │   │   ├── controller/      # Contrôleurs REST
+│       │   │   │   ├── dto/             # Objets de Transfert de Données
 │       │   │   │   ├── entity/          # Entités JPA
+│       │   │   │   ├── exception/       # Gestion des exceptions
+│       │   │   │   ├── mapper/          # Mappers Entity <-> DTO
 │       │   │   │   ├── repository/      # Repositories JPA
-│       │   │   │   ├── security/        # JWT & Security
+│       │   │   │   ├── security/        # JWT & Sécurité
 │       │   │   │   └── service/         # Services métier
 │       │   │   └── resources/
 │       │   │       └── application.properties
-│       │   └── test/
+│       │   └── test/                    # Tests unitaires et d'intégration
 │       └── pom.xml
 │
 ├── frontend/
 │   └── ega-bank-ui/
 │       ├── src/
 │       │   ├── app/
-│       │   │   ├── core/
-│       │   │   │   ├── guards/          # Route Guards
-│       │   │   │   ├── interceptors/    # HTTP Interceptors
-│       │   │   │   ├── models/          # TypeScript Interfaces
-│       │   │   │   └── services/        # Services Angular
-│       │   │   ├── features/
-│       │   │   │   ├── auth/            # Login, Register
-│       │   │   │   ├── clients/         # Gestion clients
-│       │   │   │   ├── accounts/        # Gestion comptes
-│       │   │   │   ├── transactions/    # Transactions
-│       │   │   │   ├── dashboard/       # Dashboard
-│       │   │   │   └── connection-test/ # Test de connexion
-│       │   │   └── app.routes.ts
-│       │   └── environments/
-│       │       ├── environment.ts       # Config dev
-│       │       └── environment.prod.ts  # Config prod
+│       │   │   ├── guards/              # Guards de route
+│       │   │   ├── interceptors/        # Intercepteurs HTTP
+│       │   │   ├── models/              # Interfaces TypeScript
+│       │   │   ├── pages/               # Composants de pages
+│       │   │   ├── services/            # Services Angular
+│       │   │   ├── shared/              # Composants partagés
+│       │   │   └── stores/              # État de l'application
+│       │   └── styles.css               # Styles globaux
 │       ├── proxy.conf.json              # Configuration proxy
 │       └── package.json
 │
@@ -240,29 +206,25 @@ TP_JEE_GLSI_B_Bogue_Komla_Armel_2026/
 # Démarrer en mode développement
 npm start
 
-# Démarrer avec proxy
-npm start -- --proxy-config proxy.conf.json
-
 # Builder pour la production
 npm run build
 
 # Exécuter les tests
 npm test
-
-# Linter le code
-npm run lint
 ```
 
 ## 🐛 Résolution des problèmes courants
 
 ### Problème: Backend ne démarre pas
 
-**Erreur**: `Cannot create PoolableConnectionFactory`
+**Erreur**: Port 8080 déjà utilisé
 
 **Solution**:
-1. Vérifiez que PostgreSQL est démarré
-2. Vérifiez les identifiants dans `application.properties`
-3. Vérifiez que la base de données `egabank` existe
+```bash
+# Windows
+netstat -ano | findstr :8080
+taskkill /PID <PID> /F
+```
 
 ### Problème: Frontend ne trouve pas le backend (CORS)
 
@@ -270,7 +232,7 @@ npm run lint
 
 **Solutions**:
 1. Vérifiez que le backend est démarré sur http://localhost:8080
-2. Utilisez le proxy: `npm start -- --proxy-config proxy.conf.json`
+2. Vérifiez que vous avez lancé `npm start` (qui utilise le proxy)
 3. Vérifiez la configuration CORS dans `SecurityConfig.java`
 
 ### Problème: Erreur 401 Unauthorized
@@ -301,13 +263,6 @@ taskkill /PID <PID> /F
 # Linux/Mac
 lsof -ti:4200 | xargs kill -9
 ```
-
-## 📚 Documentation complémentaire
-
-- 📖 [Guide de connexion Backend-Frontend](docs/BACKEND_FRONTEND_CONNECTION.md)
-- 📖 [Swagger UI](http://localhost:8080/swagger-ui.html) - Documentation API interactive
-- 📖 [Spring Boot Documentation](https://spring.io/projects/spring-boot)
-- 📖 [Angular Documentation](https://angular.dev/)
 
 ## 🎯 Endpoints API disponibles
 
@@ -340,14 +295,20 @@ lsof -ti:4200 | xargs kill -9
 - `GET /api/transactions/{numeroCompte}/history` - Historique
 - `GET /api/transactions/{numeroCompte}` - Toutes les transactions
 
-## 🚀 Prochaines étapes
+## 📚 Technologies utilisées
 
-1. ✅ Configuration de base terminée
-2. 🔄 Test de la connexion via http://localhost:4200/connection-test
-3. 👤 Création d'un utilisateur de test
-4. 🎨 Finalisation de l'interface utilisateur
-5. 🧪 Tests d'intégration
-6. 📦 Déploiement en production
+### Backend
+- **Spring Boot 3.2** - Framework Java
+- **Spring Security** - Authentification JWT
+- **Spring Data JPA** - Accès aux données
+- **H2 Database** - Base de données en mémoire
+- **Lombok** - Réduction du boilerplate
+- **Swagger/OpenAPI** - Documentation API
+
+### Frontend
+- **Angular 21** - Framework TypeScript
+- **RxJS** - Programmation réactive
+- **CSS Variables** - Design System
 
 ## 📞 Support
 
@@ -355,4 +316,4 @@ Pour toute question ou problème:
 1. Consultez la documentation dans `/docs`
 2. Vérifiez les logs du backend dans la console
 3. Vérifiez la console du navigateur (F12)
-4. Utilisez la page de test: http://localhost:4200/connection-test
+4. Accédez à la console H2 pour voir les données: http://localhost:8080/h2-console

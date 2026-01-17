@@ -37,7 +37,7 @@ export class AccountsComponent implements OnInit, OnDestroy {
       this.clientId = clientIdParam ? Number(clientIdParam) : null;
       this.loadAccounts();
     });
-    
+
     // S'abonner aux changements du store
     this.store.dataChanged$.pipe(
       takeUntil(this.destroy$)
@@ -48,7 +48,7 @@ export class AccountsComponent implements OnInit, OnDestroy {
       }
     });
   }
-  
+
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
@@ -69,7 +69,7 @@ export class AccountsComponent implements OnInit, OnDestroy {
         },
         error: (err) => {
           console.error('Failed to load accounts', err);
-          this.errorMessage = 'Failed to load accounts.';
+          this.errorMessage = 'Échec du chargement des comptes.';
           this.isLoading = false;
           this.cdr.detectChanges();
         },
@@ -84,7 +84,7 @@ export class AccountsComponent implements OnInit, OnDestroy {
         },
         error: (err) => {
           console.error('Failed to load accounts', err);
-          this.errorMessage = 'Failed to load accounts.';
+          this.errorMessage = 'Échec du chargement des comptes.';
           this.isLoading = false;
           this.cdr.detectChanges();
         },
@@ -97,13 +97,13 @@ export class AccountsComponent implements OnInit, OnDestroy {
   }
 
   getStatusDisplay(actif: boolean) {
-    return actif ? 'Active' : 'Inactive';
+    return actif ? 'Actif' : 'Inactif';
   }
 
   getTypeDisplay(typeCompte: string) {
     const types: Record<string, string> = {
-      EPARGNE: 'Savings',
-      COURANT: 'Checking',
+      EPARGNE: 'Épargne',
+      COURANT: 'Courant',
     };
     return types[typeCompte] || typeCompte;
   }

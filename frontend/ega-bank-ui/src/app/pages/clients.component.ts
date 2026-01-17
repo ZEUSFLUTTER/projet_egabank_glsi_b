@@ -16,11 +16,11 @@ export class ClientsComponent implements OnInit, OnDestroy {
   clients: ClientResponse[] = [];
   isLoading = true;
   errorMessage = '';
-  
+
   private destroy$ = new Subject<void>();
 
   constructor(
-    private router: Router, 
+    private router: Router,
     private clientService: ClientService,
     private store: AppStore,
     private cdr: ChangeDetectorRef
@@ -28,7 +28,7 @@ export class ClientsComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.loadClients();
-    
+
     // S'abonner aux changements du store
     this.store.dataChanged$.pipe(
       takeUntil(this.destroy$)
@@ -39,7 +39,7 @@ export class ClientsComponent implements OnInit, OnDestroy {
       }
     });
   }
-  
+
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
@@ -49,7 +49,7 @@ export class ClientsComponent implements OnInit, OnDestroy {
     this.isLoading = true;
     this.errorMessage = '';
     this.cdr.detectChanges();
-    
+
     this.clientService.getAll(0, 100).subscribe({
       next: (response) => {
         this.clients = response.content || [];
@@ -60,7 +60,7 @@ export class ClientsComponent implements OnInit, OnDestroy {
       },
       error: (err) => {
         console.error('Failed to load clients', err);
-        this.errorMessage = 'Failed to load clients. Please try again.';
+        this.errorMessage = 'Échec du chargement des clients. Veuillez réessayer.';
         this.isLoading = false;
         this.cdr.detectChanges();
       },
@@ -76,7 +76,7 @@ export class ClientsComponent implements OnInit, OnDestroy {
   }
 
   deleteClient(id: number) {
-    if (!confirm('Are you sure you want to delete this client?')) return;
+    if (!confirm('Êtes-vous sûr de vouloir supprimer ce client ?')) return;
 
     this.clientService.delete(id).subscribe({
       next: () => {
@@ -84,7 +84,7 @@ export class ClientsComponent implements OnInit, OnDestroy {
         this.store.removeClient(id);
         this.loadClients(); // Reload list
       },
-      error: (err) => alert('Failed to delete client')
+      error: (err) => alert('Échec de la suppression du client')
     });
   }
 }

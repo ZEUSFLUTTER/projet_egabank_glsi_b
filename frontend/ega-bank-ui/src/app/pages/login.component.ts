@@ -9,227 +9,569 @@ import { AuthService } from '../services/auth.service';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, RouterLink],
   template: `
-    <div class="login-layout">
-        <div class="background-shapes">
-            <div class="shape shape-1"></div>
-            <div class="shape shape-2"></div>
-        </div>
-        
-      <div class="card login-card glass-panel animate-slide-in">
-        <div class="header">
-          <div class="mb-8 flex justify-center">
-            <div class="logo-container">
-                <img src="/assets/logoega.png" alt="EGA Bank" width="120" style="height: 48px; width: auto; filter: brightness(0) invert(1);" />
+    <div class="auth-page">
+      <!-- Left Side - Branding (Hidden on Mobile) -->
+      <div class="auth-branding">
+        <div class="branding-content">
+          <div class="brand-logo">
+            <img src="/assets/logoega.png" alt="EGA Bank" />
+          </div>
+          <h1 class="brand-title">Bienvenue sur EGA Bank</h1>
+          <p class="brand-subtitle">La banque digitale qui simplifie la gestion de vos finances.</p>
+          
+          <div class="brand-features">
+            <div class="feature">
+              <i class="ri-shield-check-line"></i>
+              <span>Sécurité maximale</span>
+            </div>
+            <div class="feature">
+              <i class="ri-time-line"></i>
+              <span>Accès 24h/24</span>
+            </div>
+            <div class="feature">
+              <i class="ri-exchange-funds-line"></i>
+              <span>Virements instantanés</span>
             </div>
           </div>
-          <h2 class="text-3xl font-bold mb-2 text-center text-gray-900 tracking-tight">Welcome Back</h2>
-          <p class="text-gray-500 text-center mb-8">Sign in to access your secure banking dashboard</p>
         </div>
+        <div class="branding-decoration"></div>
+      </div>
 
-        <!-- Message de session expirée -->
-        <div *ngIf="sessionExpired" class="alert alert-warning mb-6">
-          <i class="ri-lock-line text-lg"></i> 
-          <span>Your session has expired. Please sign in again.</span>
-        </div>
+      <!-- Right Side - Form -->
+      <div class="auth-form-container">
+        <div class="auth-form-wrapper">
+          <!-- Mobile Logo -->
+          <div class="mobile-logo">
+            <div class="logo-box">
+              <img src="/assets/logoega.png" alt="EGA Bank" />
+            </div>
+          </div>
 
-        <div *ngIf="errorMessage" class="alert alert-danger mb-6">
-           <i class="ri-error-warning-line text-lg"></i> 
-           <span>{{ errorMessage }}</span>
-        </div>
+          <div class="form-header">
+            <h2 class="form-title">Connexion</h2>
+            <p class="form-subtitle">Accédez à votre espace bancaire sécurisé</p>
+          </div>
 
-        <form [formGroup]="form" (ngSubmit)="submit()">
-          <div class="mb-5">
-            <label for="username" class="label">Username</label>
-            <div class="relative">
-                <i class="ri-user-line input-icon"></i>
+          <!-- Session Expired Alert -->
+          <div *ngIf="sessionExpired" class="alert alert-warning">
+            <i class="ri-lock-line"></i>
+            <span>Votre session a expiré. Veuillez vous reconnecter.</span>
+          </div>
+
+          <!-- Error Alert -->
+          <div *ngIf="errorMessage" class="alert alert-danger">
+            <i class="ri-error-warning-line"></i>
+            <span>{{ errorMessage }}</span>
+          </div>
+
+          <form [formGroup]="form" (ngSubmit)="submit()">
+            <div class="form-group">
+              <label for="username">Nom d'utilisateur</label>
+              <div class="input-wrapper">
+                <i class="ri-user-3-line input-icon"></i>
                 <input 
                   id="username" 
                   type="text" 
-                  formControlName="username" 
-                  class="input-with-icon"
-                  placeholder="Enter your username"
-                  [class.error-border]="form.get('username')?.invalid && form.get('username')?.touched"
+                  formControlName="username"
+                  placeholder="Entrez votre nom d'utilisateur"
+                  [class.has-error]="form.get('username')?.invalid && form.get('username')?.touched"
                 />
+              </div>
+              <div *ngIf="form.get('username')?.invalid && form.get('username')?.touched" class="error-text">
+                Le nom d'utilisateur est requis
+              </div>
             </div>
-             <div *ngIf="form.get('username')?.invalid && form.get('username')?.touched" class="text-xs text-danger mt-1 font-medium">
-              Username is required
-            </div>
-          </div>
 
-          <div class="mb-8">
-            <div class="flex justify-between items-center mb-1">
-                <label for="password" class="label mb-0">Password</label>
-                <a class="text-xs text-primary font-medium hover:underline cursor-pointer">Forgot password?</a>
-            </div>
-            
-            <div class="relative">
+            <div class="form-group">
+              <div class="label-row">
+                <label for="password">Mot de passe</label>
+                <a class="forgot-link">Mot de passe oublié ?</a>
+              </div>
+              <div class="input-wrapper">
                 <i class="ri-lock-2-line input-icon"></i>
                 <input 
                   id="password" 
-                  type="password" 
+                  [type]="showPassword ? 'text' : 'password'"
                   formControlName="password"
-                   class="input-with-icon"
-                   placeholder="Enter your password"
-                   [class.error-border]="form.get('password')?.invalid && form.get('password')?.touched"
+                  placeholder="Entrez votre mot de passe"
+                  [class.has-error]="form.get('password')?.invalid && form.get('password')?.touched"
                 />
+                <button type="button" class="toggle-password" (click)="showPassword = !showPassword">
+                  <i [class]="showPassword ? 'ri-eye-off-line' : 'ri-eye-line'"></i>
+                </button>
+              </div>
+              <div *ngIf="form.get('password')?.invalid && form.get('password')?.touched" class="error-text">
+                Le mot de passe est requis
+              </div>
             </div>
-            <div *ngIf="form.get('password')?.invalid && form.get('password')?.touched" class="text-xs text-danger mt-1 font-medium">
-              Password is required
-            </div>
+
+            <button 
+              type="submit" 
+              class="submit-btn"
+              [disabled]="form.invalid || isLoading"
+            >
+              <span *ngIf="isLoading" class="spinner"></span>
+              <span *ngIf="!isLoading">Se connecter</span>
+              <span *ngIf="isLoading">Connexion en cours...</span>
+            </button>
+          </form>
+
+          <div class="form-footer">
+            <p>Pas encore de compte ? <a routerLink="/register">Créer un compte</a></p>
           </div>
 
-          <button 
-            type="submit" 
-            class="btn btn-primary w-full py-3 text-lg shadow-lg hover:shadow-xl transition-all"
-            [disabled]="form.invalid || isLoading"
-          >
-            <span *ngIf="isLoading" class="spinner-border spinner-sm mr-2"></span>
-            <span *ngIf="!isLoading">Sign in</span>
-            <span *ngIf="isLoading">Signing in...</span>
-          </button>
-        </form>
-
-        <div class="footer">
-          <p class="text-gray-500">Don't have an account? <a routerLink="/register" class="link">Create an account</a></p>
+          <!-- Mobile Footer -->
+          <div class="mobile-footer">
+            <p>&copy; 2024 EGA Bank. Système bancaire sécurisé.</p>
+          </div>
         </div>
-      </div>
-      
-      <div class="mt-8 text-center text-gray-400 text-xs">
-        &copy; 2024 EGA Bank. Secure Banking System.
       </div>
     </div>
   `,
   styles: [`
-    .login-layout {
+    .auth-page {
       min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+
+    /* ===== LEFT SIDE - BRANDING ===== */
+    .auth-branding {
+      background: linear-gradient(135deg, #1e3a5f 0%, #0f172a 100%);
       display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 1rem;
-      background-color: #f8fafc;
-      background-image: radial-gradient(at 0% 0%, hsla(253,16%,7%,1) 0, transparent 50%), radial-gradient(at 50% 0%, hsla(225,39%,30%,1) 0, transparent 50%), radial-gradient(at 100% 0%, hsla(339,49%,30%,1) 0, transparent 50%);
-      background-size: 100% 100%;
+      padding: 3rem;
       position: relative;
       overflow: hidden;
     }
-    
-    .background-shapes .shape {
-        position: absolute;
-        filter: blur(80px);
-        z-index: 0;
-        opacity: 0.6;
-    }
-    .shape-1 {
-        top: -10%;
-        left: -10%;
-        width: 500px;
-        height: 500px;
-        background: radial-gradient(circle, var(--primary) 0%, transparent 70%);
-        animation: float 20s infinite ease-in-out;
-    }
-    .shape-2 {
-        bottom: -10%;
-        right: -10%;
-        width: 600px;
-        height: 600px;
-        background: radial-gradient(circle, var(--secondary) 0%, transparent 70%);
-        animation: float 25s infinite ease-in-out reverse;
-    }
-    
-    @keyframes float {
-        0% { transform: translate(0, 0) rotate(0deg); }
-        50% { transform: translate(30px, 50px) rotate(10deg); }
-        100% { transform: translate(0, 0) rotate(0deg); }
+
+    .branding-decoration {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: 
+        radial-gradient(circle at 20% 20%, rgba(59, 130, 246, 0.15) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(139, 92, 246, 0.15) 0%, transparent 50%);
+      pointer-events: none;
     }
 
-    .login-card {
-      width: 100%;
-      max-width: 440px;
-      padding: 3rem 2.5rem;
-      z-index: 10;
-      backdrop-filter: blur(20px);
-      background: rgba(255, 255, 255, 0.9);
-      border: 1px solid rgba(255, 255, 255, 0.8);
+    .branding-content {
+      position: relative;
+      z-index: 1;
+      max-width: 420px;
+      color: white;
     }
-    
-    .logo-container {
+
+    .brand-logo {
+      width: 100px;
+      height: 100px;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 2rem;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .brand-logo img {
+      height: 50px;
+      width: auto;
+      filter: brightness(0) invert(1);
+    }
+
+    .brand-title {
+      font-size: 2.5rem;
+      font-weight: 700;
+      line-height: 1.2;
+      margin-bottom: 1rem;
+      letter-spacing: -0.025em;
+    }
+
+    .brand-subtitle {
+      font-size: 1.125rem;
+      color: rgba(255, 255, 255, 0.7);
+      line-height: 1.6;
+      margin-bottom: 3rem;
+    }
+
+    .brand-features {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .feature {
+      display: flex;
+      align-items: center;
+      gap: 0.875rem;
+      font-size: 1rem;
+      color: rgba(255, 255, 255, 0.85);
+    }
+
+    .feature i {
+      width: 44px;
+      height: 44px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      color: #60a5fa;
+    }
+
+    /* ===== RIGHT SIDE - FORM ===== */
+    .auth-form-container {
+      background: #f8fafc;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+
+    .auth-form-wrapper {
+      width: 100%;
+      max-width: 400px;
+    }
+
+    .mobile-logo {
+      display: none;
+    }
+
+    .form-header {
+      margin-bottom: 2rem;
+    }
+
+    .form-title {
+      font-size: 1.875rem;
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 0.5rem;
+    }
+
+    .form-subtitle {
+      color: #64748b;
+      font-size: 0.9375rem;
+    }
+
+    /* Alerts */
+    .alert {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      padding: 1rem;
+      border-radius: 12px;
+      margin-bottom: 1.5rem;
+      font-size: 0.875rem;
+    }
+
+    .alert i {
+      font-size: 1.25rem;
+      flex-shrink: 0;
+    }
+
+    .alert-warning {
+      background: #fffbeb;
+      border: 1px solid #fef3c7;
+      color: #b45309;
+    }
+
+    .alert-danger {
+      background: #fef2f2;
+      border: 1px solid #fee2e2;
+      color: #dc2626;
+    }
+
+    /* Form */
+    .form-group {
+      margin-bottom: 1.25rem;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: #334155;
+      margin-bottom: 0.5rem;
+    }
+
+    .label-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.5rem;
+    }
+
+    .label-row label {
+      margin-bottom: 0;
+    }
+
+    .forgot-link {
+      font-size: 0.8125rem;
+      color: #3b82f6;
+      cursor: pointer;
+      font-weight: 500;
+    }
+
+    .forgot-link:hover {
+      text-decoration: underline;
+    }
+
+    .input-wrapper {
+      position: relative;
+    }
+
+    .input-icon {
+      position: absolute;
+      left: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #94a3b8;
+      font-size: 1.25rem;
+      pointer-events: none;
+      transition: color 0.2s;
+    }
+
+    .input-wrapper input {
+      width: 100%;
+      padding: 0.875rem 1rem 0.875rem 3rem;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      font-size: 0.9375rem;
+      color: #1e293b;
+      background: white;
+      transition: all 0.2s;
+    }
+
+    .input-wrapper input::placeholder {
+      color: #94a3b8;
+    }
+
+    .input-wrapper input:focus {
+      outline: none;
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
+    }
+
+    .input-wrapper:focus-within .input-icon {
+      color: #3b82f6;
+    }
+
+    .input-wrapper input.has-error {
+      border-color: #ef4444;
+      background: #fef2f2;
+    }
+
+    .toggle-password {
+      position: absolute;
+      right: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: #94a3b8;
+      cursor: pointer;
+      padding: 0.25rem;
+      font-size: 1.25rem;
+      transition: color 0.2s;
+    }
+
+    .toggle-password:hover {
+      color: #64748b;
+    }
+
+    .error-text {
+      font-size: 0.75rem;
+      color: #ef4444;
+      margin-top: 0.375rem;
+      font-weight: 500;
+    }
+
+    /* Submit Button */
+    .submit-btn {
+      width: 100%;
+      padding: 0.875rem 1.5rem;
+      background: linear-gradient(135deg, #3b82f6, #2563eb);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      transition: all 0.2s;
+      margin-top: 1.5rem;
+      box-shadow: 0 4px 14px rgba(59, 130, 246, 0.4);
+    }
+
+    .submit-btn:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(59, 130, 246, 0.5);
+    }
+
+    .submit-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .spinner {
+      width: 1.25rem;
+      height: 1.25rem;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Footer */
+    .form-footer {
+      margin-top: 2rem;
+      text-align: center;
+      padding-top: 1.5rem;
+      border-top: 1px solid #e2e8f0;
+    }
+
+    .form-footer p {
+      color: #64748b;
+      font-size: 0.9375rem;
+    }
+
+    .form-footer a {
+      color: #3b82f6;
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    .form-footer a:hover {
+      text-decoration: underline;
+    }
+
+    .mobile-footer {
+      display: none;
+    }
+
+    /* ===== RESPONSIVE - TABLET ===== */
+    @media (max-width: 1024px) {
+      .auth-branding {
+        padding: 2rem;
+      }
+
+      .brand-title {
+        font-size: 2rem;
+      }
+
+      .brand-features {
+        gap: 0.75rem;
+      }
+    }
+
+    /* ===== RESPONSIVE - MOBILE ===== */
+    @media (max-width: 768px) {
+      .auth-page {
+        grid-template-columns: 1fr;
+      }
+
+      .auth-branding {
+        display: none;
+      }
+
+      .auth-form-container {
+        min-height: 100vh;
+        background: linear-gradient(180deg, #1e3a5f 0%, #0f172a 30%, #f8fafc 30%);
+        padding: 0;
+        align-items: flex-start;
+      }
+
+      .auth-form-wrapper {
+        background: white;
+        margin: 6rem 1rem 2rem;
+        padding: 2rem 1.5rem;
+        border-radius: 24px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        max-width: none;
+      }
+
+      .mobile-logo {
+        display: flex;
+        justify-content: center;
+        margin: -5rem 0 2rem;
+      }
+
+      .logo-box {
         width: 80px;
         height: 80px;
-        background: var(--gray-900);
+        background: linear-gradient(135deg, #3b82f6, #2563eb);
         border-radius: 20px;
         display: flex;
         align-items: center;
         justify-content: center;
-        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2);
+        box-shadow: 0 10px 30px rgba(59, 130, 246, 0.4);
+      }
+
+      .logo-box img {
+        height: 40px;
+        width: auto;
+        filter: brightness(0) invert(1);
+      }
+
+      .form-header {
+        text-align: center;
+      }
+
+      .form-title {
+        font-size: 1.5rem;
+      }
+
+      .mobile-footer {
+        display: block;
+        text-align: center;
+        margin-top: 2rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid #f1f5f9;
+      }
+
+      .mobile-footer p {
+        font-size: 0.75rem;
+        color: #94a3b8;
+      }
+
+      .input-wrapper input {
+        padding: 1rem 1rem 1rem 3rem;
+      }
+
+      .submit-btn {
+        padding: 1rem;
+      }
     }
 
-    .label {
-      display: block;
-      font-size: 0.875rem;
-      font-weight: 600;
-      color: var(--gray-700);
-      margin-bottom: 0.5rem;
-    }
-    
-    .relative { position: relative; }
-    
-    .input-icon {
-        position: absolute;
-        left: 1rem;
-        top: 50%;
-        transform: translateY(-50%);
-        color: var(--gray-400);
-        font-size: 1.2rem;
-        pointer-events: none;
-        transition: color 0.2s;
-    }
-    
-    .input-with-icon {
-      padding: 0.75rem 1rem 0.75rem 3rem;
-      width: 100%;
-      border: 1px solid var(--gray-200);
-      border-radius: var(--radius-md);
-      transition: all 0.2s;
-      outline: none;
-      background: var(--white);
-      font-size: 0.95rem;
-    }
-    
-    .input-with-icon:focus {
-      border-color: var(--primary);
-      box-shadow: 0 0 0 4px color-mix(in srgb, var(--primary) 10%, transparent);
-    }
-    
-    .input-with-icon:focus + .input-icon, 
-    .relative:focus-within .input-icon {
-        color: var(--primary);
-    }
-    
-    .error-border { border-color: var(--danger); background-color: #fff5f5; }
-    
-    .footer {
-      margin-top: 2rem;
-      text-align: center;
-      font-size: 0.9rem;
-      border-top: 1px solid var(--gray-200);
-      padding-top: 1.5rem;
-    }
-    .link {
-      color: var(--primary);
-      font-weight: 600;
-      text-decoration: none;
-      transition: color 0.2s;
-    }
-    .link:hover { color: var(--primary-hover); text-decoration: underline; }
-    
-    .spinner-border {
-        width: 1.2em;
-        height: 1.2em;
-        border: 0.2em solid currentColor;
-        border-right-color: transparent;
-        border-radius: 50%;
-        animation: spin .75s linear infinite
+    /* ===== RESPONSIVE - SMALL MOBILE ===== */
+    @media (max-width: 375px) {
+      .auth-form-wrapper {
+        margin: 5rem 0.75rem 1.5rem;
+        padding: 1.5rem 1.25rem;
+      }
+
+      .form-title {
+        font-size: 1.375rem;
+      }
+
+      .label-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.25rem;
+      }
     }
   `]
 })
@@ -238,6 +580,7 @@ export class LoginComponent implements OnInit {
   isLoading = false;
   errorMessage = '';
   sessionExpired = false;
+  showPassword = false;
   private returnUrl = '/';
 
   constructor(
@@ -253,19 +596,14 @@ export class LoginComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // Vérifier si l'utilisateur est déjà connecté
     if (this.auth.isAuthenticated()) {
       this.router.navigateByUrl('/');
       return;
     }
 
-    // Récupérer l'URL de retour depuis les query params
     this.route.queryParams.subscribe(params => {
       this.returnUrl = params['returnUrl'] || '/';
-
-      // Vérifier si la session a expiré (présence d'un returnUrl indique une redirection)
       if (params['returnUrl'] && !this.auth.isAuthenticated()) {
-        // Vérifier s'il y avait un token avant (session expirée)
         const hadToken = localStorage.getItem('accessToken') !== null;
         if (!hadToken && params['expired'] === 'true') {
           this.sessionExpired = true;
@@ -285,19 +623,17 @@ export class LoginComponent implements OnInit {
     this.auth.login({ username, password }).subscribe({
       next: () => {
         this.isLoading = false;
-        // Rediriger vers l'URL de retour après connexion réussie
         this.router.navigateByUrl(this.returnUrl);
       },
       error: (err) => {
         this.isLoading = false;
         console.error('Login failed', err);
-        // Display a friendly error message
         if (err.status === 401) {
-          this.errorMessage = 'Invalid username or password. Please try again.';
+          this.errorMessage = 'Nom d\'utilisateur ou mot de passe incorrect.';
         } else if (err.status === 0) {
-          this.errorMessage = 'Unable to connect to server. Please check your connection.';
+          this.errorMessage = 'Impossible de se connecter au serveur. Vérifiez votre connexion.';
         } else {
-          this.errorMessage = err.error?.message || 'An error occurred. Please try again.';
+          this.errorMessage = err.error?.message || 'Une erreur est survenue. Veuillez réessayer.';
         }
       },
     });

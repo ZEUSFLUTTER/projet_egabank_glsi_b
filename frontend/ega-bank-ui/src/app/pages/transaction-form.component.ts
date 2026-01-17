@@ -16,8 +16,8 @@ import { AppStore } from '../stores/app.store';
   template: `
     <div class="p-6">
       <div class="mb-6 animate-slide-in">
-        <h1 class="text-3xl font-bold mb-2 tracking-tight">New Transaction</h1>
-        <p class="text-gray-500 text-lg">Perform a secure deposit, withdrawal, or transfer between accounts.</p>
+        <h1 class="text-3xl font-bold mb-2 tracking-tight">Nouvelle Transaction</h1>
+        <p class="text-gray-500 text-lg">Effectuez un dépôt, retrait ou virement sécurisé entre comptes.</p>
       </div>
 
       <div class="card p-8 animate-slide-in mx-auto max-w-3xl">
@@ -37,7 +37,7 @@ import { AppStore } from '../stores/app.store';
           <!-- Transaction Type -->
           <div class="mb-8">
             <label class="block text-sm font-bold text-gray-700 mb-3 uppercase tracking-wide">
-              Transaction Type
+              Type de Transaction
             </label>
             <div class="grid gap-4 grid-cols-3">
               <label class="cursor-pointer group">
@@ -46,7 +46,7 @@ import { AppStore } from '../stores/app.store';
                   <div class="w-12 h-12 rounded-full bg-green-100 text-success flex items-center justify-center mb-2 text-2xl group-hover:scale-110 transition-transform">
                       <i class="ri-add-line"></i>
                   </div>
-                  <div class="font-bold text-lg">Deposit</div>
+                  <div class="font-bold text-lg">Dépôt</div>
                 </div>
               </label>
               <label class="cursor-pointer group">
@@ -55,7 +55,7 @@ import { AppStore } from '../stores/app.store';
                   <div class="w-12 h-12 rounded-full bg-red-100 text-danger flex items-center justify-center mb-2 text-2xl group-hover:scale-110 transition-transform">
                       <i class="ri-subtract-line"></i>
                   </div>
-                  <div class="font-bold text-lg">Withdraw</div>
+                  <div class="font-bold text-lg">Retrait</div>
                 </div>
               </label>
               <label class="cursor-pointer group">
@@ -64,7 +64,7 @@ import { AppStore } from '../stores/app.store';
                   <div class="w-12 h-12 rounded-full bg-blue-100 text-primary flex items-center justify-center mb-2 text-2xl group-hover:scale-110 transition-transform">
                       <i class="ri-arrow-left-right-line"></i>
                   </div>
-                  <div class="font-bold text-lg">Transfer</div>
+                  <div class="font-bold text-lg">Virement</div>
                 </div>
               </label>
             </div>
@@ -74,7 +74,7 @@ import { AppStore } from '../stores/app.store';
               <!-- Source Account -->
               <div>
                 <label class="block text-sm font-bold text-gray-700 mb-2 uppercase tracking-wide">
-                  {{ form.value.type === 'VIREMENT' ? 'Source Account' : 'Account' }} *
+                  {{ form.value.type === 'VIREMENT' ? 'Compte Source' : 'Compte' }} *
                 </label>
                 
                 <!-- Loading accounts -->
@@ -83,9 +83,9 @@ import { AppStore } from '../stores/app.store';
                 <!-- No accounts available -->
                 <div *ngIf="!isLoadingAccounts && accounts.length === 0" class="p-6 bg-gray-50 rounded-lg border border-dashed border-gray-300 text-center">
                   <div class="text-3xl text-gray-300 mb-2"><i class="ri-bank-card-2-line"></i></div>
-                  <p class="text-gray-500 mb-4 font-medium">No accounts found.</p>
+                  <p class="text-gray-500 mb-4 font-medium">Aucun compte trouvé.</p>
                   <a routerLink="/accounts/new" class="btn btn-primary btn-sm">
-                    Create Account First
+                    Créer un compte d'abord
                   </a>
                 </div>
     
@@ -94,7 +94,7 @@ import { AppStore } from '../stores/app.store';
                     <i class="ri-bank-card-line absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-lg"></i>
                     <select formControlName="accountNumber" 
                             class="w-full p-3 pl-10 border rounded-lg appearance-none bg-white focus:ring-2 focus:ring-primary focus:border-primary transition-shadow cursor-pointer">
-                      <option value="">Select an account...</option>
+                      <option value="">Sélectionnez un compte...</option>
                       <option *ngFor="let account of accounts" [value]="account.numeroCompte">
                         {{ account.numeroCompte }} ({{ getTypeDisplay(account.typeCompte) }})
                       </option>
@@ -105,7 +105,7 @@ import { AppStore } from '../stores/app.store';
                 <!-- Selected account info -->
                 <div *ngIf="sourceAccount" class="mt-3 p-4 bg-blue-50 rounded-lg border border-blue-100 flex justify-between items-center animate-slide-in">
                     <div>
-                        <div class="text-xs text-blue-800 uppercase font-bold tracking-wide mb-1">Current Balance</div>
+                        <div class="text-xs text-blue-800 uppercase font-bold tracking-wide mb-1">Solde Actuel</div>
                         <div class="font-mono font-bold text-2xl" [class.text-success]="sourceAccount.solde > 0" [class.text-danger]="sourceAccount.solde <= 0">
                             {{ sourceAccount.solde | currency:'XOF':'symbol':'1.0-0' }}
                         </div>
@@ -120,13 +120,13 @@ import { AppStore } from '../stores/app.store';
               <!-- Target Account (only for transfers) -->
               <div *ngIf="form.value.type === 'VIREMENT'" class="animate-slide-in">
                 <label class="block text-sm font-bold text-gray-700 mb-2 uppercase tracking-wide">
-                   Target Account *
+                   Compte Destinataire *
                 </label>
                 <div class="relative">
                     <i class="ri-arrow-right-line absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-lg"></i>
                     <select formControlName="targetAccountNumber" 
                             class="w-full p-3 pl-10 border rounded-lg appearance-none bg-white focus:ring-2 focus:ring-primary focus:border-primary transition-shadow cursor-pointer">
-                      <option value="">Select target account...</option>
+                      <option value="">Sélectionnez le compte destinataire...</option>
                       <option *ngFor="let account of getTargetAccounts()" [value]="account.numeroCompte">
                          {{ account.numeroCompte }} ({{ getTypeDisplay(account.typeCompte) }}) - {{ account.clientNomComplet }}
                       </option>
@@ -138,7 +138,7 @@ import { AppStore } from '../stores/app.store';
               <!-- Amount -->
               <div>
                 <label class="block text-sm font-bold text-gray-700 mb-2 uppercase tracking-wide">
-                   Amount (XOF) *
+                   Montant (FCFA) *
                 </label>
                 <div class="relative">
                   <input type="number" 
@@ -147,7 +147,7 @@ import { AppStore } from '../stores/app.store';
                          placeholder="0"
                          min="1"
                          step="1">
-                  <span class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 font-bold bg-gray-100 px-2 py-1 rounded text-sm">XOF</span>
+                  <span class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 font-bold bg-gray-100 px-2 py-1 rounded text-sm">FCFA</span>
                 </div>
                 
                 <!-- Feedback messages -->
@@ -156,12 +156,12 @@ import { AppStore } from '../stores/app.store';
                         <i [class]="sourceAccount.solde >= form.get('amount')?.value ? 'ri-checkbox-circle-fill text-success' : 'ri-close-circle-fill text-danger'"></i>
                         <span [class.text-success]="sourceAccount.solde >= form.get('amount')?.value" 
                              [class.text-danger]="sourceAccount.solde < form.get('amount')?.value">
-                         {{ sourceAccount.solde >= form.get('amount')?.value ? 'Sufficient balance available' : 'Insufficient funds for this transaction' }}
+                         {{ sourceAccount.solde >= form.get('amount')?.value ? 'Solde suffisant' : 'Solde insuffisant pour cette opération' }}
                         </span>
                    </ng-container>
                   <span *ngIf="form.value.type === 'DEPOT'" class="text-success flex items-center gap-2">
                     <i class="ri-arrow-up-circle-fill"></i> 
-                    <span>New balance: {{ (sourceAccount.solde + form.get('amount')?.value) | currency:'XOF':'symbol':'1.0-0' }}</span>
+                    <span>Nouveau solde: {{ (sourceAccount.solde + form.get('amount')?.value) | number:'1.0-0' }} FCFA</span>
                   </span>
                 </div>
               </div>
@@ -169,22 +169,22 @@ import { AppStore } from '../stores/app.store';
               <!-- Description -->
               <div>
                 <label class="block text-sm font-bold text-gray-700 mb-2 uppercase tracking-wide">
-                   Description <span class="text-gray-400 font-normal normal-case">(Optional)</span>
+                   Description <span class="text-gray-400 font-normal normal-case">(Optionnel)</span>
                 </label>
                 <input type="text" 
                        formControlName="description" 
                        class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-shadow"
-                       placeholder="e.g., Monthly Rent Payment">
+                       placeholder="Ex: Paiement loyer mensuel">
               </div>
           </div>
 
           <!-- Actions -->
           <div class="flex gap-4 pt-4 border-t border-gray-100">
             <a routerLink="/transactions" class="btn btn-secondary flex-1 py-3 text-base" *ngIf="returnAccountId">
-              Cancel
+              Annuler
             </a>
             <a routerLink="/accounts" class="btn btn-secondary flex-1 py-3 text-base" *ngIf="!returnAccountId">
-              Cancel
+              Annuler
             </a>
             <button type="submit" 
                     [disabled]="form.invalid || isSubmitting || accounts.length === 0 || !isBalanceSufficient()" 
@@ -193,7 +193,7 @@ import { AppStore } from '../stores/app.store';
                     [class.btn-danger]="form.value.type === 'RETRAIT'"
                     [class.btn-primary]="form.value.type === 'VIREMENT'">
               <span *ngIf="isSubmitting" class="flex items-center gap-2">
-                <i class="ri-loader-4-line spinner-icon text-xl"></i> Processing...
+                <i class="ri-loader-4-line spinner-icon text-xl"></i> Traitement...
               </span>
               <span *ngIf="!isSubmitting" class="flex items-center gap-2">
                 <i [class]="getSubmitIcon() + ' text-xl'"></i> 
@@ -300,7 +300,7 @@ export class TransactionFormComponent implements OnInit, OnDestroy {
       },
       error: (err) => {
         console.error('Failed to load accounts', err);
-        this.errorMessage = 'Failed to load accounts. Please try again.';
+        this.errorMessage = 'Échec du chargement des comptes. Veuillez réessayer.';
         this.isLoadingAccounts = false;
         this.cdr.detectChanges();
       }
@@ -314,8 +314,8 @@ export class TransactionFormComponent implements OnInit, OnDestroy {
 
   getTypeDisplay(typeCompte: string): string {
     const types: Record<string, string> = {
-      EPARGNE: 'Savings',
-      COURANT: 'Checking',
+      EPARGNE: 'Épargne',
+      COURANT: 'Courant',
     };
     return types[typeCompte] || typeCompte;
   }
@@ -337,10 +337,10 @@ export class TransactionFormComponent implements OnInit, OnDestroy {
 
   getSubmitLabel(): string {
     switch (this.form.value.type) {
-      case 'DEPOT': return 'Deposit';
-      case 'RETRAIT': return 'Withdraw';
-      case 'VIREMENT': return 'Transfer';
-      default: return 'Submit';
+      case 'DEPOT': return 'Effectuer le Dépôt';
+      case 'RETRAIT': return 'Effectuer le Retrait';
+      case 'VIREMENT': return 'Effectuer le Virement';
+      default: return 'Valider';
     }
   }
 
@@ -351,7 +351,7 @@ export class TransactionFormComponent implements OnInit, OnDestroy {
 
     // Validate transfer target
     if (v.type === 'VIREMENT' && !v.targetAccountNumber) {
-      this.errorMessage = 'Please select a target account for the transfer.';
+      this.errorMessage = 'Veuillez sélectionner un compte destinataire pour le virement.';
       return;
     }
 
@@ -366,7 +366,7 @@ export class TransactionFormComponent implements OnInit, OnDestroy {
         montant: Number(v.amount),
         description: v.description || undefined
       }).subscribe({
-        next: (tx) => this.handleSuccess('Transfer completed successfully!', tx),
+        next: (tx) => this.handleSuccess('Virement effectué avec succès !', tx),
         error: (e) => this.handleError(e)
       });
     } else if (v.type === 'DEPOT') {
@@ -374,7 +374,7 @@ export class TransactionFormComponent implements OnInit, OnDestroy {
         montant: Number(v.amount),
         description: v.description || undefined
       }).subscribe({
-        next: (tx) => this.handleSuccess('Deposit completed successfully!', tx),
+        next: (tx) => this.handleSuccess('Dépôt effectué avec succès !', tx),
         error: (e) => this.handleError(e)
       });
     } else {
@@ -382,7 +382,7 @@ export class TransactionFormComponent implements OnInit, OnDestroy {
         montant: Number(v.amount),
         description: v.description || undefined
       }).subscribe({
-        next: (tx) => this.handleSuccess('Withdrawal completed successfully!', tx),
+        next: (tx) => this.handleSuccess('Retrait effectué avec succès !', tx),
         error: (e) => this.handleError(e)
       });
     }
@@ -429,6 +429,6 @@ export class TransactionFormComponent implements OnInit, OnDestroy {
   private handleError(err: any): void {
     console.error('Transaction failed', err);
     this.isSubmitting = false;
-    this.errorMessage = err.error?.message || 'Transaction failed. Please try again.';
+    this.errorMessage = err.error?.message || 'Échec de la transaction. Veuillez réessayer.';
   }
 }

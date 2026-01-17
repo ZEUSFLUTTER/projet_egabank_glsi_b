@@ -31,7 +31,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     };
     recentClients: ClientResponse[] = [];
     recentAccounts: AccountResponse[] = [];
-    
+
     private destroy$ = new Subject<void>();
 
     constructor(
@@ -46,7 +46,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         this.loadData();
-        
+
         // S'abonner aux changements du store pour rafraîchir automatiquement
         this.store.dataChanged$.pipe(
             takeUntil(this.destroy$)
@@ -64,7 +64,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
             }
         });
     }
-    
+
     ngOnDestroy() {
         this.destroy$.next();
         this.destroy$.complete();
@@ -73,15 +73,15 @@ export class DashboardComponent implements OnInit, OnDestroy {
     retry() {
         this.loadData();
     }
-    
+
     private updateLocalBalances(data: { numeroCompte: string, newBalance: number }) {
         // Mettre à jour le compte dans la liste récente
-        this.recentAccounts = this.recentAccounts.map(acc => 
-            acc.numeroCompte === data.numeroCompte 
+        this.recentAccounts = this.recentAccounts.map(acc =>
+            acc.numeroCompte === data.numeroCompte
                 ? { ...acc, solde: data.newBalance }
                 : acc
         );
-        
+
         // Recalculer le total balance approximatif
         // (Pour une vraie mise à jour, on recharge depuis le backend)
         this.loadData();
@@ -160,7 +160,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
                 console.error('[Dashboard] Fatal error loading data:', err);
                 this.isLoading = false;
                 this.hasError = true;
-                this.errorMessage = 'Failed to load dashboard data. Please check if the backend is running.';
+                this.errorMessage = 'Échec du chargement des données. Veuillez vérifier que le serveur est en marche.';
                 this.cdr.detectChanges();
             }
         });

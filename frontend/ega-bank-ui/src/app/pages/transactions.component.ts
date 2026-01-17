@@ -20,7 +20,7 @@ export class TransactionsComponent implements OnInit, OnDestroy {
   accountId: string | null = null;
   isLoading = true;
   errorMessage = '';
-  
+
   private destroy$ = new Subject<void>();
 
   constructor(
@@ -41,7 +41,7 @@ export class TransactionsComponent implements OnInit, OnDestroy {
         this.loadAllTransactions();
       }
     });
-    
+
     // S'abonner aux changements du store
     this.store.dataChanged$.pipe(
       takeUntil(this.destroy$)
@@ -56,7 +56,7 @@ export class TransactionsComponent implements OnInit, OnDestroy {
       }
     });
   }
-  
+
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
@@ -81,7 +81,7 @@ export class TransactionsComponent implements OnInit, OnDestroy {
       },
       error: (err) => {
         console.error('Failed to load all transactions', err);
-        this.errorMessage = 'Failed to load transactions.';
+        this.errorMessage = 'Échec du chargement des transactions.';
         this.isLoading = false;
         this.cdr.detectChanges();
       },
@@ -101,7 +101,7 @@ export class TransactionsComponent implements OnInit, OnDestroy {
       },
       error: (err) => {
         console.error('Failed to load account', err);
-        this.errorMessage = 'Failed to load account details.';
+        this.errorMessage = 'Échec du chargement des détails du compte.';
         this.cdr.detectChanges();
       },
     });
@@ -117,7 +117,7 @@ export class TransactionsComponent implements OnInit, OnDestroy {
       },
       error: (err) => {
         console.error('Failed to load transactions', err);
-        this.errorMessage = 'Failed to load transactions.';
+        this.errorMessage = 'Échec du chargement des transactions.';
         this.isLoading = false;
         this.cdr.detectChanges();
       },
@@ -126,10 +126,10 @@ export class TransactionsComponent implements OnInit, OnDestroy {
 
   getTypeDisplay(type: string): string {
     const types: Record<string, string> = {
-      DEPOT: 'Deposit',
-      RETRAIT: 'Withdrawal',
-      VIREMENT_ENTRANT: 'Transfer In',
-      VIREMENT_SORTANT: 'Transfer Out',
+      DEPOT: 'Dépôt',
+      RETRAIT: 'Retrait',
+      VIREMENT_ENTRANT: 'Virement reçu',
+      VIREMENT_SORTANT: 'Virement émis',
     };
     return types[type] || type;
   }
@@ -160,8 +160,8 @@ export class TransactionsComponent implements OnInit, OnDestroy {
 
   getAccountTypeDisplay(typeCompte: string): string {
     const types: Record<string, string> = {
-      EPARGNE: 'Savings',
-      COURANT: 'Checking',
+      EPARGNE: 'Épargne',
+      COURANT: 'Courant',
     };
     return types[typeCompte] || typeCompte;
   }

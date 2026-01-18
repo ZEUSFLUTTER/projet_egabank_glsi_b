@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ega.egabank.dto.request.LoginRequest;
 import com.ega.egabank.dto.request.AdminCreateUserRequest;
-import com.ega.egabank.dto.request.RegisterRequest;
+import com.ega.egabank.dto.request.ChangePasswordRequest;
 import com.ega.egabank.dto.response.AuthResponse;
 import com.ega.egabank.service.AuthService;
 
@@ -31,12 +31,6 @@ public class AuthController {
 
     private final AuthService authService;
 
-    @Operation(summary = "Inscription d'un nouvel utilisateur")
-    @PostMapping("/register")
-    public ResponseEntity<AuthResponse> register(@Valid @RequestBody RegisterRequest request) {
-        AuthResponse response = authService.register(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
-    }
 
     @Operation(summary = "Connexion d'un utilisateur")
     @PostMapping("/login")
@@ -58,5 +52,12 @@ public class AuthController {
     public ResponseEntity<AuthResponse> createClientUser(@Valid @RequestBody AdminCreateUserRequest request) {
         AuthResponse response = authService.createClientUser(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @Operation(summary = "Changer le mot de passe")
+    @PostMapping("/change-password")
+    public ResponseEntity<Void> changePassword(@Valid @RequestBody ChangePasswordRequest request) {
+        authService.changePassword(request.getCurrentPassword(), request.getNewPassword());
+        return ResponseEntity.noContent().build();
     }
 }

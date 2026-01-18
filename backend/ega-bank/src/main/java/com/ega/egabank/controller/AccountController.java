@@ -74,7 +74,7 @@ public class AccountController {
     public ResponseEntity<List<AccountResponse>> getMyAccounts() {
         Long clientId = securityService.getCurrentClientId();
         if (clientId == null) {
-            throw new OperationNotAllowedException("Aucun client associé à l'utilisateur connecté");
+            return ResponseEntity.ok(List.of());
         }
         return ResponseEntity.ok(accountService.getAccountsByClient(clientId));
     }

@@ -1,7 +1,9 @@
 <div class="p-6">
     <div class="mb-6">
         <h1 class="text-2xl font-bold mb-2">Dashboard</h1>
-        <p class="text-gray-500">Overview of your bank's performance.</p>
+        <p class="text-gray-500">
+            {{ isAdmin ? "Overview of your bank's performance." : 'Overview of your accounts and recent activity.' }}
+        </p>
     </div>
 
     <!-- Error State -->
@@ -23,7 +25,7 @@
     <!-- Stats Grid -->
     <div class="grid-dashboard">
         <!-- Total Clients -->
-        <div class="card p-4">
+        <div class="card p-4" *ngIf="isAdmin">
             <div class="flex items-center gap-2 text-sm text-gray-500 mb-1">
                 <i class="ri-user-line"></i>
                 <span>Total Clients</span>
@@ -36,7 +38,7 @@
         <div class="card p-4">
             <div class="flex items-center gap-2 text-sm text-gray-500 mb-1">
                 <i class="ri-bank-card-line"></i>
-                <span>Total Accounts</span>
+                <span>{{ isAdmin ? 'Total Accounts' : 'My Accounts' }}</span>
             </div>
             <div *ngIf="isLoading" class="skeleton skeleton-text" style="height: 2rem; width: 60%;"></div>
             <div *ngIf="!isLoading" class="text-2xl font-bold">{{ stats.totalAccounts }}</div>
@@ -46,7 +48,7 @@
         <div class="card p-4">
             <div class="flex items-center gap-2 text-sm text-gray-500 mb-1">
                 <i class="ri-checkbox-circle-line"></i>
-                <span>Active Accounts</span>
+                <span>{{ isAdmin ? 'Active Accounts' : 'Active My Accounts' }}</span>
             </div>
             <div *ngIf="isLoading" class="skeleton skeleton-text" style="height: 2rem; width: 60%;"></div>
             <div *ngIf="!isLoading" class="text-2xl font-bold text-success">{{ stats.activeAccounts }}</div>
@@ -56,7 +58,7 @@
         <div class="card p-4">
             <div class="flex items-center gap-2 text-sm text-gray-500 mb-1">
                 <i class="ri-money-dollar-circle-line"></i>
-                <span>Total Balance</span>
+                <span>{{ isAdmin ? 'Total Balance' : 'My Total Balance' }}</span>
             </div>
             <div *ngIf="isLoading" class="skeleton skeleton-text" style="height: 2rem; width: 60%;"></div>
             <div *ngIf="!isLoading" class="text-2xl font-bold text-primary">{{ stats.totalBalance |
@@ -66,7 +68,7 @@
 
     <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 1.5rem;">
         <!-- Recent Clients -->
-        <div class="card overflow-hidden">
+        <div class="card overflow-hidden" *ngIf="isAdmin">
             <div class="p-4 border-b flex justify-between items-center">
                 <h3 class="font-bold flex items-center gap-2">
                     <i class="ri-user-line text-primary"></i>
@@ -104,7 +106,7 @@
             <div class="p-4 border-b flex justify-between items-center">
                 <h3 class="font-bold flex items-center gap-2">
                     <i class="ri-bank-card-line text-primary"></i>
-                    Recent Accounts
+                    {{ isAdmin ? 'Recent Accounts' : 'My Accounts' }}
                 </h3>
                 <a [routerLink]="accountsRoute" class="text-sm text-primary" style="text-decoration: none;">View All</a>
             </div>
@@ -138,7 +140,7 @@
                         <i class="ri-bank-card-2-line"></i>
                     </div>
                     <p class="mb-2">No accounts yet.</p>
-                    <a [routerLink]="newAccountRoute" class="text-primary font-medium">
+                    <a *ngIf="isAdmin" [routerLink]="newAccountRoute" class="text-primary font-medium">
                         <i class="ri-add-line"></i> Open first account
                     </a>
                 </div>

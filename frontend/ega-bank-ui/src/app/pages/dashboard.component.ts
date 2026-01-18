@@ -8,6 +8,8 @@ import { PageResponse } from '../models/page.model';
 import { AccountService } from '../services/account.service';
 import { ClientService } from '../services/client.service';
 import { DashboardService } from '../services/dashboard.service';
+import { TransactionService } from '../services/transaction.service';
+import { AuthService } from '../services/auth.service';
 import { RouteHelperService } from '../services/route-helper.service';
 import { AppStore } from '../stores/app.store';
 
@@ -21,6 +23,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     isLoading = true;
     hasError = false;
     errorMessage = '';
+    isAdmin = false;
     private cdr: ChangeDetectorRef;
 
     stats = {
@@ -45,6 +48,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
         private clientService: ClientService,
         private accountService: AccountService,
         private dashboardService: DashboardService,
+        private transactionService: TransactionService,
+        private authService: AuthService,
         private store: AppStore,
         private routeHelper: RouteHelperService,
         cdr: ChangeDetectorRef
@@ -53,6 +58,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
+        this.isAdmin = this.authService.isAdmin();
         this.loadData();
 
         // S'abonner aux changements du store pour rafraîchir automatiquement
@@ -101,6 +107,47 @@ export class DashboardComponent implements OnInit, OnDestroy {
         this.errorMessage = '';
 
         console.log('[Dashboard] Starting data load...');
+
+        if (!this.isAdmin) {
+            forkJoin({
+                accounts: this.accountService.getMine().pipe(
+                    timeout(10000),
+                    catchError(err => {
+                        console.error('[Dashboard] Error loading accounts:', err);
+                        return of([] as AccountResponse[]);
+                    })
+                ),
+                transactions: this.transactionService.getMine().pipe(
+                    timeout(10000),
+                    catchError(err => {
+                        console.error('[Dashboard] Error loading transactions:', err);
+                        return of([]);
+                    })
+                )
+            }).subscribe({
+                next: ({ accounts, transactions }) => {
+                    this.stats.totalClients = 0;
+                    this.stats.totalAccounts = accounts.length;
+                    this.stats.activeAccounts = accounts.filter(acc => acc.actif).length;
+                    this.stats.totalBalance = accounts.reduce((sum, acc) => sum + (acc.solde || 0), 0);
+                    this.stats.totalTransactions = transactions.length;
+
+                    this.recentClients = [];
+                    this.recentAccounts = accounts;
+
+                    this.isLoading = false;
+                    this.cdr.detectChanges();
+                },
+                error: (err: any) => {
+                    console.error('[Dashboard] Fatal error loading client data:', err);
+                    this.isLoading = false;
+                    this.hasError = true;
+                    this.errorMessage = 'Failed to load your dashboard data. Please check if the backend is running.';
+                    this.cdr.detectChanges();
+                }
+            });
+            return;
+        }
 
         // Execute requests in parallel using forkJoin
         forkJoin({

@@ -35,4 +35,12 @@ export class AccountService {
   deactivate(id: number): Observable<any> {
     return this.api.put(`/accounts/${id}/deactivate`, {});
   }
+
+  activate(id: number): Observable<any> {
+    return this.api.put(`/accounts/${id}/activate`, {});
+  }
+
+  updateStatus(numeroCompte: string, actif: boolean): Observable<any> {
+    return actif ? this.activate(Number(numeroCompte)) : this.deactivate(Number(numeroCompte));
+  }
 }

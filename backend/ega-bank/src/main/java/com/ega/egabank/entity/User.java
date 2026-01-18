@@ -38,6 +38,9 @@ public class User {
     @Column(nullable = false)
     private Boolean enabled = true;
 
+    @Column(nullable = false)
+    private Boolean mustChangePassword = false;
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 

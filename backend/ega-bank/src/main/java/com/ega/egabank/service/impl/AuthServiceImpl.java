@@ -9,7 +9,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.ega.egabank.dto.request.AdminCreateUserRequest;
 import com.ega.egabank.dto.request.LoginRequest;
-import com.ega.egabank.dto.request.RegisterRequest;
 import com.ega.egabank.dto.response.AuthResponse;
 import com.ega.egabank.entity.Client;
 import com.ega.egabank.entity.User;
@@ -19,6 +18,7 @@ import com.ega.egabank.mapper.ClientMapper;
 import com.ega.egabank.repository.ClientRepository;
 import com.ega.egabank.repository.UserRepository;
 import com.ega.egabank.security.JwtTokenProvider;
+import com.ega.egabank.security.SecurityService;
 import com.ega.egabank.service.AuthService;
 
 import lombok.RequiredArgsConstructor;
@@ -39,49 +39,8 @@ public class AuthServiceImpl implements AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider tokenProvider;
     private final AuthenticationManager authenticationManager;
+    private final SecurityService securityService;
 
-    @Override
-    public AuthResponse register(RegisterRequest request) {
-        log.info("Inscription d'un nouvel utilisateur: {}", request.getUsername());
-
-        // Vérifier l'unicité du username
-        if (userRepository.existsByUsername(request.getUsername())) {
-            throw new DuplicateResourceException("Utilisateur", "username", request.getUsername());
-        }
-
-        // Vérifier l'unicité de l'email
-        if (userRepository.existsByEmail(request.getEmail())) {
-            throw new DuplicateResourceException("Utilisateur", "email", request.getEmail());
-        }
-
-        Client client = ensureClientForRegistration(request.getEmail());
-
-        // Créer l'utilisateur
-        User user = User.builder()
-                .username(request.getUsername())
-                .email(request.getEmail())
-                .password(passwordEncoder.encode(request.getPassword()))
-                .role(Role.ROLE_USER)
-                .enabled(true)
-                .client(client)
-                .build();
-
-        user = userRepository.save(user);
-
-        // Générer les tokens
-        String accessToken = tokenProvider.generateAccessToken(user.getUsername());
-        String refreshToken = tokenProvider.generateRefreshToken(user.getUsername());
-
-        log.info("Utilisateur créé avec succès: {}", user.getUsername());
-
-        return AuthResponse.of(
-                accessToken,
-                refreshToken,
-                tokenProvider.getExpirationTime(),
-                user.getUsername(),
-                user.getEmail(),
-                user.getRole().name());
-    }
 
     @Override
     public AuthResponse login(LoginRequest request) {
@@ -106,7 +65,22 @@ public class AuthServiceImpl implements AuthService {
                 tokenProvider.getExpirationTime(),
                 user.getUsername(),
                 user.getEmail(),
-                user.getRole().name());
+                user.getRole().name(),
+                user.getMustChangePassword());
+    }
+
+    @Override
+    public void changePassword(String currentPassword, String newPassword) {
+        User user = securityService.getCurrentUser()
+                .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
+
+        if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
+            throw new RuntimeException("Mot de passe actuel incorrect");
+        }
+
+        user.setPassword(passwordEncoder.encode(newPassword));
+        user.setMustChangePassword(false);
+        userRepository.save(user);
     }
 
     @Override
@@ -132,7 +106,8 @@ public class AuthServiceImpl implements AuthService {
                 tokenProvider.getExpirationTime(),
                 user.getUsername(),
                 user.getEmail(),
-                user.getRole().name());
+                user.getRole().name(),
+                user.getMustChangePassword());
     }
 
     @Override
@@ -164,6 +139,7 @@ public class AuthServiceImpl implements AuthService {
                 .password(passwordEncoder.encode(request.getPassword()))
                 .role(Role.ROLE_USER)
                 .enabled(true)
+                .mustChangePassword(true)
                 .client(client)
                 .build();
 
@@ -178,11 +154,8 @@ public class AuthServiceImpl implements AuthService {
                 tokenProvider.getExpirationTime(),
                 user.getUsername(),
                 user.getEmail(),
-                user.getRole().name());
+                user.getRole().name(),
+                user.getMustChangePassword());
     }
 
-    private Client ensureClientForRegistration(String email) {
-        return clientRepository.findByCourriel(email)
-                .orElseGet(() -> clientRepository.save(Client.builder().courriel(email).build()));
-    }
 }

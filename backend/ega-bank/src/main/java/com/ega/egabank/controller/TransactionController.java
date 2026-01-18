@@ -81,7 +81,7 @@ public class TransactionController {
     public ResponseEntity<List<TransactionResponse>> getMyTransactions() {
         Long clientId = securityService.getCurrentClientId();
         if (clientId == null) {
-            throw new OperationNotAllowedException("Aucun client associé à l'utilisateur connecté");
+            return ResponseEntity.ok(List.of());
         }
         return ResponseEntity.ok(transactionService.getAllTransactionsForClient(clientId));
     }

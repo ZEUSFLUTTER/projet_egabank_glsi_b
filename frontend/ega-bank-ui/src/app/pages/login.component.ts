@@ -1,13 +1,13 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink],
+  imports: [CommonModule, ReactiveFormsModule],
   template: `
     <div class="login-layout">
       <div class="card login-card">
@@ -68,7 +68,7 @@ import { AuthService } from '../services/auth.service';
         </form>
 
         <div class="footer">
-          Don't have an account? <a routerLink="/register" class="link">Register</a>
+          Contact your administrator if you need an account.
         </div>
       </div>
     </div>
@@ -217,6 +217,11 @@ export class LoginComponent implements OnInit {
         this.isLoading = false;
 
         // Redirection automatique selon le rôle de l'utilisateur
+        if (this.auth.mustChangePassword()) {
+          this.router.navigateByUrl(this.auth.isAdmin() ? '/admin/settings' : '/client/settings');
+          return;
+        }
+
         if (this.auth.isAdmin()) {
           // Admin → Interface d'administration
           this.router.navigateByUrl('/admin/dashboard');

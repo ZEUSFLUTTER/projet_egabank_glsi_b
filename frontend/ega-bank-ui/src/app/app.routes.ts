@@ -11,15 +11,15 @@ import { ClientCreateComponent } from './pages/client-create.component';
 import { ClientsComponent } from './pages/clients.component';
 import { DashboardComponent } from './pages/dashboard.component';
 import { LoginComponent } from './pages/login.component';
-import { RegisterComponent } from './pages/register.component';
 import { SettingsComponent } from './pages/settings.component';
 import { TransactionFormComponent } from './pages/transaction-form.component';
 import { TransactionsComponent } from './pages/transactions.component';
+import { LandingComponent } from './pages/landing.component';
 
 export const routes: Routes = [
 	// Routes publiques
+	{ path: '', component: LandingComponent },
 	{ path: 'login', component: LoginComponent },
-	{ path: 'register', component: RegisterComponent },
 
 	// Routes ADMIN uniquement (gestion des clients et comptes pour tous)
 	{
@@ -51,9 +51,6 @@ export const routes: Routes = [
 		]
 	},
 
-	// Redirection racine vers login (la logique de redirection selon le rôle est dans LoginComponent)
-	{ path: '', redirectTo: 'login', pathMatch: 'full' },
-
-	// Route wildcard
-	{ path: '**', redirectTo: 'login' },
+	// Route wildcard vers landing
+	{ path: '**', redirectTo: '', pathMatch: 'full' },
 ];

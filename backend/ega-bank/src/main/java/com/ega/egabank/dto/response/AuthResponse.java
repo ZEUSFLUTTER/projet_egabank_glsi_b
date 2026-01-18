@@ -21,9 +21,10 @@ public class AuthResponse {
     private String username;
     private String email;
     private String role;
+    private Boolean mustChangePassword;
 
     public static AuthResponse of(String accessToken, String refreshToken, Long expiresIn,
-            String username, String email, String role) {
+            String username, String email, String role, Boolean mustChangePassword) {
         return AuthResponse.builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
@@ -32,6 +33,7 @@ public class AuthResponse {
                 .username(username)
                 .email(email)
                 .role(role)
+                .mustChangePassword(mustChangePassword)
                 .build();
     }
 }

@@ -13,19 +13,6 @@ export class AuthService {
     private store: AppStore
   ) { }
 
-  register(payload: any): Observable<any> {
-    return this.api.post('/auth/register', payload).pipe(
-      tap((res: any) => {
-        if (res?.accessToken) localStorage.setItem('accessToken', res.accessToken);
-        if (res?.refreshToken) localStorage.setItem('refreshToken', res.refreshToken);
-        // Sauvegarder les infos utilisateur
-        if (res?.username) localStorage.setItem('username', res.username);
-        if (res?.email) localStorage.setItem('email', res.email);
-        if (res?.role) localStorage.setItem('role', res.role);
-      })
-    );
-  }
-
   login(payload: any): Observable<any> {
     return this.api.post('/auth/login', payload).pipe(
       tap((res: any) => {
@@ -35,8 +22,39 @@ export class AuthService {
         if (res?.username) localStorage.setItem('username', res.username);
         if (res?.email) localStorage.setItem('email', res.email);
         if (res?.role) localStorage.setItem('role', res.role);
+        if (res?.mustChangePassword !== undefined) {
+          localStorage.setItem('mustChangePassword', String(res.mustChangePassword));
+        }
       })
     );
+  }
+
+  register(payload: { email: string; username: string; password: string }): Observable<any> {
+    return this.api.post('/auth/register', payload).pipe(
+      tap((res: any) => {
+        if (res?.accessToken) localStorage.setItem('accessToken', res.accessToken);
+        if (res?.refreshToken) localStorage.setItem('refreshToken', res.refreshToken);
+        if (res?.username) localStorage.setItem('username', res.username);
+        if (res?.email) localStorage.setItem('email', res.email);
+        if (res?.role) localStorage.setItem('role', res.role);
+        if (res?.mustChangePassword !== undefined) {
+          localStorage.setItem('mustChangePassword', String(res.mustChangePassword));
+        }
+      })
+    );
+  }
+
+  createClientUser(payload: {
+    username: string;
+    email: string;
+    password: string;
+    client: any;
+  }): Observable<any> {
+    return this.api.post('/auth/admin/create-client-user', payload);
+  }
+
+  changePassword(payload: { currentPassword: string; newPassword: string }): Observable<void> {
+    return this.api.post<void>('/auth/change-password', payload);
   }
 
   refreshToken(refreshToken: string): Observable<any> {
@@ -49,6 +67,7 @@ export class AuthService {
     localStorage.removeItem('username');
     localStorage.removeItem('email');
     localStorage.removeItem('role');
+    localStorage.removeItem('mustChangePassword');
 
     // Réinitialiser le store pour nettoyer l'état
     this.store.reset();
@@ -162,6 +181,10 @@ export class AuthService {
    */
   getUserRole(): string | null {
     return localStorage.getItem('role');
+  }
+
+  mustChangePassword(): boolean {
+    return localStorage.getItem('mustChangePassword') === 'true';
   }
 
   /**

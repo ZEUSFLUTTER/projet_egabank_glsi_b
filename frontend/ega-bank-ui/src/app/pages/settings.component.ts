@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ClientResponse } from '../models/client.model';
 import { ClientService } from '../services/client.service';
+import { AuthService } from '../services/auth.service';
 
 @Component({
     standalone: true,
@@ -20,6 +21,7 @@ import { ClientService } from '../services/client.service';
         <div class="md:col-span-1">
           <div class="card p-2 sticky top-24">
             <button 
+              *ngIf="!isAdmin"
               (click)="activeTab = 'profile'"
               [class.bg-blue-50]="activeTab === 'profile'"
               [class.text-primary]="activeTab === 'profile'"
@@ -36,6 +38,7 @@ import { ClientService } from '../services/client.service';
               <span class="font-medium">Security</span>
             </button>
             <button 
+              *ngIf="!isAdmin"
               (click)="activeTab = 'notifications'"
               [class.bg-blue-50]="activeTab === 'notifications'"
               [class.text-primary]="activeTab === 'notifications'"
@@ -50,7 +53,7 @@ import { ClientService } from '../services/client.service';
         <div class="md:col-span-2 space-y-6">
           
           <!-- Profile Tab -->
-          <div *ngIf="activeTab === 'profile'" class="card p-6 animate-fade-in">
+          <div *ngIf="!isAdmin && activeTab === 'profile'" class="card p-6 animate-fade-in">
             <div *ngIf="isLoading" class="text-sm text-gray-500 mb-4">Chargement du profil...</div>
             <h2 class="text-xl font-bold mb-6 flex items-center gap-2">
               <i class="ri-user-smile-line text-primary"></i> Personal Information
@@ -108,19 +111,19 @@ import { ClientService } from '../services/client.service';
               <i class="ri-lock-password-line text-primary"></i> Password & Security
             </h2>
 
-            <form class="space-y-4">
+            <form class="space-y-4" (ngSubmit)="updatePassword()">
               <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1">Current Password</label>
-                <input type="password" class="input w-full" placeholder="Enter current password" />
+                <input type="password" class="input w-full" placeholder="Enter current password" [(ngModel)]="passwordForm.currentPassword" name="currentPassword" />
               </div>
               <div class="grid grid-cols-2 gap-4">
                 <div>
                   <label class="block text-sm font-medium text-gray-700 mb-1">New Password</label>
-                  <input type="password" class="input w-full" placeholder="Enter new password" />
+                  <input type="password" class="input w-full" placeholder="Enter new password" [(ngModel)]="passwordForm.newPassword" name="newPassword" />
                 </div>
                 <div>
                   <label class="block text-sm font-medium text-gray-700 mb-1">Confirm New Password</label>
-                  <input type="password" class="input w-full" placeholder="Confirm new password" />
+                  <input type="password" class="input w-full" placeholder="Confirm new password" [(ngModel)]="passwordForm.confirmPassword" name="confirmPassword" />
                 </div>
               </div>
               
@@ -138,13 +141,13 @@ import { ClientService } from '../services/client.service';
               </div>
 
               <div class="pt-2 flex justify-end">
-                <button type="button" class="btn btn-primary" (click)="updatePassword()">Update Password</button>
+                <button type="submit" class="btn btn-primary">Update Password</button>
               </div>
             </form>
           </div>
 
            <!-- Notifications Tab -->
-          <div *ngIf="activeTab === 'notifications'" class="card p-6 animate-fade-in">
+          <div *ngIf="!isAdmin && activeTab === 'notifications'" class="card p-6 animate-fade-in">
              <h2 class="text-xl font-bold mb-6 flex items-center gap-2">
               <i class="ri-notification-badge-line text-primary"></i> Notification Preferences
             </h2>
@@ -213,11 +216,24 @@ export class SettingsComponent implements OnInit {
     isSaving = false;
     isLoading = false;
     profile: ClientResponse | null = null;
+    passwordForm = {
+      currentPassword: '',
+      newPassword: '',
+      confirmPassword: ''
+    };
 
-    constructor(private clientService: ClientService) {}
+    constructor(private clientService: ClientService, private auth: AuthService) {}
+
+    get isAdmin(): boolean {
+      return this.auth.isAdmin();
+    }
 
     ngOnInit(): void {
-        this.loadProfile();
+        if (this.isAdmin) {
+            this.activeTab = 'security';
+        } else {
+            this.loadProfile();
+        }
     }
 
     loadProfile() {
@@ -243,7 +259,29 @@ export class SettingsComponent implements OnInit {
     }
 
     updatePassword() {
-        // Simulate API call
-        alert('Password updated successfully!');
+        if (!this.passwordForm.currentPassword || !this.passwordForm.newPassword) {
+            alert('Please complete all password fields.');
+            return;
+        }
+
+        if (this.passwordForm.newPassword !== this.passwordForm.confirmPassword) {
+            alert('New password and confirmation do not match.');
+            return;
+        }
+
+        this.auth.changePassword({
+            currentPassword: this.passwordForm.currentPassword,
+            newPassword: this.passwordForm.newPassword
+        }).subscribe({
+            next: () => {
+                localStorage.setItem('mustChangePassword', 'false');
+                this.passwordForm = { currentPassword: '', newPassword: '', confirmPassword: '' };
+                alert('Password updated successfully!');
+            },
+            error: (err) => {
+                console.error('Password update failed', err);
+                alert(err.error?.message || 'Failed to update password.');
+            }
+        });
     }
 }

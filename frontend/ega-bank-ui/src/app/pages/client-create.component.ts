@@ -40,6 +40,18 @@ import { AuthService } from '../services/auth.service';
             <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
             <input type="email" formControlName="courriel" class="form-input" placeholder="client@example.com" />
         </div>
+        <div *ngIf="!isEditMode" class="border-t border-gray-200 pt-4 mt-4">
+          <h3 class="text-lg font-semibold mb-3">Login Credentials</h3>
+          <div class="mb-4">
+              <label class="block text-sm font-medium text-gray-700 mb-2">Username</label>
+              <input formControlName="username" class="form-input" placeholder="client username" />
+          </div>
+          <div class="mb-6">
+              <label class="block text-sm font-medium text-gray-700 mb-2">Temporary Password</label>
+              <input type="password" formControlName="password" class="form-input" placeholder="temporary password" />
+              <p class="text-xs text-gray-500 mt-1">Client will be asked to change password at first login.</p>
+          </div>
+        </div>
         <div class="flex gap-4">
           <button type="button" routerLink="/admin/clients" class="btn btn-secondary flex-1">Cancel</button>
           <button type="submit" [disabled]="form.invalid || isLoading" class="btn btn-primary flex-1">
@@ -99,6 +111,8 @@ export class ClientCreateComponent implements OnInit {
       sexe: ['MASCULIN', Validators.required],
       telephone: [''],
       courriel: ['', Validators.email],
+      username: ['', Validators.required],
+      password: ['', [Validators.required, Validators.minLength(6)]],
     });
   }
 
@@ -156,7 +170,21 @@ export class ClientCreateComponent implements OnInit {
         }
       });
     } else {
-      this.clientService.create(payload).subscribe({
+      const clientPayload = {
+        nom: payload.nom,
+        prenom: payload.prenom,
+        dateNaissance: payload.dateNaissance,
+        sexe: payload.sexe,
+        telephone: payload.telephone,
+        courriel: payload.courriel
+      };
+
+      this.authService.createClientUser({
+        username: payload.username,
+        email: payload.courriel,
+        password: payload.password,
+        client: clientPayload
+      }).subscribe({
         next: () => this.router.navigateByUrl('/admin/clients'),
         error: (err) => {
           console.error('Create failed', err);

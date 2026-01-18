@@ -1,10 +1,12 @@
 <div class="p-6">
     <div class="mb-6 flex justify-between items-center">
         <div>
-            <h1 class="text-2xl font-bold mb-2">Account Management</h1>
-            <p class="text-gray-500">Overview of all customer accounts and financial holdings.</p>
+            <h1 class="text-2xl font-bold mb-2">{{ isAdmin ? 'Account Management' : 'My Accounts' }}</h1>
+            <p class="text-gray-500">
+                {{ isAdmin ? 'Overview of all customer accounts and financial holdings.' : 'Overview of your accounts and balances.' }}
+            </p>
         </div>
-        <a routerLink="/admin/accounts/new" class="btn btn-primary">
+        <a *ngIf="isAdmin" routerLink="/admin/accounts/new" class="btn btn-primary">
             <i class="ri-add-circle-line" style="margin-right: 0.5rem;"></i> Open Account
         </a>
     </div>
@@ -24,7 +26,7 @@
                 <thead>
                     <tr>
                         <th>Account</th>
-                        <th>Client</th>
+                        <th *ngIf="isAdmin">Client</th>
                         <th>Status</th>
                         <th>Created</th>
                         <th class="text-right">Balance</th>
@@ -81,7 +83,7 @@
                             </div>
                             <div class="text-sm text-gray-500 font-mono">{{ account.numeroCompte }}</div>
                         </td>
-                        <td>
+                        <td *ngIf="isAdmin">
                             <span *ngIf="account.clientNomComplet" class="flex items-center gap-1">
                                 <i class="ri-user-line text-gray-400"></i>
                                 {{ account.clientNomComplet }}
@@ -91,7 +93,7 @@
                             </span>
                         </td>
                         <td>
-                            <span class="badge" [ngClass]="getStatusClass(account.actif)">
+                            <span class="badge flex items-center gap-1" [ngClass]="getStatusClass(account.actif)">
                                 <i [class]="account.actif ? 'ri-checkbox-circle-line' : 'ri-close-circle-line'"></i>
                                 {{ getStatusDisplay(account.actif) }}
                             </span>
@@ -103,9 +105,14 @@
                             {{ account.solde | currency:'XOF':'symbol':'1.0-0' }}
                         </td>
                         <td>
-                            <button (click)="viewTransactions(account.numeroCompte)" class="btn btn-sm btn-secondary">
-                                <i class="ri-exchange-dollar-line"></i> Transactions
-                            </button>
+                            <div class="flex gap-1">
+                                <button (click)="viewTransactions(account.numeroCompte)" class="btn btn-sm btn-outline-info" title="View Transactions">
+                                    <i class="ri-history-line"></i>
+                                </button>
+                                <button *ngIf="isAdmin" (click)="toggleStatus(account)" class="btn btn-sm" [class.btn-outline-success]="!account.actif" [class.btn-outline-warning]="account.actif" :title="account.actif ? 'Deactivate Account' : 'Activate Account'">
+                                    <i [class]="account.actif ? 'ri-stop-circle-line' : 'ri-play-circle-line'"></i>
+                                </button>
+                            </div>
                         </td>
                     </tr>
                 </tbody>

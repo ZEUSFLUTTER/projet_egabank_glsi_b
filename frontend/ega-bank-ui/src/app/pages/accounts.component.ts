@@ -19,6 +19,7 @@ export class AccountsComponent implements OnInit, OnDestroy {
   clientId: number | null = null;
   isLoading = true;
   errorMessage = '';
+  isAdmin = false;
   // Cache for client names
   private clientCache: Map<number, string> = new Map();
   private destroy$ = new Subject<void>();
@@ -34,6 +35,7 @@ export class AccountsComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
+    this.isAdmin = this.authService.isAdmin();
     this.route.queryParamMap.subscribe((map) => {
       const clientIdParam = map.get('clientId');
       this.clientId = clientIdParam ? Number(clientIdParam) : null;
@@ -127,5 +129,39 @@ export class AccountsComponent implements OnInit, OnDestroy {
 
   viewTransactions(numeroCompte: string) {
     this.router.navigate(['/transactions'], { queryParams: { accountId: numeroCompte } });
+  }
+
+  editAccount(account: AccountResponse) {
+    this.router.navigate(['/admin/accounts/edit', account.numeroCompte]);
+  }
+
+  toggleStatus(account: AccountResponse) {
+    const newStatus = !account.actif;
+    if (confirm(`Are you sure you want to ${newStatus ? 'activate' : 'deactivate'} this account?`)) {
+      this.accountService.updateStatus(account.numeroCompte, newStatus).subscribe({
+        next: () => {
+          account.actif = newStatus;
+          this.cdr.detectChanges();
+        },
+        error: (err) => {
+          console.error('Failed to toggle status', err);
+          alert('Failed to update account status.');
+        }
+      });
+    }
+  }
+
+  deleteAccount(numeroCompte: string) {
+    if (confirm('Are you sure you want to delete this account? This action cannot be undone.')) {
+      this.accountService.delete(Number(numeroCompte)).subscribe({
+        next: () => {
+          this.loadAccounts();
+        },
+        error: (err: any) => {
+          console.error('Failed to delete account', err);
+          alert('Failed to delete account.');
+        }
+      });
+    }
   }
 }

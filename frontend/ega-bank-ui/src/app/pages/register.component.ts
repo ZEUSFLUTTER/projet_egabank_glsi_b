@@ -230,7 +230,7 @@ export class RegisterComponent {
           this.router.navigateByUrl('/client/dashboard');
         }
       },
-      error: (err) => {
+      error: (err: any) => {
         this.isLoading = false;
         console.error('Register failed', err);
 

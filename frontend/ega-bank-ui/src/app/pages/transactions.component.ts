@@ -1,18 +1,20 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 import { AccountResponse } from '../models/account.model';
 import { TransactionResponse } from '../models/transaction.model';
 import { AccountService } from '../services/account.service';
 import { TransactionService } from '../services/transaction.service';
+import { StatementService } from '../services/statement.service';
 import { AppStore } from '../stores/app.store';
 import { AuthService } from '../services/auth.service';
 
 @Component({
   standalone: true,
   selector: 'app-transactions',
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, FormsModule],
   templateUrl: './transactions.component.html',
 })
 export class TransactionsComponent implements OnInit, OnDestroy {
@@ -22,6 +24,13 @@ export class TransactionsComponent implements OnInit, OnDestroy {
   isLoading = true;
   errorMessage = '';
 
+  // Statement download modal
+  showStatementModal = false;
+  statementStartDate = '';
+  statementEndDate = '';
+  isDownloading = false;
+  downloadError = '';
+
   isAdmin = false;
   clientId: number | null = null;
   private destroy$ = new Subject<void>();
@@ -30,10 +39,18 @@ export class TransactionsComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private txService: TransactionService,
     private accountService: AccountService,
+    private statementService: StatementService,
     private store: AppStore,
     private cdr: ChangeDetectorRef,
     private authService: AuthService
-  ) { }
+  ) {
+    // Initialize default dates (last 30 days)
+    const today = new Date();
+    const thirtyDaysAgo = new Date(today);
+    thirtyDaysAgo.setDate(today.getDate() - 30);
+    this.statementEndDate = today.toISOString().split('T')[0];
+    this.statementStartDate = thirtyDaysAgo.toISOString().split('T')[0];
+  }
 
   ngOnInit(): void {
     this.isAdmin = this.authService.getUserRole() === 'ROLE_ADMIN';
@@ -178,5 +195,54 @@ export class TransactionsComponent implements OnInit, OnDestroy {
       COURANT: 'Courant',
     };
     return types[typeCompte] || typeCompte;
+  }
+
+  // Statement download methods
+  openStatementModal(): void {
+    this.showStatementModal = true;
+    this.downloadError = '';
+  }
+
+  closeStatementModal(): void {
+    this.showStatementModal = false;
+    this.downloadError = '';
+  }
+
+  downloadStatement(): void {
+    if (!this.accountId || !this.statementStartDate || !this.statementEndDate) {
+      this.downloadError = 'Veuillez sélectionner les dates.';
+      return;
+    }
+
+    this.isDownloading = true;
+    this.downloadError = '';
+
+    this.statementService.downloadStatement(
+      this.accountId,
+      this.statementStartDate,
+      this.statementEndDate
+    ).subscribe({
+      next: (blob) => {
+        // Create download link
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `releve_${this.accountId}_${this.statementStartDate}_${this.statementEndDate}.pdf`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+
+        this.isDownloading = false;
+        this.closeStatementModal();
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('Failed to download statement', err);
+        this.downloadError = 'Échec du téléchargement. Veuillez réessayer.';
+        this.isDownloading = false;
+        this.cdr.detectChanges();
+      }
+    });
   }
 }

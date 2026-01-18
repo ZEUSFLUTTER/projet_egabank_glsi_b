@@ -218,6 +218,64 @@ import { AuthService } from '../services/auth.service';
         </div>
       </div>
     </div>
+
+    <!-- Payment Processor Simulation Modal -->
+    <div *ngIf="showPaymentProcessor" class="payment-overlay">
+      <div class="payment-modal">
+        <div class="payment-header">
+          <div class="payment-logo">
+            <i class="ri-bank-card-line"></i>
+          </div>
+          <h2>{{ selectedType === 'DEPOT' ? 'Dépôt en cours' : 'Retrait en cours' }}</h2>
+        </div>
+
+        <div class="payment-amount">
+          {{ form.get('amount')?.value | number:'1.0-0' }} <span class="currency">FCFA</span>
+        </div>
+
+        <div class="payment-steps">
+          <div class="step" [class.active]="processingStep >= 1" [class.done]="processingStep > 1">
+            <div class="step-icon">
+              <i *ngIf="processingStep <= 1" class="ri-shield-check-line"></i>
+              <i *ngIf="processingStep > 1" class="ri-check-line"></i>
+            </div>
+            <span>Validation</span>
+          </div>
+          
+          <div class="step-connector" [class.active]="processingStep >= 2"></div>
+          
+          <div class="step" [class.active]="processingStep >= 2" [class.done]="processingStep > 2">
+            <div class="step-icon">
+              <i *ngIf="processingStep <= 2" class="ri-bank-card-line"></i>
+              <i *ngIf="processingStep > 2" class="ri-check-line"></i>
+            </div>
+            <span>Traitement</span>
+          </div>
+          
+          <div class="step-connector" [class.active]="processingStep >= 3"></div>
+          
+          <div class="step" [class.active]="processingStep >= 3" [class.done]="processingStep > 3">
+            <div class="step-icon">
+              <i *ngIf="processingStep <= 3" class="ri-secure-payment-line"></i>
+              <i *ngIf="processingStep > 3" class="ri-check-line"></i>
+            </div>
+            <span>Finalisation</span>
+          </div>
+        </div>
+
+        <div class="payment-status" [class.success]="processingStep === 4">
+          <div class="status-icon" [class.spinning]="processingStep < 4">
+            <i [class]="processingStep === 4 ? 'ri-checkbox-circle-fill' : processingIcon"></i>
+          </div>
+          <p>{{ processingMessage }}</p>
+        </div>
+
+        <div *ngIf="processingStep === 4" class="payment-success-badge">
+          <i class="ri-check-double-line"></i>
+          Opération réussie
+        </div>
+      </div>
+    </div>
   `,
   styles: [`
     .tx-container {
@@ -827,6 +885,215 @@ import { AuthService } from '../services/auth.service';
         padding: 1rem 4rem 1rem 1rem;
       }
     }
+
+    /* ===== PAYMENT PROCESSOR MODAL ===== */
+    .payment-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(15, 23, 42, 0.8);
+      backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      animation: fadeIn 0.3s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .payment-modal {
+      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+      border-radius: 24px;
+      padding: 2.5rem;
+      width: 100%;
+      max-width: 420px;
+      text-align: center;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+      animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px) scale(0.95);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    .payment-header {
+      margin-bottom: 1.5rem;
+    }
+
+    .payment-logo {
+      width: 64px;
+      height: 64px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, #3b82f6, #2563eb);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1rem;
+      font-size: 1.75rem;
+      color: white;
+      box-shadow: 0 8px 24px rgba(59, 130, 246, 0.4);
+    }
+
+    .payment-header h2 {
+      color: white;
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin: 0;
+    }
+
+    .payment-amount {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: white;
+      margin-bottom: 2rem;
+      letter-spacing: -0.02em;
+    }
+
+    .payment-amount .currency {
+      font-size: 1.25rem;
+      color: rgba(255, 255, 255, 0.6);
+      font-weight: 500;
+    }
+
+    .payment-steps {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .payment-steps .step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      opacity: 0.4;
+      transition: all 0.3s;
+    }
+
+    .payment-steps .step.active {
+      opacity: 1;
+    }
+
+    .payment-steps .step.done .step-icon {
+      background: #10b981;
+    }
+
+    .payment-steps .step-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.125rem;
+      transition: background 0.3s;
+    }
+
+    .payment-steps .step.active .step-icon {
+      background: #3b82f6;
+    }
+
+    .payment-steps .step span {
+      font-size: 0.75rem;
+      color: rgba(255, 255, 255, 0.7);
+      font-weight: 500;
+    }
+
+    .payment-steps .step-connector {
+      width: 40px;
+      height: 2px;
+      background: rgba(255, 255, 255, 0.2);
+      margin-bottom: 1.5rem;
+      transition: background 0.3s;
+    }
+
+    .payment-steps .step-connector.active {
+      background: #10b981;
+    }
+
+    .payment-status {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .payment-status .status-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #3b82f6;
+      font-size: 1.5rem;
+    }
+
+    .payment-status .status-icon.spinning i {
+      animation: spin 1s linear infinite;
+    }
+
+    .payment-status.success .status-icon {
+      background: rgba(16, 185, 129, 0.2);
+      color: #10b981;
+    }
+
+    .payment-status p {
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 0.9375rem;
+      margin: 0;
+    }
+
+    .payment-success-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(16, 185, 129, 0.2);
+      color: #10b981;
+      padding: 0.75rem 1.5rem;
+      border-radius: 100px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      margin-top: 1.5rem;
+      animation: bounceIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    }
+
+    @keyframes bounceIn {
+      0% {
+        opacity: 0;
+        transform: scale(0.3);
+      }
+      50% {
+        opacity: 1;
+        transform: scale(1.1);
+      }
+      100% {
+        transform: scale(1);
+      }
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
   `]
 })
 export class TransactionFormComponent implements OnInit, OnDestroy {
@@ -840,6 +1107,12 @@ export class TransactionFormComponent implements OnInit, OnDestroy {
   successMessage = '';
   returnAccountId: string | null = null;
   selectedType: 'DEPOT' | 'RETRAIT' | 'VIREMENT' = 'DEPOT';
+
+  // Payment processor simulation
+  showPaymentProcessor = false;
+  processingStep = 0; // 0: idle, 1: validating, 2: processing, 3: finalizing, 4: done
+  processingMessage = '';
+  processingIcon = '';
 
   private destroy$ = new Subject<void>();
 
@@ -989,9 +1262,51 @@ export class TransactionFormComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.isSubmitting = true;
     this.errorMessage = '';
     this.successMessage = '';
+
+    // Pour les dépôts et retraits, afficher la simulation du processeur de paiement
+    if (v.type === 'DEPOT' || v.type === 'RETRAIT') {
+      this.startPaymentSimulation();
+    } else {
+      // Virement direct sans simulation
+      this.isSubmitting = true;
+      this.executeTransaction();
+    }
+  }
+
+  private startPaymentSimulation(): void {
+    this.showPaymentProcessor = true;
+    this.processingStep = 1;
+    this.processingMessage = 'Vérification des informations...';
+    this.processingIcon = 'ri-shield-check-line';
+    this.cdr.detectChanges();
+
+    // Étape 1: Validation (1.2s)
+    setTimeout(() => {
+      this.processingStep = 2;
+      this.processingMessage = 'Traitement bancaire en cours...';
+      this.processingIcon = 'ri-bank-card-line';
+      this.cdr.detectChanges();
+
+      // Étape 2: Traitement (1.5s)
+      setTimeout(() => {
+        this.processingStep = 3;
+        this.processingMessage = 'Finalisation de l\'opération...';
+        this.processingIcon = 'ri-secure-payment-line';
+        this.cdr.detectChanges();
+
+        // Étape 3: Finalisation (0.8s)
+        setTimeout(() => {
+          this.isSubmitting = true;
+          this.executeTransaction();
+        }, 800);
+      }, 1500);
+    }, 1200);
+  }
+
+  private executeTransaction(): void {
+    const v = this.form.value;
 
     if (v.type === 'VIREMENT') {
       this.txService.transfer({
@@ -1028,6 +1343,14 @@ export class TransactionFormComponent implements OnInit, OnDestroy {
   }
 
   private handleSuccess(message: string, transaction?: TransactionResponse): void {
+    // Show success in payment processor if visible
+    if (this.showPaymentProcessor) {
+      this.processingStep = 4;
+      this.processingMessage = 'Opération réussie !';
+      this.processingIcon = 'ri-checkbox-circle-fill';
+      this.cdr.detectChanges();
+    }
+
     this.successMessage = message;
     this.isSubmitting = false;
 
@@ -1045,6 +1368,7 @@ export class TransactionFormComponent implements OnInit, OnDestroy {
     this.store.incrementTransactionCount();
 
     setTimeout(() => {
+      this.showPaymentProcessor = false;
       if (this.returnAccountId) {
         this.router.navigate(['/transactions'], { queryParams: { accountId: this.returnAccountId } });
       } else {
@@ -1055,7 +1379,9 @@ export class TransactionFormComponent implements OnInit, OnDestroy {
 
   private handleError(err: any): void {
     console.error('Transaction failed', err);
+    this.showPaymentProcessor = false;
     this.isSubmitting = false;
     this.errorMessage = err.error?.message || 'Échec de la transaction. Veuillez réessayer.';
+    this.cdr.detectChanges();
   }
 }

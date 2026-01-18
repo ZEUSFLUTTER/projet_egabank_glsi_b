@@ -21,6 +21,12 @@ import { ClientService } from '../services/client.service';
           </div>
         </div>
         
+        <!-- Error Message -->
+        <div *ngIf="errorMessage" class="error-alert">
+          <i class="ri-error-warning-line"></i>
+          {{ errorMessage }}
+        </div>
+        
         <form [formGroup]="form" (ngSubmit)="submit()">
           <div class="form-grid">
             <div class="form-group">
@@ -303,6 +309,24 @@ import { ClientService } from '../services/client.service';
         justify-content: center;
       }
     }
+
+    .error-alert {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 1rem 1.25rem;
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      border-radius: 10px;
+      color: #dc2626;
+      font-size: 0.875rem;
+      font-weight: 500;
+      margin: 1rem 1.5rem 0;
+    }
+
+    .error-alert i {
+      font-size: 1.125rem;
+    }
   `]
 })
 export class ClientCreateComponent implements OnInit {
@@ -310,6 +334,7 @@ export class ClientCreateComponent implements OnInit {
   isEditMode = false;
   clientId: number | null = null;
   isLoading = false;
+  errorMessage = '';
 
   constructor(
     private fb: FormBuilder,
@@ -317,10 +342,14 @@ export class ClientCreateComponent implements OnInit {
     private router: Router,
     private route: ActivatedRoute
   ) {
+    // Default date of birth: 18 years ago (to pass @Past validation)
+    const defaultDate = new Date();
+    defaultDate.setFullYear(defaultDate.getFullYear() - 18);
+
     this.form = this.fb.group({
-      nom: ['', Validators.required],
-      prenom: ['', Validators.required],
-      dateNaissance: [new Date().toISOString().split('T')[0], Validators.required],
+      nom: ['', [Validators.required, Validators.minLength(2)]],
+      prenom: ['', [Validators.required, Validators.minLength(2)]],
+      dateNaissance: [defaultDate.toISOString().split('T')[0], Validators.required],
       sexe: ['MASCULIN', Validators.required],
       telephone: [''],
       courriel: ['', Validators.email],
@@ -363,13 +392,26 @@ export class ClientCreateComponent implements OnInit {
     if (this.form.invalid) return;
 
     this.isLoading = true;
-    const payload = this.form.value;
+    this.errorMessage = '';
+
+    // Clean the payload - remove spaces from phone number
+    const payload = { ...this.form.value };
+    if (payload.telephone) {
+      payload.telephone = payload.telephone.replace(/\s/g, '');
+    }
+    // Remove empty optional fields to avoid validation errors
+    if (!payload.telephone) delete payload.telephone;
+    if (!payload.courriel) delete payload.courriel;
+
+    console.log('Sending payload:', JSON.stringify(payload, null, 2));
 
     if (this.isEditMode && this.clientId) {
       this.clientService.update(this.clientId, payload).subscribe({
         next: () => this.router.navigateByUrl('/clients'),
         error: (err) => {
           console.error('Update failed', err);
+          console.error('Error body:', err.error);
+          this.errorMessage = this.extractErrorMessage(err);
           this.isLoading = false;
         }
       });
@@ -378,9 +420,29 @@ export class ClientCreateComponent implements OnInit {
         next: () => this.router.navigateByUrl('/clients'),
         error: (err) => {
           console.error('Create failed', err);
+          console.error('Error body:', err.error);
+          this.errorMessage = this.extractErrorMessage(err);
           this.isLoading = false;
         }
       });
     }
+  }
+
+  private extractErrorMessage(err: any): string {
+    if (err.error) {
+      // Check for validation errors array
+      if (err.error.errors && Array.isArray(err.error.errors)) {
+        return err.error.errors.join(', ');
+      }
+      // Check for message field
+      if (err.error.message) {
+        return err.error.message;
+      }
+      // Check if error is a string
+      if (typeof err.error === 'string') {
+        return err.error;
+      }
+    }
+    return 'Échec de l\'opération. Vérifiez les informations saisies.';
   }
 }

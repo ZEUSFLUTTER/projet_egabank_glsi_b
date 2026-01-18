@@ -7,12 +7,15 @@ export class ApiService {
   // Utilise le proxy Angular pour les appels API
   private readonly base = '/api';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
-  get<T>(path: string, params?: Record<string, string | number | boolean>): Observable<T> {
+  get<T>(path: string, params?: Record<string, string | number | boolean>, options?: { responseType?: 'json' | 'blob' }): Observable<T> {
     let p = new HttpParams();
     if (params) {
       Object.keys(params).forEach((k) => p = p.set(k, String(params[k])));
+    }
+    if (options && options.responseType === 'blob') {
+      return this.http.get<any>(`${this.base}${path}`, { params: p, responseType: 'blob' as 'json' }) as unknown as Observable<T>;
     }
     return this.http.get<T>(`${this.base}${path}`, { params: p });
   }

@@ -734,12 +734,15 @@ export class DashboardHeader {
       error: () => this.isSearching = false
     });
 
-    // Simple account search simulation
-    if (this.searchQuery.length > 5) {
+    // Search accounts only if query looks like an IBAN (starts with TG and at least 10 chars)
+    const query = this.searchQuery.trim().toUpperCase();
+    if (query.length >= 10 && query.startsWith('TG')) {
       this.accountService.getByNumber(this.searchQuery).subscribe({
         next: (acc) => this.foundAccounts = [acc],
         error: () => this.foundAccounts = []
       });
+    } else {
+      this.foundAccounts = [];
     }
   }
 

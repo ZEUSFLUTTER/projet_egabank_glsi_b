@@ -72,7 +72,7 @@
                     <i class="ri-user-line text-primary"></i>
                     Recent Clients
                 </h3>
-                <a routerLink="/clients" class="text-sm text-primary" style="text-decoration: none;">View All</a>
+                <a [routerLink]="clientsRoute" class="text-sm text-primary" style="text-decoration: none;">View All</a>
             </div>
             <div>
                 <div *ngIf="isLoading">
@@ -92,7 +92,7 @@
                         <i class="ri-user-add-line"></i>
                     </div>
                     <p class="mb-2">No clients yet.</p>
-                    <a routerLink="/clients/new" class="text-primary font-medium">
+                    <a [routerLink]="newClientRoute" class="text-primary font-medium">
                         <i class="ri-add-line"></i> Add your first client
                     </a>
                 </div>
@@ -106,7 +106,7 @@
                     <i class="ri-bank-card-line text-primary"></i>
                     Recent Accounts
                 </h3>
-                <a routerLink="/accounts" class="text-sm text-primary" style="text-decoration: none;">View All</a>
+                <a [routerLink]="accountsRoute" class="text-sm text-primary" style="text-decoration: none;">View All</a>
             </div>
             <div>
                 <div *ngIf="isLoading">
@@ -138,7 +138,7 @@
                         <i class="ri-bank-card-2-line"></i>
                     </div>
                     <p class="mb-2">No accounts yet.</p>
-                    <a routerLink="/accounts/new" class="text-primary font-medium">
+                    <a [routerLink]="newAccountRoute" class="text-primary font-medium">
                         <i class="ri-add-line"></i> Open first account
                     </a>
                 </div>

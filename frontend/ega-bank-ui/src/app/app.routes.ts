@@ -1,5 +1,10 @@
 import { Routes } from '@angular/router';
+import { inject } from '@angular/core';
+import { Router } from '@angular/router';
 import { AuthGuard } from './guards/auth.guard';
+import { AdminGuard } from './guards/admin.guard';
+import { ClientGuard } from './guards/client.guard';
+import { AuthService } from './services/auth.service';
 import { AccountCreateComponent } from './pages/account-create.component';
 import { AccountsComponent } from './pages/accounts.component';
 import { ClientCreateComponent } from './pages/client-create.component';
@@ -12,20 +17,43 @@ import { TransactionFormComponent } from './pages/transaction-form.component';
 import { TransactionsComponent } from './pages/transactions.component';
 
 export const routes: Routes = [
-	// Routes publiques (pas de guard)
+	// Routes publiques
 	{ path: 'login', component: LoginComponent },
 	{ path: 'register', component: RegisterComponent },
 
-	// Routes protégées (nécessitent authentification)
-	{ path: '', component: DashboardComponent, canActivate: [AuthGuard] },
-	{ path: 'clients', component: ClientsComponent, canActivate: [AuthGuard] },
-	{ path: 'clients/new', component: ClientCreateComponent, canActivate: [AuthGuard] },
-	{ path: 'accounts', component: AccountsComponent, canActivate: [AuthGuard] },
-	{ path: 'accounts/new', component: AccountCreateComponent, canActivate: [AuthGuard] },
-	{ path: 'transactions', component: TransactionsComponent, canActivate: [AuthGuard] },
-	{ path: 'transactions/new', component: TransactionFormComponent, canActivate: [AuthGuard] },
-	{ path: 'settings', component: SettingsComponent, canActivate: [AuthGuard] },
+	// Routes ADMIN uniquement (gestion des clients et comptes pour tous)
+	{
+		path: 'admin',
+		canActivate: [AdminGuard],
+		children: [
+			{ path: 'dashboard', component: DashboardComponent },
+			{ path: 'clients', component: ClientsComponent },
+			{ path: 'clients/new', component: ClientCreateComponent },
+			{ path: 'accounts', component: AccountsComponent },
+			{ path: 'accounts/new', component: AccountCreateComponent },
+			{ path: 'transactions', component: TransactionsComponent },
+			{ path: 'settings', component: SettingsComponent },
+			{ path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+		]
+	},
 
-	// Route wildcard - redirige vers la page d'accueil (qui redirigera vers login si non authentifié)
-	{ path: '**', redirectTo: '' },
+	// Routes CLIENT uniquement (consultation et transactions propres)
+	{
+		path: 'client',
+		canActivate: [ClientGuard],
+		children: [
+			{ path: 'dashboard', component: DashboardComponent },
+			{ path: 'accounts', component: AccountsComponent },
+			{ path: 'transactions', component: TransactionsComponent },
+			{ path: 'transactions/new', component: TransactionFormComponent },
+			{ path: 'settings', component: SettingsComponent },
+			{ path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+		]
+	},
+
+	// Redirection racine vers login (la logique de redirection selon le rôle est dans LoginComponent)
+	{ path: '', redirectTo: 'login', pathMatch: 'full' },
+
+	// Route wildcard
+	{ path: '**', redirectTo: 'login' },
 ];

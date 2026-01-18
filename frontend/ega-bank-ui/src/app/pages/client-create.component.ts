@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ClientService } from '../services/client.service';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-client-create',
@@ -13,34 +14,34 @@ import { ClientService } from '../services/client.service';
       <h2 class="text-2xl font-bold mb-6">{{ isEditMode ? 'Edit Client' : 'Create Client' }}</h2>
       <form [formGroup]="form" (ngSubmit)="submit()">
         <div class="mb-4">
-            <label class="block text-sm font-medium text-gray-700 mb-1">Last name</label>
-            <input formControlName="nom" class="w-full p-2 border rounded" />
+            <label class="block text-sm font-medium text-gray-700 mb-2">Last name</label>
+            <input formControlName="nom" class="form-input" placeholder="Enter last name" />
         </div>
         <div class="mb-4">
-            <label class="block text-sm font-medium text-gray-700 mb-1">First name</label>
-            <input formControlName="prenom" class="w-full p-2 border rounded" />
+            <label class="block text-sm font-medium text-gray-700 mb-2">First name</label>
+            <input formControlName="prenom" class="form-input" placeholder="Enter first name" />
         </div>
         <div class="mb-4">
-            <label class="block text-sm font-medium text-gray-700 mb-1">Date of birth</label>
-            <input type="date" formControlName="dateNaissance" class="w-full p-2 border rounded" />
+            <label class="block text-sm font-medium text-gray-700 mb-2">Date of birth</label>
+            <input type="date" formControlName="dateNaissance" class="form-input" />
         </div>
         <div class="mb-4">
-            <label class="block text-sm font-medium text-gray-700 mb-1">Sex</label>
-            <select formControlName="sexe" class="w-full p-2 border rounded">
-            <option value="MASCULIN">Male</option>
-            <option value="FEMININ">Female</option>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Sex</label>
+            <select formControlName="sexe" class="form-input">
+                <option value="MASCULIN">Male</option>
+                <option value="FEMININ">Female</option>
             </select>
         </div>
         <div class="mb-4">
-            <label class="block text-sm font-medium text-gray-700 mb-1">Phone</label>
-            <input formControlName="telephone" class="w-full p-2 border rounded" />
+            <label class="block text-sm font-medium text-gray-700 mb-2">Phone</label>
+            <input formControlName="telephone" class="form-input" placeholder="+1 234 567 8900" />
         </div>
         <div class="mb-6">
-            <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
-            <input formControlName="courriel" class="w-full p-2 border rounded" />
+            <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+            <input type="email" formControlName="courriel" class="form-input" placeholder="client@example.com" />
         </div>
         <div class="flex gap-4">
-          <button type="button" routerLink="/clients" class="btn btn-secondary flex-1">Cancel</button>
+          <button type="button" routerLink="/admin/clients" class="btn btn-secondary flex-1">Cancel</button>
           <button type="submit" [disabled]="form.invalid || isLoading" class="btn btn-primary flex-1">
             {{ isLoading ? 'Saving...' : (isEditMode ? 'Update' : 'Create') }}
           </button>
@@ -48,6 +49,35 @@ import { ClientService } from '../services/client.service';
       </form>
     </div>
   `,
+  styles: [`
+    .form-input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      font-size: 14px;
+      transition: all 0.2s;
+      background-color: #ffffff;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    .form-input:hover:not(:focus) {
+      border-color: #9ca3af;
+    }
+
+    .form-input::placeholder {
+      color: #9ca3af;
+    }
+
+    select.form-input {
+      cursor: pointer;
+    }
+  `],
 })
 export class ClientCreateComponent implements OnInit {
   form: any;
@@ -59,7 +89,8 @@ export class ClientCreateComponent implements OnInit {
     private fb: FormBuilder,
     private clientService: ClientService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private authService: AuthService
   ) {
     this.form = this.fb.group({
       nom: ['', Validators.required],
@@ -72,6 +103,13 @@ export class ClientCreateComponent implements OnInit {
   }
 
   ngOnInit() {
+    // Vérifier que l'utilisateur est admin
+    if (!this.authService.isAdmin()) {
+      alert('Access denied: Admin only');
+      this.router.navigate(['/client/dashboard']);
+      return;
+    }
+
     this.route.queryParamMap.subscribe(params => {
       const id = params.get('id');
       if (id) {
@@ -98,7 +136,7 @@ export class ClientCreateComponent implements OnInit {
       },
       error: () => {
         alert('Failed to load client data');
-        this.router.navigate(['/clients']);
+        this.router.navigate(['/admin/clients']);
       }
     });
   }
@@ -111,7 +149,7 @@ export class ClientCreateComponent implements OnInit {
 
     if (this.isEditMode && this.clientId) {
       this.clientService.update(this.clientId, payload).subscribe({
-        next: () => this.router.navigateByUrl('/clients'),
+        next: () => this.router.navigateByUrl('/admin/clients'),
         error: (err) => {
           console.error('Update failed', err);
           this.isLoading = false;
@@ -119,7 +157,7 @@ export class ClientCreateComponent implements OnInit {
       });
     } else {
       this.clientService.create(payload).subscribe({
-        next: () => this.router.navigateByUrl('/clients'),
+        next: () => this.router.navigateByUrl('/admin/clients'),
         error: (err) => {
           console.error('Create failed', err);
           this.isLoading = false;

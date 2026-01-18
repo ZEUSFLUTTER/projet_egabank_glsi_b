@@ -72,60 +72,18 @@ import { ClientService } from '../services/client.service';
 
       <!-- Right Actions -->
       <div style="flex:1;display:flex;justify-content:flex-end;align-items:center;gap:12px;">
-        <!-- User Profile -->
-        <div style="position:relative;">
-           <button (click)="toggleProfile()" class="profile-btn">
-             <div class="profile-avatar">
-               <span *ngIf="userInfo">{{ userInfo.initial }}</span>
-               <i *ngIf="!userInfo" class="ri-user-3-line"></i>
-             </div>
-             <div class="profile-info">
-               <span class="profile-name">{{ userInfo?.username || 'User' }}</span>
-               <i class="ri-arrow-down-s-line profile-arrow" [class.rotated]="showProfile"></i>
-             </div>
-           </button>
-
-           <div *ngIf="showProfile" class="dropdown-menu profile-dropdown">
-               <div class="profile-menu-header">
-                   <div class="user-avatar-lg">{{ userInfo?.initial || 'U' }}</div>
-                   <div class="user-details">
-                       <span class="user-fullname">{{ userInfo?.username || 'Utilisateur' }}</span>
-                       <span class="user-email">{{ userInfo?.email || '' }}</span>
-                   </div>
-               </div>
-
-               <div class="dropdown-divider"></div>
-
-               <div class="menu-items">
-                   <a (click)="goSettings()" class="menu-item">
-                       <i class="ri-settings-3-line"></i>
-                       <span>Paramètres</span>
-                   </a>
-                   <a class="menu-item">
-                       <i class="ri-user-line"></i>
-                       <span>Mon profil</span>
-                   </a>
-                   <a class="menu-item">
-                       <i class="ri-customer-service-2-line"></i>
-                       <span>Support</span>
-                   </a>
-               </div>
-
-               <div class="menu-divider"></div>
-
-               <div class="menu-items">
-                   <a (click)="logout()" class="menu-item logout">
-                       <i class="ri-logout-box-r-line"></i>
-                       <span>Déconnexion</span>
-                   </a>
-               </div>
-           </div>
+        <!-- User Info Display -->
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div style="width:32px;height:32px;border-radius:50%;background:#374151;display:flex;align-items:center;justify-content:center;color:white;font-weight:500;font-size:13px;">
+            {{ userInfo?.initial || 'U' }}
+          </div>
+          <span style="font-weight:500;color:#374151;font-size:14px;">{{ userInfo?.username || 'User' }}</span>
         </div>
       </div>
     </header>
 
     <!-- Click overlay to close dropdowns -->
-    <div *ngIf="showSearch || showProfile" (click)="closeAll()" style="position:fixed;top:0;left:0;right:0;bottom:0;z-index:30;"></div>
+    <div *ngIf="showSearch" (click)="closeAll()" style="position:fixed;top:0;left:0;right:0;bottom:0;z-index:30;"></div>
   `,
   styles: [`
     .search-results {

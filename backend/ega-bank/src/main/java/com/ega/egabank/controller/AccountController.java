@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,6 +29,8 @@ import lombok.RequiredArgsConstructor;
 
 /**
  * Contrôleur pour la gestion des comptes
+ * Consultation: Admin + Client
+ * Création/Suppression: Admin uniquement
  */
 @RestController
 @RequestMapping("/api/accounts")
@@ -37,44 +40,48 @@ public class AccountController {
 
     private final AccountService accountService;
 
-    @Operation(summary = "Récupérer tous les comptes avec pagination")
+    @Operation(summary = "Récupérer tous les comptes avec pagination (Admin)")
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<PageResponse<AccountResponse>> getAllAccounts(
             @Parameter(description = "Numéro de page (commence à 0)") @RequestParam(defaultValue = "0") int page,
             @Parameter(description = "Taille de la page") @RequestParam(defaultValue = "10") int size) {
         return ResponseEntity.ok(accountService.getAllAccounts(page, size));
     }
 
-    @Operation(summary = "Récupérer un compte par son numéro IBAN")
+    @Operation(summary = "Récupérer un compte par son numéro IBAN (Authentifié)")
     @GetMapping("/{numeroCompte}")
     public ResponseEntity<AccountResponse> getAccountByNumber(
             @Parameter(description = "Numéro de compte (IBAN)") @PathVariable String numeroCompte) {
         return ResponseEntity.ok(accountService.getAccountByNumber(numeroCompte));
     }
 
-    @Operation(summary = "Récupérer les comptes d'un client")
+    @Operation(summary = "Récupérer les comptes d'un client (Authentifié)")
     @GetMapping("/client/{clientId}")
     public ResponseEntity<List<AccountResponse>> getAccountsByClient(
             @Parameter(description = "Identifiant du client") @PathVariable Long clientId) {
         return ResponseEntity.ok(accountService.getAccountsByClient(clientId));
     }
 
-    @Operation(summary = "Créer un nouveau compte")
+    @Operation(summary = "Créer un nouveau compte (Admin)")
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<AccountResponse> createAccount(@Valid @RequestBody AccountRequest request) {
         AccountResponse response = accountService.createAccount(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    @Operation(summary = "Supprimer un compte")
+    @Operation(summary = "Supprimer un compte (Admin)")
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<MessageResponse> deleteAccount(@PathVariable Long id) {
         accountService.deleteAccount(id);
         return ResponseEntity.ok(MessageResponse.success("Compte supprimé avec succès"));
     }
 
-    @Operation(summary = "Désactiver un compte")
+    @Operation(summary = "Désactiver un compte (Admin)")
     @PutMapping("/{id}/deactivate")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<MessageResponse> deactivateAccount(@PathVariable Long id) {
         accountService.deactivateAccount(id);
         return ResponseEntity.ok(MessageResponse.success("Compte désactivé avec succès"));

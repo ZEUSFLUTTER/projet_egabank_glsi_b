@@ -1,10 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 import { ClientResponse } from '../models/client.model';
 import { AccountService } from '../services/account.service';
+import { AuthService } from '../services/auth.service';
 import { ClientSearchInputComponent } from '../shared/client-search-input.component';
 import { AppStore } from '../stores/app.store';
 
@@ -36,7 +37,7 @@ import { AppStore } from '../stores/app.store';
             <label class="block text-sm font-medium text-gray-700 mb-2">
               <i class="ri-user-line text-primary"></i> Select Client *
             </label>
-            
+
             <!-- Composant de recherche client amélioré -->
             <client-search-input
               formControlName="clientId"
@@ -46,8 +47,8 @@ import { AppStore } from '../stores/app.store';
               (clientSelected)="onClientSelected($event)"
               (createNewClient)="goToCreateClient()"
             ></client-search-input>
-            
-            <div *ngIf="form.get('clientId')?.touched && form.get('clientId')?.invalid" 
+
+            <div *ngIf="form.get('clientId')?.touched && form.get('clientId')?.invalid"
                  class="text-danger text-sm mt-1">
               <i class="ri-error-warning-line"></i> Veuillez sélectionner un client
             </div>
@@ -99,11 +100,11 @@ import { AppStore } from '../stores/app.store';
 
           <!-- Actions -->
           <div class="flex gap-4">
-            <a routerLink="/accounts" class="btn btn-secondary flex-1">
+            <a routerLink="/admin/accounts" class="btn btn-secondary flex-1">
               <i class="ri-arrow-left-line"></i> Cancel
             </a>
-            <button type="submit" 
-                    [disabled]="form.invalid || isSubmitting" 
+            <button type="submit"
+                    [disabled]="form.invalid || isSubmitting"
                     class="btn btn-primary flex-1">
               <span *ngIf="isSubmitting">
                 <i class="ri-loader-4-line spinner-icon"></i> Creating...
@@ -139,38 +140,48 @@ import { AppStore } from '../stores/app.store';
     }
   `]
 })
-export class AccountCreateComponent implements OnDestroy {
+export class AccountCreateComponent implements OnInit, OnDestroy {
   form: FormGroup;
   selectedClient: ClientResponse | null = null;
   isSubmitting = false;
   errorMessage = '';
   successMessage = '';
-  
+
   private destroy$ = new Subject<void>();
 
   constructor(
     private fb: FormBuilder,
     private accountService: AccountService,
     private router: Router,
-    private store: AppStore
+    private store: AppStore,
+    private authService: AuthService
   ) {
     this.form = this.fb.group({
       clientId: [null, Validators.required],
       typeCompte: ['EPARGNE', Validators.required],
     });
   }
-  
+
+  ngOnInit(): void {
+    // Vérifier que l'utilisateur est admin
+    if (!this.authService.isAdmin()) {
+      alert('Access denied: Admin only');
+      this.router.navigate(['/client/dashboard']);
+      return;
+    }
+  }
+
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
   }
-  
+
   onClientSelected(client: ClientResponse) {
     this.selectedClient = client;
   }
-  
+
   goToCreateClient() {
-    this.router.navigateByUrl('/clients/new');
+    this.router.navigateByUrl('/admin/clients/new');
   }
 
   submit(): void {
@@ -190,14 +201,14 @@ export class AccountCreateComponent implements OnDestroy {
     ).subscribe({
       next: (account) => {
         this.successMessage = `Account ${account.numeroCompte} created successfully!`;
-        
+
         // Mettre à jour le store pour synchroniser tous les composants
         this.store.addAccount(account);
         this.store.triggerFullRefresh();
-        
+
         // Navigate after a short delay to show success message
         setTimeout(() => {
-          this.router.navigateByUrl('/accounts');
+          this.router.navigateByUrl('/admin/accounts');
         }, 1500);
       },
       error: (err) => {

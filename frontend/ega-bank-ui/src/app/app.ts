@@ -18,7 +18,9 @@ export class App {
     this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
         const url = event.urlAfterRedirects.split('?')[0];
-        this.showLayout.set(!['/login', '/register'].includes(url));
+        // Afficher le layout pour toutes les routes SAUF login et register
+        const publicRoutes = ['/login', '/register'];
+        this.showLayout.set(!publicRoutes.includes(url));
       }
     });
   }

@@ -16,11 +16,11 @@ export class ClientsComponent implements OnInit, OnDestroy {
   clients: ClientResponse[] = [];
   isLoading = true;
   errorMessage = '';
-  
+
   private destroy$ = new Subject<void>();
 
   constructor(
-    private router: Router, 
+    private router: Router,
     private clientService: ClientService,
     private store: AppStore,
     private cdr: ChangeDetectorRef
@@ -28,7 +28,7 @@ export class ClientsComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.loadClients();
-    
+
     // S'abonner aux changements du store
     this.store.dataChanged$.pipe(
       takeUntil(this.destroy$)
@@ -39,7 +39,7 @@ export class ClientsComponent implements OnInit, OnDestroy {
       }
     });
   }
-  
+
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
@@ -49,7 +49,7 @@ export class ClientsComponent implements OnInit, OnDestroy {
     this.isLoading = true;
     this.errorMessage = '';
     this.cdr.detectChanges();
-    
+
     this.clientService.getAll(0, 100).subscribe({
       next: (response) => {
         this.clients = response.content || [];
@@ -68,11 +68,11 @@ export class ClientsComponent implements OnInit, OnDestroy {
   }
 
   viewAccounts(clientId: number) {
-    this.router.navigate(['/accounts'], { queryParams: { clientId } });
+    this.router.navigate(['/admin/accounts'], { queryParams: { clientId } });
   }
 
   viewDetails(clientId: number) {
-    this.router.navigate(['/clients/new'], { queryParams: { id: clientId } }); // Reuse create form for edit
+    this.router.navigate(['/admin/clients/new'], { queryParams: { id: clientId } }); // Reuse create form for edit
   }
 
   deleteClient(id: number) {

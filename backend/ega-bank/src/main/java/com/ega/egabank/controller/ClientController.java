@@ -2,6 +2,7 @@ package com.ega.egabank.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,11 +27,13 @@ import lombok.RequiredArgsConstructor;
 
 /**
  * Contrôleur pour la gestion des clients
+ * Réservé aux ADMINS uniquement
  */
 @RestController
 @RequestMapping("/api/clients")
 @RequiredArgsConstructor
-@Tag(name = "Clients", description = "CRUD des clients")
+@Tag(name = "Clients", description = "CRUD des clients (Admin uniquement)")
+@PreAuthorize("hasRole('ADMIN')")
 public class ClientController {
 
     private final ClientService clientService;

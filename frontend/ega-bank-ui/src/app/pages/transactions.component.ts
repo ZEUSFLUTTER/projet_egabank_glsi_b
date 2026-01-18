@@ -7,6 +7,7 @@ import { TransactionResponse } from '../models/transaction.model';
 import { AccountService } from '../services/account.service';
 import { TransactionService } from '../services/transaction.service';
 import { AppStore } from '../stores/app.store';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   standalone: true,
@@ -20,7 +21,8 @@ export class TransactionsComponent implements OnInit, OnDestroy {
   accountId: string | null = null;
   isLoading = true;
   errorMessage = '';
-  
+  isAdmin = false;
+
   private destroy$ = new Subject<void>();
 
   constructor(
@@ -28,10 +30,13 @@ export class TransactionsComponent implements OnInit, OnDestroy {
     private txService: TransactionService,
     private accountService: AccountService,
     private store: AppStore,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private authService: AuthService
   ) { }
 
   ngOnInit(): void {
+    this.isAdmin = this.authService.isAdmin();
+
     this.route.queryParamMap.subscribe((map) => {
       this.accountId = map.get('accountId');
       if (this.accountId) {
@@ -41,7 +46,7 @@ export class TransactionsComponent implements OnInit, OnDestroy {
         this.loadAllTransactions();
       }
     });
-    
+
     // S'abonner aux changements du store
     this.store.dataChanged$.pipe(
       takeUntil(this.destroy$)
@@ -56,7 +61,7 @@ export class TransactionsComponent implements OnInit, OnDestroy {
       }
     });
   }
-  
+
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();

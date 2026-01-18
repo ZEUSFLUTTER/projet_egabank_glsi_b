@@ -30,10 +30,10 @@ import { AuthService } from '../services/auth.service';
         <form [formGroup]="form" (ngSubmit)="submit()">
            <div class="mb-4">
             <label for="email" class="label">Email</label>
-            <input 
-              id="email" 
-              type="email" 
-              formControlName="email" 
+            <input
+              id="email"
+              type="email"
+              formControlName="email"
               class="input-field w-full"
               [class.error-border]="form.get('email')?.invalid && form.get('email')?.touched"
             />
@@ -44,10 +44,10 @@ import { AuthService } from '../services/auth.service';
 
           <div class="mb-4">
             <label for="username" class="label">Username</label>
-            <input 
-              id="username" 
-              type="text" 
-              formControlName="username" 
+            <input
+              id="username"
+              type="text"
+              formControlName="username"
               class="input-field w-full"
               [class.error-border]="form.get('username')?.invalid && form.get('username')?.touched"
             />
@@ -58,9 +58,9 @@ import { AuthService } from '../services/auth.service';
 
           <div class="mb-6">
             <label for="password" class="label">Password</label>
-            <input 
-              id="password" 
-              type="password" 
+            <input
+              id="password"
+              type="password"
               formControlName="password"
                class="input-field w-full"
                [class.error-border]="form.get('password')?.invalid && form.get('password')?.touched"
@@ -70,8 +70,8 @@ import { AuthService } from '../services/auth.service';
             </div>
           </div>
 
-          <button 
-            type="submit" 
+          <button
+            type="submit"
             class="btn btn-primary w-full"
             [disabled]="form.invalid || isLoading"
           >
@@ -221,11 +221,14 @@ export class RegisterComponent {
     this.auth.register(this.form.value).subscribe({
       next: (res: any) => {
         this.isLoading = false;
-        // Store tokens from registration response (auto-login)
-        if (res?.accessToken) localStorage.setItem('accessToken', res.accessToken);
-        if (res?.refreshToken) localStorage.setItem('refreshToken', res.refreshToken);
-        // Redirect to dashboard
-        this.router.navigateByUrl('/');
+
+        // Redirection automatique selon le rôle de l'utilisateur
+        // Les nouveaux inscrits sont des clients par défaut (ROLE_USER)
+        if (this.auth.isAdmin()) {
+          this.router.navigateByUrl('/admin/dashboard');
+        } else {
+          this.router.navigateByUrl('/client/dashboard');
+        }
       },
       error: (err) => {
         this.isLoading = false;

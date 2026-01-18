@@ -8,6 +8,7 @@ import { PageResponse } from '../models/page.model';
 import { AccountService } from '../services/account.service';
 import { ClientService } from '../services/client.service';
 import { DashboardService } from '../services/dashboard.service';
+import { RouteHelperService } from '../services/route-helper.service';
 import { AppStore } from '../stores/app.store';
 
 @Component({
@@ -31,14 +32,21 @@ export class DashboardComponent implements OnInit, OnDestroy {
     };
     recentClients: ClientResponse[] = [];
     recentAccounts: AccountResponse[] = [];
-    
+
     private destroy$ = new Subject<void>();
+
+    // Exposer les routes pour le template
+    get clientsRoute() { return this.routeHelper.getClientsRoute(); }
+    get newClientRoute() { return this.routeHelper.getNewClientRoute(); }
+    get accountsRoute() { return this.routeHelper.getAccountsRoute(); }
+    get newAccountRoute() { return this.routeHelper.getNewAccountRoute(); }
 
     constructor(
         private clientService: ClientService,
         private accountService: AccountService,
         private dashboardService: DashboardService,
         private store: AppStore,
+        private routeHelper: RouteHelperService,
         cdr: ChangeDetectorRef
     ) {
         this.cdr = cdr;
@@ -46,7 +54,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         this.loadData();
-        
+
         // S'abonner aux changements du store pour rafraîchir automatiquement
         this.store.dataChanged$.pipe(
             takeUntil(this.destroy$)
@@ -64,7 +72,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
             }
         });
     }
-    
+
     ngOnDestroy() {
         this.destroy$.next();
         this.destroy$.complete();
@@ -73,15 +81,15 @@ export class DashboardComponent implements OnInit, OnDestroy {
     retry() {
         this.loadData();
     }
-    
+
     private updateLocalBalances(data: { numeroCompte: string, newBalance: number }) {
         // Mettre à jour le compte dans la liste récente
-        this.recentAccounts = this.recentAccounts.map(acc => 
-            acc.numeroCompte === data.numeroCompte 
+        this.recentAccounts = this.recentAccounts.map(acc =>
+            acc.numeroCompte === data.numeroCompte
                 ? { ...acc, solde: data.newBalance }
                 : acc
         );
-        
+
         // Recalculer le total balance approximatif
         // (Pour une vraie mise à jour, on recharge depuis le backend)
         this.loadData();

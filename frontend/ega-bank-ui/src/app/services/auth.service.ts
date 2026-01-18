@@ -21,6 +21,7 @@ export class AuthService {
         // Sauvegarder les infos utilisateur
         if (res?.username) localStorage.setItem('username', res.username);
         if (res?.email) localStorage.setItem('email', res.email);
+        if (res?.role) localStorage.setItem('role', res.role);
       })
     );
   }
@@ -33,6 +34,7 @@ export class AuthService {
         // Sauvegarder les infos utilisateur
         if (res?.username) localStorage.setItem('username', res.username);
         if (res?.email) localStorage.setItem('email', res.email);
+        if (res?.role) localStorage.setItem('role', res.role);
       })
     );
   }
@@ -46,6 +48,7 @@ export class AuthService {
     localStorage.removeItem('refreshToken');
     localStorage.removeItem('username');
     localStorage.removeItem('email');
+    localStorage.removeItem('role');
 
     // Réinitialiser le store pour nettoyer l'état
     this.store.reset();
@@ -152,5 +155,34 @@ export class AuthService {
    */
   hasRefreshToken(): boolean {
     return !!localStorage.getItem('refreshToken');
+  }
+
+  /**
+   * Récupère le rôle de l'utilisateur connecté
+   */
+  getUserRole(): string | null {
+    return localStorage.getItem('role');
+  }
+
+  /**
+   * Vérifie si l'utilisateur a un rôle spécifique
+   */
+  hasRole(role: string): boolean {
+    const userRole = this.getUserRole();
+    return userRole === role;
+  }
+
+  /**
+   * Vérifie si l'utilisateur est un admin
+   */
+  isAdmin(): boolean {
+    return this.hasRole('ROLE_ADMIN');
+  }
+
+  /**
+   * Vérifie si l'utilisateur est un client
+   */
+  isClient(): boolean {
+    return this.hasRole('ROLE_USER');
   }
 }

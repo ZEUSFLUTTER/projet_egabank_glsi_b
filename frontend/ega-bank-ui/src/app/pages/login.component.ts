@@ -31,10 +31,10 @@ import { AuthService } from '../services/auth.service';
         <form [formGroup]="form" (ngSubmit)="submit()">
           <div class="mb-4">
             <label for="username" class="label">Username</label>
-            <input 
-              id="username" 
-              type="text" 
-              formControlName="username" 
+            <input
+              id="username"
+              type="text"
+              formControlName="username"
               class="input-field w-full"
               [class.error-border]="form.get('username')?.invalid && form.get('username')?.touched"
             />
@@ -45,9 +45,9 @@ import { AuthService } from '../services/auth.service';
 
           <div class="mb-6">
             <label for="password" class="label">Password</label>
-            <input 
-              id="password" 
-              type="password" 
+            <input
+              id="password"
+              type="password"
               formControlName="password"
                class="input-field w-full"
                [class.error-border]="form.get('password')?.invalid && form.get('password')?.touched"
@@ -57,8 +57,8 @@ import { AuthService } from '../services/auth.service';
             </div>
           </div>
 
-          <button 
-            type="submit" 
+          <button
+            type="submit"
             class="btn btn-primary w-full"
             [disabled]="form.invalid || isLoading"
           >
@@ -179,9 +179,13 @@ export class LoginComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // Vérifier si l'utilisateur est déjà connecté
+    // Vérifier si l'utilisateur est déjà connecté et rediriger selon le rôle
     if (this.auth.isAuthenticated()) {
-      this.router.navigateByUrl('/');
+      if (this.auth.isAdmin()) {
+        this.router.navigateByUrl('/admin/dashboard');
+      } else {
+        this.router.navigateByUrl('/client/dashboard');
+      }
       return;
     }
 
@@ -211,8 +215,15 @@ export class LoginComponent implements OnInit {
     this.auth.login({ username, password }).subscribe({
       next: () => {
         this.isLoading = false;
-        // Rediriger vers l'URL de retour après connexion réussie
-        this.router.navigateByUrl(this.returnUrl);
+
+        // Redirection automatique selon le rôle de l'utilisateur
+        if (this.auth.isAdmin()) {
+          // Admin → Interface d'administration
+          this.router.navigateByUrl('/admin/dashboard');
+        } else {
+          // Client → Interface client
+          this.router.navigateByUrl('/client/dashboard');
+        }
       },
       error: (err) => {
         this.isLoading = false;

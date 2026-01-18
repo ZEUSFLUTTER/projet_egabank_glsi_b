@@ -2,10 +2,6 @@ package com.backend.ega.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Past;
-import jakarta.validation.constraints.Pattern;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.ArrayList;
@@ -20,24 +16,18 @@ import java.util.ArrayList;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Client extends BaseUser {
 
-    @Past(message = "La date de naissance doit être dans le passé")
     @Column(name = "birth_date")
     private LocalDate birthDate;
 
-    @NotBlank(message = "Le sexe est obligatoire")
-    @Pattern(regexp = "M|F|Autre", message = "Le sexe doit être M, F ou Autre")
     @Column(name = "gender")
     private String gender;
 
-    @NotBlank(message = "L'adresse est obligatoire")
     @Column(name = "address")
     private String address;
 
-    @NotBlank(message = "Le numéro de téléphone est obligatoire")
     @Column(name = "phone_number")
     private String phoneNumber;
 
-    @NotBlank(message = "La nationalité est obligatoire")
     @Column(name = "nationality")
     private String nationality;
 

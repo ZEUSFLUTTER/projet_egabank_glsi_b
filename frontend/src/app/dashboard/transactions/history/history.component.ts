@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { BankService, Transaction, Account } from '../../../core/services/bank.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { forkJoin, of } from 'rxjs';
-import { finalize } from 'rxjs/operators';
+import { finalize, catchError } from 'rxjs/operators';
 
 @Component({
   selector: 'app-transactions-history',
@@ -18,6 +18,15 @@ import { finalize } from 'rxjs/operators';
           <p class="text-slate-500 mt-1">Consultez et analysez vos opérations bancaires récentes.</p>
         </div>
         <div class="flex flex-wrap items-center gap-4 px-4 py-3 bg-white rounded-2xl border border-slate-100 shadow-sm">
+          <div class="flex items-center gap-2" *ngIf="accounts.length > 0">
+            <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Compte</span>
+            <select [(ngModel)]="selectedAccountId" (ngModelChange)="onAccountChange()" class="text-sm font-bold text-slate-900 bg-slate-50 border-none rounded-lg focus:ring-2 focus:ring-blue-500 py-1 px-2">
+              <option [value]="'all'">Tous les comptes</option>
+              <option *ngFor="let acc of accounts" [ngValue]="acc.id">
+                {{ acc.accountNumber }} ({{ acc.accountType }})
+              </option>
+            </select>
+          </div>
           <div class="flex items-center gap-2">
             <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Du</span>
             <input type="date" [(ngModel)]="dateFilters.start" class="text-sm font-bold text-slate-900 bg-slate-50 border-none rounded-lg focus:ring-2 focus:ring-blue-500 py-1" />
@@ -119,6 +128,9 @@ export class TransactionsHistoryComponent implements OnInit {
   private cdr = inject(ChangeDetectorRef);
 
   transactions: Transaction[] = [];
+  allTransactions: Transaction[] = [];
+  accounts: Account[] = [];
+  selectedAccountId: number | 'all' = 'all';
   loading = true;
   dateFilters = {
     start: '',
@@ -140,12 +152,31 @@ export class TransactionsHistoryComponent implements OnInit {
     if (userId) this.fetchTransactions(userId);
   }
 
+  onAccountChange(): void {
+    this.filterTransactions();
+  }
+
+  filterTransactions(): void {
+    if (this.selectedAccountId === 'all') {
+      this.transactions = this.allTransactions;
+    } else {
+      const selectedId = Number(this.selectedAccountId);
+      this.transactions = this.allTransactions.filter(tx => 
+        tx.sourceAccount.id === selectedId || 
+        (tx.destinationAccount && tx.destinationAccount.id === selectedId)
+      );
+    }
+    this.cdr.detectChanges();
+  }
+
   fetchTransactions(userId: number): void {
     this.loading = true;
     this.cdr.detectChanges();
 
     this.bankService.getAccountsByClient(userId).subscribe({
       next: (accounts: Account[]) => {
+        this.accounts = accounts;
+        
         if (accounts.length === 0) {
           this.loading = false;
           this.cdr.detectChanges();
@@ -157,9 +188,19 @@ export class TransactionsHistoryComponent implements OnInit {
             // Convert to matching format YYYY-MM-DDTHH:mm:ss if backend requires it
             const start = `${this.dateFilters.start}T00:00:00`;
             const end = `${this.dateFilters.end}T23:59:59`;
-            return this.bankService.getTransactionsByAccountAndPeriod(acc.id, start, end);
+            return this.bankService.getTransactionsByAccountAndPeriod(acc.id, start, end).pipe(
+              catchError(err => {
+                console.error(`Error fetching transactions for account ${acc.id}`, err);
+                return of([]);
+              })
+            );
           }
-          return this.bankService.getTransactionsByAccount(acc.id);
+          return this.bankService.getTransactionsByAccount(acc.id).pipe(
+            catchError(err => {
+              console.error(`Error fetching transactions for account ${acc.id}`, err);
+              return of([]);
+            })
+          );
         });
 
         forkJoin(txRequests).pipe(
@@ -170,11 +211,12 @@ export class TransactionsHistoryComponent implements OnInit {
         ).subscribe({
           next: (results) => {
             const allTx = results.flat();
-            this.transactions = allTx.sort((a, b) => {
+            this.allTransactions = allTx.sort((a, b) => {
               const dateA = new Date(a.transactionDate || a.createdAt || '').getTime();
               const dateB = new Date(b.transactionDate || b.createdAt || '').getTime();
               return dateB - dateA;
             });
+            this.filterTransactions();
           },
           error: (err: any) => console.error('Error fetching transactions', err)
         });
@@ -188,30 +230,32 @@ export class TransactionsHistoryComponent implements OnInit {
   }
 
   downloadPDF(): void {
-    const userId = this.authService.getUserId();
-    if (!userId) return;
+    if (!this.selectedAccountId || this.selectedAccountId === 'all') {
+      console.error('Please select a specific account to download PDF');
+      alert('Veuillez sélectionner un compte spécifique pour télécharger le relevé PDF');
+      return;
+    }
 
-    // For simplicity, we download the statement of the first account. 
-    // Ideally, we'd have a dropdown to choose the account.
-    this.bankService.getAccountsByClient(userId).subscribe(accounts => {
-      if (accounts.length > 0) {
-        const primaryAcc = accounts[0];
-        const request = (this.dateFilters.start && this.dateFilters.end)
-          ? this.bankService.getAccountStatementByPeriod(primaryAcc.id, `${this.dateFilters.start}T00:00:00`, `${this.dateFilters.end}T23:59:59`)
-          : this.bankService.getAccountStatement(primaryAcc.id);
+    const selectedAccount = this.accounts.find(acc => acc.id === this.selectedAccountId);
+    if (!selectedAccount) {
+      console.error('Selected account not found');
+      return;
+    }
 
-        request.subscribe({
-          next: (blob) => {
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `releve-compte-${primaryAcc.accountNumber}.pdf`;
-            a.click();
-            window.URL.revokeObjectURL(url);
-          },
-          error: (err) => console.error('Error downloading PDF', err)
-        });
-      }
+    const request = (this.dateFilters.start && this.dateFilters.end)
+      ? this.bankService.getAccountStatementByPeriod(this.selectedAccountId, `${this.dateFilters.start}T00:00:00`, `${this.dateFilters.end}T23:59:59`)
+      : this.bankService.getAccountStatement(this.selectedAccountId);
+
+    request.subscribe({
+      next: (blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `releve-compte-${selectedAccount.accountNumber}.pdf`;
+        a.click();
+        window.URL.revokeObjectURL(url);
+      },
+      error: (err) => console.error('Error downloading PDF', err)
     });
   }
 }

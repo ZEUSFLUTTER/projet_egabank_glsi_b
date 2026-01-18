@@ -44,14 +44,6 @@ interface ClientProfile {
             <p class="text-sm text-slate-500">{{ client.email }}</p>
             <p class="mt-2 text-xs text-slate-400">Membre depuis {{ client.createdAt | date:'dd/MM/yyyy' }}</p>
           </div>
-
-          <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
-            <h4 class="font-bold text-slate-900 mb-4">Statut du compte</h4>
-            <div class="flex items-center gap-3 p-3 rounded-xl" [ngClass]="client.isActive ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'">
-              <div class="h-2 w-2 rounded-full" [ngClass]="client.isActive ? 'bg-green-500' : 'bg-red-500'"></div>
-              {{ client.isActive ? 'Vérifié & Actif' : 'Inactif' }}
-            </div>
-          </div>
         </div>
 
         <!-- Main form -->
@@ -89,7 +81,7 @@ interface ClientProfile {
                 <select [(ngModel)]="editClient.gender" name="gender" class="w-full rounded-xl border border-slate-200 p-3 focus:ring-2 focus:ring-blue-500">
                   <option value="M">Masculin</option>
                   <option value="F">Féminin</option>
-                  <option value="O">Autre</option>
+                  <option value="Autre">Autre</option>
                 </select>
               </div>
               <div class="space-y-2 md:col-span-2">
@@ -192,9 +184,17 @@ export class ProfileComponent implements OnInit {
     this.saving = true;
     this.cdr.detectChanges();
 
-    this.bankService.updateClientProfile(userId, this.editClient).subscribe({
+    // Prepare data - ensure birthDate is in correct format
+    const dataToSend = { ...this.editClient };
+    if (dataToSend.birthDate && typeof dataToSend.birthDate === 'string') {
+      // If it's already a string from date input (YYYY-MM-DD), keep it
+      dataToSend.birthDate = dataToSend.birthDate;
+    }
+
+    this.bankService.updateClientProfile(userId, dataToSend).subscribe({
       next: (updated: ClientProfile) => {
         this.client = updated;
+        this.editClient = { ...updated };
         this.saving = false;
         this.notificationService.success('Profil mis à jour avec succès !');
         this.cdr.detectChanges();
@@ -202,7 +202,11 @@ export class ProfileComponent implements OnInit {
       error: (err: any) => {
         console.error('Error updating profile', err);
         this.saving = false;
-        this.notificationService.error('Erreur lors de la mise à jour du profil.');
+        if (err.error && err.error.message) {
+          this.notificationService.error(err.error.message);
+        } else {
+          this.notificationService.error('Erreur lors de la mise à jour du profil.');
+        }
         this.cdr.detectChanges();
       }
     });

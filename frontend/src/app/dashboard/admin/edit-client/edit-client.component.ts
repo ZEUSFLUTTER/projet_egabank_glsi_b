@@ -142,7 +142,11 @@ export class AdminEditClientComponent implements OnInit {
             },
             error: (err) => {
                 console.error('Error updating client', err);
-                this.notificationService.error('Erreur lors de la mise à jour.');
+                if (err.error && err.error.message) {
+                    this.notificationService.error(err.error.message);
+                } else {
+                    this.notificationService.error('Erreur lors de la mise à jour.');
+                }
             }
         });
     }

@@ -182,17 +182,35 @@ public class AccountStatementService {
                 table.addCell(new Cell().add(new Paragraph(
                         t.getTransactionDate().format(DATE_FORMATTER))));
                 
-                // Type
-                String type = t.getTransactionType().toString();
+                // Type - Translate to French and determine if incoming or outgoing
+                String type;
+                boolean isDebit = t.getSourceAccount().getId().equals(account.getId());
+                
+                switch (t.getTransactionType().toString()) {
+                    case "DEPOSIT":
+                        type = "Dépôt";
+                        break;
+                    case "WITHDRAWAL":
+                        type = "Retrait";
+                        break;
+                    case "TRANSFER":
+                        type = isDebit ? "Virement sortant" : "Virement entrant";
+                        break;
+                    default:
+                        type = t.getTransactionType().toString();
+                }
                 table.addCell(new Cell().add(new Paragraph(type)));
                 
                 // Description
                 String description = t.getDescription() != null ? t.getDescription() : "-";
-                if (t.getDestinationAccount() != null && 
-                    !t.getDestinationAccount().getId().equals(account.getId())) {
-                    description += " (vers " + t.getDestinationAccount().getAccountNumber() + ")";
-                } else if (t.getDestinationAccount() != null) {
-                    description += " (de " + t.getSourceAccount().getAccountNumber() + ")";
+                
+                // Add account details for transfers
+                if ("TRANSFER".equals(t.getTransactionType().toString())) {
+                    if (isDebit && t.getDestinationAccount() != null) {
+                        description += " → " + t.getDestinationAccount().getAccountNumber();
+                    } else if (!isDebit && t.getSourceAccount() != null) {
+                        description += " ← " + t.getSourceAccount().getAccountNumber();
+                    }
                 }
                 table.addCell(new Cell().add(new Paragraph(description)));
                 

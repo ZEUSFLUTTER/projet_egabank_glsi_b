@@ -1,7 +1,7 @@
 # 📊 RAPPORT D'INTÉGRATION FRONTEND - API DOCUMENTATION
 
 > **Date:** 18 Janvier 2026  
-> **Version:** 1.0  
+> **Version:** 2.0  
 > **Auteur:** Analyse automatique  
 > **Statut:** ✅ CONFORME
 
@@ -25,11 +25,15 @@
 - Intégrations API partiellement conformes
 - Types de retour incorrects pour les transactions (deposit/withdraw/transfer)
 - Données fictives dans le formulaire de virement
+- Endpoints historique des transactions mal configurés
+- Bouton Suspend/Activate non fonctionnel
 
-### État Après Corrections
-- ✅ **19/19 endpoints** correctement intégrés
+### État Après Corrections (v2.0)
+- ✅ **20/20 endpoints** correctement intégrés
 - ✅ Types de retour conformes à la documentation
 - ✅ Formulaires utilisant les vraies données API
+- ✅ Historique des transactions fonctionnel (Admin + Client)
+- ✅ Bouton Suspend/Activate fonctionnel avec mise à jour locale
 - ✅ Build Angular réussi sans erreurs
 
 ---

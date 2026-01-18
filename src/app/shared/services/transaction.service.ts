@@ -22,58 +22,93 @@ export class TransactionService {
             }
             return date;
         }
-        return date.toISOString();
+        return date.toISOString().slice(0, 19); // Format sans timezone
     }
 
-    // Admin/Client: Historique par IBAN avec dates optionnelles
-    getTransactions(filters?: { compteId?: string; type?: string; dateDebut?: string; dateFin?: string; start?: string; end?: string }): Observable<Transaction[]> {
-        if (filters?.compteId) {
-            // Utilise l'historique par IBAN si fourni
-            const start = filters.start || filters.dateDebut;
-            const end = filters.end || filters.dateFin;
-            return this.getHistory(filters.compteId, start, end);
-        }
-        // Liste générale (admin)
-        return this.http.get<any[]>(this.apiUrl).pipe(
-            map(items => (items || []).map(mapTransactionFromBackend))
+    // ADMIN: Liste globale de toutes les transactions
+    // Endpoint: GET /api/transactions/history
+    getAllTransactions(): Observable<Transaction[]> {
+        console.log('[TransactionService] Fetching ALL transactions (admin)');
+        return this.http.get<any[]>(`${this.apiUrl}/history`).pipe(
+            map(items => {
+                console.log('[TransactionService] Raw response:', items);
+                return (items || []).map(mapTransactionFromBackend);
+            })
         );
     }
 
-    // Client: Historique par IBAN
-    // Endpoint: GET /transactions/history/{IBAN}?start=...&end=...
-    getHistory(iban: string, start?: string, end?: string): Observable<Transaction[]> {
-        let url = `${this.apiUrl}/history/${encodeURIComponent(iban)}`;
+    // Méthode flexible pour admin ou client avec filtres
+    getTransactions(filters?: { compteId?: string; type?: string; dateDebut?: string; dateFin?: string; start?: string; end?: string }): Observable<Transaction[]> {
+        console.log('[TransactionService] getTransactions called with filters:', filters);
+
+        if (filters?.compteId) {
+            // Utilise l'historique par IBAN si un compte est spécifié
+            const start = filters.start || filters.dateDebut;
+            const end = filters.end || filters.dateFin;
+            return this.getHistoryByAccount(filters.compteId, start, end).pipe(
+                map(transactions => {
+                    // Filtrer par type si spécifié
+                    if (filters.type) {
+                        return transactions.filter(t => t.type === filters.type);
+                    }
+                    return transactions;
+                })
+            );
+        }
+
+        // ADMIN: Liste globale via GET /api/transactions/history
+        return this.getAllTransactions().pipe(
+            map(transactions => {
+                // Filtrer par type si spécifié
+                if (filters?.type) {
+                    return transactions.filter(t => t.type === filters.type);
+                }
+                return transactions;
+            })
+        );
+    }
+
+    // Client/Admin: Historique par numéro de compte (IBAN)
+    // Endpoint: GET /api/transactions/history/{accountNumber}?start=...&end=...
+    getHistoryByAccount(accountNumber: string, start?: string, end?: string): Observable<Transaction[]> {
+        console.log('[TransactionService] Fetching history for account:', accountNumber);
 
         // Dates par défaut si non fournies
         let effectiveStart = start;
         let effectiveEnd = end;
 
         if (!effectiveStart) {
-            // Par défaut : depuis 5 ans
+            // Par défaut : depuis 3 mois (au lieu de 5 ans pour éviter les réponses JSON trop volumineuses)
             const d = new Date();
-            d.setFullYear(d.getFullYear() - 5);
-
-            // Format YYYY-MM-DD
+            d.setMonth(d.getMonth() - 3);
             effectiveStart = d.toISOString().split('T')[0];
         }
 
         if (!effectiveEnd) {
-            // Par défaut : aujourd'hui
+            // Par défaut : demain (pour inclure aujourd'hui)
             const d = new Date();
+            d.setDate(d.getDate() + 1);
             effectiveEnd = d.toISOString().split('T')[0];
         }
 
-        const params: string[] = [];
-        params.push(`start=${encodeURIComponent(this.formatDateForBackend(effectiveStart))}`);
-        params.push(`end=${encodeURIComponent(this.formatDateForBackend(effectiveEnd))}`);
+        const startFormatted = this.formatDateForBackend(effectiveStart);
+        const endFormatted = this.formatDateForBackend(effectiveEnd);
 
-        if (params.length > 0) {
-            url += '?' + params.join('&');
-        }
+        const url = `${this.apiUrl}/history/${encodeURIComponent(accountNumber)}?start=${encodeURIComponent(startFormatted)}&end=${encodeURIComponent(endFormatted)}`;
+
+        console.log('[TransactionService] Request URL:', url);
 
         return this.http.get<any[]>(url).pipe(
-            map(items => (items || []).map(mapTransactionFromBackend))
+            map(items => {
+                console.log('[TransactionService] History response:', items);
+                return (items || []).map(mapTransactionFromBackend);
+            })
         );
+    }
+
+    // Alias pour compatibilité
+    getHistory(iban: string, start?: string, end?: string): Observable<Transaction[]> {
+        return this.getHistoryByAccount(iban, start, end);
     }
 
     // Admin: Dépôt

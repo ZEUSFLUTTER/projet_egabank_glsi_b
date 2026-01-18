@@ -1,7 +1,7 @@
 package com.ega.bank_backend.controller;
 
 import com.ega.bank_backend.dto.TransactionRequestDTO;
-import com.ega.bank_backend.entity.Transaction;
+import com.ega.bank_backend.dto.TransactionResponseDTO;
 import com.ega.bank_backend.service.TransactionService;
 import jakarta.validation.Valid;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -42,19 +42,27 @@ public class TransactionController {
         return "Virement effectué avec succès";
     }
 
+    /**
+     * Liste globale de toutes les transactions (Admin uniquement).
+     * Retourne des DTOs pour éviter la récursion infinie.
+     */
     @GetMapping("/history")
     @PreAuthorize("hasRole('ADMIN')")
-    public List<Transaction> getAllHistory() {
-        return transactionService.getAllTransactions();
+    public List<TransactionResponseDTO> getAllHistory() {
+        return transactionService.getAllTransactionsDTO();
     }
 
+    /**
+     * Historique des transactions d'un compte spécifique.
+     * Retourne des DTOs pour éviter la récursion infinie.
+     */
     @GetMapping("/history/{accountNumber}")
     @PreAuthorize("hasRole('ADMIN') or @clientSecurity.isAccountOwner(authentication, #accountNumber)")
-    public List<Transaction> getHistory(
+    public List<TransactionResponseDTO> getHistory(
             @PathVariable String accountNumber,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime start,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime end) {
-        return transactionService.getHistory(accountNumber, start, end);
+        return transactionService.getHistoryDTO(accountNumber, start, end);
     }
 
     @GetMapping("/statement/{accountNumber}")

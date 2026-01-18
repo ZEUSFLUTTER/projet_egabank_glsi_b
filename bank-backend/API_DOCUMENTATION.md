@@ -858,7 +858,7 @@ Authorization: Bearer <token>
 GET /api/transactions/history/FR7630001007941234567890185?start=2024-01-01T00:00:00&end=2026-12-31T23:59:59
 ```
 
-#### Réponse succès (200 OK) - Array<Transaction>
+#### Réponse succès (200 OK) - Array<TransactionResponseDTO>
 
 ```json
 [
@@ -868,7 +868,9 @@ GET /api/transactions/history/FR7630001007941234567890185?start=2024-01-01T00:00
         "amount": 500000.00,
         "timestamp": "2026-01-18T10:30:00",
         "description": "Dépôt initial cash",
-        "targetAccountNumber": null
+        "accountNumber": "FR7630001007941234567890185",
+        "targetAccountNumber": null,
+        "ownerName": "Toto Boni"
     },
     {
         "id": 2,
@@ -876,7 +878,9 @@ GET /api/transactions/history/FR7630001007941234567890185?start=2024-01-01T00:00
         "amount": 5000.00,
         "timestamp": "2026-01-18T11:00:00",
         "description": "Virement vers FR7630001007941234567890186: Virement épargne mensuel",
-        "targetAccountNumber": "FR7630001007941234567890186"
+        "accountNumber": "FR7630001007941234567890185",
+        "targetAccountNumber": "FR7630001007941234567890186",
+        "ownerName": "Toto Boni"
     },
     {
         "id": 3,
@@ -884,7 +888,9 @@ GET /api/transactions/history/FR7630001007941234567890185?start=2024-01-01T00:00
         "amount": 10000.00,
         "timestamp": "2026-01-18T12:00:00",
         "description": "Retrait guichet",
-        "targetAccountNumber": null
+        "accountNumber": "FR7630001007941234567890185",
+        "targetAccountNumber": null,
+        "ownerName": "Toto Boni"
     }
 ]
 ```
@@ -896,7 +902,9 @@ GET /api/transactions/history/FR7630001007941234567890185?start=2024-01-01T00:00
 | `amount` | BigDecimal | Montant de la transaction |
 | `timestamp` | string | Date/heure de la transaction (ISO format) |
 | `description` | string | Description de l'opération |
+| `accountNumber` | string | Numéro IBAN du compte concerné |
 | `targetAccountNumber` | string \| null | Compte destination (pour virements) |
+| `ownerName` | string | Nom du propriétaire du compte |
 
 ---
 

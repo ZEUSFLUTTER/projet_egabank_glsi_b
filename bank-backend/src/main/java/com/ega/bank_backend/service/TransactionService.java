@@ -1,6 +1,7 @@
 package com.ega.bank_backend.service;
 
 import com.ega.bank_backend.dto.TransactionRequestDTO;
+import com.ega.bank_backend.dto.TransactionResponseDTO;
 import com.ega.bank_backend.entity.Account;
 import com.ega.bank_backend.entity.Transaction;
 import com.ega.bank_backend.entity.TransactionType;
@@ -13,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -76,12 +78,6 @@ public class TransactionService {
         }
 
         Account targetAccount = getAccount(dto.targetAccountNumber());
-        // Should we check target account owner status too? Requirement says "Bloquer
-        // les opérations... si le client est suspendu". Usually implies the initiator.
-        // But if target is suspended, maybe they shouldn't receive? Let's stick to
-        // initiator (source) for now unless specified.
-        // Actually, for deposit/withdraw it's clear. For transfer, the "client" usually
-        // refers to the one initiating the action.
 
         if (sourceAccount.getBalance().compareTo(dto.amount()) < 0) {
             throw new InsufficientBalanceException("Solde insuffisant pour le virement");
@@ -111,15 +107,33 @@ public class TransactionService {
         accountRepository.save(targetAccount);
     }
 
-    public List<Transaction> getHistory(String accountNumber, LocalDateTime start, LocalDateTime end) {
+    /**
+     * Récupère l'historique des transactions d'un compte sous forme de DTOs.
+     * Évite la récursion infinie en mappant les entités vers des objets plats.
+     */
+    public List<TransactionResponseDTO> getHistoryDTO(String accountNumber, LocalDateTime start, LocalDateTime end) {
         Account account = getAccount(accountNumber);
+        List<Transaction> transactions = transactionRepository.findByAccountIdAndTimestampBetween(account.getId(),
+                start, end);
 
-        return transactionRepository.findByAccountIdAndTimestampBetween(account.getId(), start, end);
+        return transactions.stream()
+                .map(TransactionResponseDTO::fromEntity)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Récupère toutes les transactions sous forme de DTOs.
+     * Utilisé par l'admin pour voir l'historique global.
+     */
+    public List<TransactionResponseDTO> getAllTransactionsDTO() {
+        return transactionRepository.findAll().stream()
+                .map(TransactionResponseDTO::fromEntity)
+                .collect(Collectors.toList());
     }
 
     public String generateBankStatement(String accountNumber, LocalDateTime start, LocalDateTime end) {
         Account account = getAccount(accountNumber);
-        List<Transaction> transactions = getHistory(accountNumber, start, end);
+        List<TransactionResponseDTO> transactions = getHistoryDTO(accountNumber, start, end);
 
         StringBuilder sb = new StringBuilder();
         sb.append("===== RELEVE BANCAIRE =====\n");
@@ -132,12 +146,12 @@ public class TransactionService {
         sb.append("----------------------------\n");
         sb.append(String.format("%-20s | %-10s | %-10s | %-30s\n", "Date", "Type", "Montant", "Description"));
 
-        for (Transaction t : transactions) {
+        for (TransactionResponseDTO t : transactions) {
             sb.append(String.format("%-20s | %-10s | %-10s | %-30s\n",
-                    t.getTimestamp().toString().substring(0, 16),
-                    t.getType(),
-                    t.getAmount(),
-                    t.getDescription()));
+                    t.timestamp().toString().substring(0, 16),
+                    t.type(),
+                    t.amount(),
+                    t.description()));
         }
         sb.append("----------------------------\n");
         return sb.toString();
@@ -146,9 +160,5 @@ public class TransactionService {
     private Account getAccount(String accountNumber) {
         return accountRepository.findByAccountNumber(accountNumber)
                 .orElseThrow(() -> new ResourceNotFoundException("Compte introuvable: " + accountNumber));
-    }
-
-    public List<Transaction> getAllTransactions() {
-        return transactionRepository.findAll();
     }
 }

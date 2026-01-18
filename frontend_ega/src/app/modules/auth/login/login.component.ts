@@ -90,13 +90,8 @@ export class LoginComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    if (this.authService.isAuthenticated()) {
-      if (this.authService.isAdmin()) {
-        this.router.navigate(['/dashboard'], { replaceUrl: true });
-      } else {
-        this.router.navigate(['/client/dashboard'], { replaceUrl: true });
-      }
-    }
+    // On permet l'accès à la page de connexion même si on est déjà authentifié
+    // pour permettre de changer de compte (ex: passer de client à admin)
   }
 
   onSubmit() {

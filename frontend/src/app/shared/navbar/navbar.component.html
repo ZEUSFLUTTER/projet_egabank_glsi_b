@@ -1,0 +1,38 @@
+<nav class="bg-slate-900/90 backdrop-blur-md sticky top-0 z-50 border-b border-white/5">
+  <div class="container mx-auto px-6 h-16 flex justify-between items-center">
+    <!-- Logo -->
+    <a routerLink="/" class="flex items-center gap-3 group cursor-pointer">
+      <div
+        class="w-10 h-10 rounded-lg bg-gradient-to-tr from-amber-400 to-amber-600 flex items-center justify-center shadow-lg shadow-amber-500/20 group-hover:scale-105 transition-transform text-white">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
+          class="w-6 h-6">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 12V10.332A48.36 48.36 0 0012 9.75c-2.551 0-5.056.2-7.5.582V21M3 21h18M12 6.75h.008v.008H12V6.75z" />
+        </svg>
+      </div>
+      <div>
+        <span class="text-2xl font-bold text-white tracking-wide font-primary block leading-none">EgaBank</span>
+      </div>
+    </a>
+
+    <!-- Desktop Menu -->
+    <div class="hidden md:flex items-center gap-10">
+      <a *ngFor="let link of navLinks" [href]="link.href"
+        class="text-sm font-medium text-slate-300 hover:text-amber-400 transition-colors uppercase tracking-wider">
+        {{ link.label }}
+      </a>
+    </div>
+
+    <!-- CTA Button -->
+    <div class="flex items-center gap-6">
+      <a routerLink="/login"
+        class="hidden md:block text-sm font-bold text-white hover:text-amber-400 cursor-pointer transition-colors uppercase tracking-wide">
+        Espace Client
+      </a>
+      <a routerLink="/register"
+        class="px-5 py-2 bg-white text-slate-900 text-sm font-bold rounded-lg shadow-lg hover:bg-amber-400 hover:text-slate-900 transition-all transform hover:-translate-y-0.5 cursor-pointer uppercase tracking-tight">
+        Ouvrir un compte
+      </a>
+    </div>
+  </div>
+</nav>

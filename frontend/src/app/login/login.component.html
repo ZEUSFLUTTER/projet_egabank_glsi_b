@@ -1,0 +1,151 @@
+<div class="min-h-screen flex items-center justify-center p-4 py-12 bg-slate-50 relative overflow-hidden">
+  <!-- Background Decorations -->
+  <div class="absolute top-0 left-0 w-full h-96 bg-slate-900 skew-y-3 transform -translate-y-24 z-0"></div>
+  <div
+    class="absolute bottom-0 right-0 w-64 h-64 bg-amber-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob">
+  </div>
+
+  <div
+    class="max-w-5xl w-full bg-white rounded-xl shadow-2xl overflow-hidden flex flex-col md:flex-row relative z-10 glass-card">
+
+    <!-- Left Side (Visual) -->
+    <div class="w-full md:w-5/12 bg-slate-900 text-white p-12 flex flex-col justify-between relative overflow-hidden">
+      <div class="absolute inset-0 bg-gradient-to-br from-slate-900 to-slate-800 z-0"></div>
+      <!-- Gold Gloss Effect -->
+      <div class="absolute top-0 right-0 -mr-20 -mt-20 w-80 h-80 rounded-full bg-amber-500 blur-3xl opacity-10"></div>
+
+      <div class="relative z-10">
+        <div class="flex items-center gap-3 mb-10">
+          <div
+            class="w-10 h-10 rounded-lg bg-gradient-to-tr from-amber-400 to-amber-600 flex items-center justify-center shadow-lg shadow-amber-500/20">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+              stroke="currentColor" class="w-6 h-6 text-white">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 12V10.332A48.36 48.36 0 0012 9.75c-2.551 0-5.056.2-7.5.582V21M3 21h18M12 6.75h.008v.008H12V6.75z" />
+            </svg>
+          </div>
+          <span class="text-2xl font-bold tracking-wide font-primary">EgaBank</span>
+        </div>
+
+        <h2 class="text-4xl font-bold mb-6 font-primary leading-tight">L'excellence bancaire, réinventée.</h2>
+        <p class="text-slate-400 leading-relaxed">
+          Accédez à votre patrimoine et gérez vos opérations avec une sécurité de niveau institutionnel.
+        </p>
+      </div>
+
+      <div class="relative z-10 mt-12">
+        <div
+          class="flex items-center gap-4 text-sm text-slate-400 bg-slate-800/50 p-4 rounded-lg backdrop-blur-sm border border-slate-700/50">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+            stroke="currentColor" class="w-5 h-5 text-amber-500">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M9 12.75L11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 01-1.043 3.296 3.745 3.745 0 01-3.296 1.043A3.745 3.745 0 0112 21c-1.268 0-2.39-.63-3.068-1.593a3.745 3.745 0 01-3.296-1.043 3.745 3.745 0 01-1.043-3.296A3.745 3.745 0 013 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 011.043-3.296 3.746 3.746 0 013.296-1.043A3.746 3.746 0 0112 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 013.296 1.043 3.746 3.746 0 011.043 3.296A3.745 3.745 0 0121 12z" />
+          </svg>
+          <span>Connexion chiffrée de bout en bout</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Side (Form) -->
+    <div class="w-full md:w-7/12 p-8 md:p-14 bg-white">
+      <div class="flex justify-end mb-8">
+        <button (click)="toggleAdminMode()" type="button"
+          class="text-xs font-semibold px-4 py-2 rounded-lg transition-all border tracking-wide uppercase"
+          [ngClass]="isAdminMode ? 'bg-slate-900 text-white border-slate-900' : 'bg-slate-50 text-slate-500 border-slate-200 hover:border-slate-400'">
+          {{ isAdminMode ? 'Mode Client' : 'Accès Admin' }}
+        </button>
+      </div>
+
+      <div class="mb-10">
+        <h3 class="text-3xl font-bold text-slate-900 mb-2 font-primary">
+          {{ isAdminMode ? 'Portail Administration' : 'Connexion' }}
+        </h3>
+        <p class="text-slate-500">
+          {{ isAdminMode ? 'Veuillez vous identifier pour accéder au back-office.' : 'Heureux de vous revoir. Entrez vos
+          identifiants.' }}
+        </p>
+      </div>
+
+      <form [formGroup]="form" (ngSubmit)="login()" class="space-y-6">
+        <div class="space-y-2">
+          <label class="block text-sm font-semibold text-slate-700 ml-1">Email</label>
+          <input formControlName="email" type="email"
+            class="w-full px-5 py-3.5 rounded-lg bg-slate-50 border border-slate-200 focus:border-slate-900 focus:bg-white focus:ring-4 focus:ring-slate-100 outline-none transition-all duration-300 font-medium"
+            placeholder="nom@exemple.com" />
+          <div *ngIf="form.get('email')?.touched && form.get('email')?.invalid"
+            class="text-red-500 text-xs ml-1 mt-1 font-medium animate-pulse">
+            <span *ngIf="form.get('email')?.hasError('required')">L'email est requis</span>
+            <span *ngIf="form.get('email')?.hasError('email')">Format email invalide</span>
+          </div>
+        </div>
+
+        <div class="space-y-2">
+          <div class="flex justify-between items-center ml-1">
+            <label class="block text-sm font-semibold text-slate-700">Mot de passe</label>
+            <a href="#" class="text-xs text-amber-600 hover:text-amber-700 font-semibold transition-colors">Oublié ?</a>
+          </div>
+          <input formControlName="password" type="password"
+            class="w-full px-5 py-3.5 rounded-lg bg-slate-50 border border-slate-200 focus:border-slate-900 focus:bg-white focus:ring-4 focus:ring-slate-100 outline-none transition-all duration-300 font-medium"
+            placeholder="••••••••" />
+          <div *ngIf="form.get('password')?.touched && form.get('password')?.invalid"
+            class="text-red-500 text-xs ml-1 mt-1 font-medium animate-pulse">
+            Mot de passe requis
+          </div>
+        </div>
+
+        <!-- Alert Messages -->
+        <div *ngIf="error"
+          class="p-4 bg-red-50 border-l-4 border-red-500 text-red-700 rounded-r-lg text-sm flex items-center gap-3">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd"
+              d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+              clip-rule="evenodd" />
+          </svg>
+          {{ error }}
+        </div>
+
+        <div *ngIf="success"
+          class="p-4 bg-green-50 border-l-4 border-green-500 text-green-700 rounded-r-lg text-sm flex items-center gap-3">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd"
+              d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+              clip-rule="evenodd" />
+          </svg>
+          {{ success }}
+        </div>
+
+        <div class="pt-4">
+          <button type="submit" [disabled]="submitting || form.invalid"
+            class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-4 rounded-lg shadow-lg shadow-slate-900/20 transition-all transform hover:-translate-y-0.5 disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2">
+            <span *ngIf="!submitting">Connexion sécurisée</span>
+            <span *ngIf="submitting" class="flex items-center gap-2">
+              <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none"
+                viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                </path>
+              </svg>
+              Traitement...
+            </span>
+          </button>
+        </div>
+      </form>
+
+      <div class="mt-8 text-center">
+        <p class="text-slate-500 text-sm">
+          Nouveau client ?
+          <a routerLink="/register"
+            class="text-amber-600 font-bold hover:text-amber-700 hover:underline transition-colors ml-1">
+            Devenir membre
+          </a>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer Copyright -->
+  <div class="absolute bottom-4 text-slate-400 text-xs text-center w-full z-10">
+    &copy; 2026 EgaBank. Tous droits réservés. Sécurité garantie.
+  </div>
+</div>

@@ -1,0 +1,178 @@
+<div>
+  <!-- Loading State -->
+  <div *ngIf="loading" class="flex justify-center items-center py-20 min-h-[400px]">
+    <div class="relative">
+      <div class="h-16 w-16 animate-spin rounded-full border-4 border-slate-200 border-t-amber-500"></div>
+      <div class="absolute inset-0 flex items-center justify-center font-bold text-slate-900 text-xs">EGA</div>
+    </div>
+  </div>
+
+  <div *ngIf="!loading" class="animate-fade-in-up">
+
+    <!-- Admin View: Render the dedicated AdminHomeComponent -->
+    <ng-container *ngIf="authService.getUserType() === 'ADMIN'">
+      <app-admin-home></app-admin-home>
+    </ng-container>
+
+    <!-- Client View: Existing Dashboard -->
+    <ng-container *ngIf="authService.getUserType() !== 'ADMIN'">
+      <!-- Top Summary Section -->
+      <div class="mb-8">
+        <div
+          class="bg-slate-900 rounded-lg p-6 md:p-8 text-white shadow-2xl shadow-slate-900/20 relative overflow-hidden">
+          <!-- Decorative elements -->
+          <div
+            class="absolute top-0 right-0 -mr-20 -mt-20 w-80 h-80 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 blur-[80px] opacity-20">
+          </div>
+          <div class="absolute bottom-0 left-0 -ml-20 -mb-20 w-60 h-60 rounded-full bg-blue-600 blur-[80px] opacity-20">
+          </div>
+          <div
+            class="absolute top-0 left-0 w-full h-full bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-5">
+          </div>
+
+          <div class="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-end gap-8">
+            <div>
+              <div class="flex items-center gap-4 mb-6">
+                <div
+                  class="w-14 h-14 rounded-lg bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center text-amber-400 shadow-lg font-bold text-2xl">
+                  {{ clientName.charAt(0) }}
+                </div>
+                <div>
+                  <p class="text-slate-400 text-sm font-medium uppercase tracking-wider mb-1">Bienvenue</p>
+                  <h2 class="text-3xl font-bold font-primary text-white tracking-wide">{{ clientName }}</h2>
+                </div>
+              </div>
+
+              <div class="mb-2">
+                <p class="text-slate-400 text-xs font-bold uppercase tracking-widest mb-2">Solde Global</p>
+                <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight">
+                  {{ totalBalance | number: '1.2-2' }} <span
+                    class="text-xl text-amber-500 font-normal align-top">FCFA</span>
+                </h1>
+              </div>
+            </div>
+
+            <div class="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
+              <a routerLink="/dashboard/transactions"
+                class="px-6 py-3.5 bg-amber-500 hover:bg-amber-400 text-slate-900 text-sm font-bold rounded-lg transition-all shadow-lg shadow-amber-500/20 transform hover:-translate-y-0.5 text-center">
+                Nouveau Virement
+              </a>
+              <a routerLink="/dashboard/accounts"
+                class="px-6 py-3.5 bg-white/10 hover:bg-white/20 text-white text-sm font-bold rounded-lg transition-all backdrop-blur-md border border-white/10 text-center">
+                Mes Comptes
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Accounts List (Left Column) -->
+        <div class="lg:col-span-2 space-y-6">
+          <div class="flex justify-between items-end">
+            <h3 class="text-xl font-bold text-slate-900 font-primary">Mes Comptes</h3>
+            <a routerLink="/dashboard/accounts"
+              class="text-sm font-bold text-amber-600 hover:text-amber-700 hover:underline">Voir tout</a>
+          </div>
+
+          <div *ngFor="let account of accounts"
+            class="bg-white rounded-lg p-5 shadow-sm border border-slate-100 hover:shadow-lg transition-all duration-300 group">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+              <div class="flex items-center gap-4">
+                <div
+                  class="w-14 h-14 rounded-lg bg-slate-50 text-slate-600 flex items-center justify-center group-hover:bg-slate-900 group-hover:text-amber-400 transition-colors duration-300">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="currentColor" class="w-8 h-8">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                      d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5z" />
+                  </svg>
+                </div>
+                <div>
+                  <h4 class="text-lg font-bold text-slate-900">{{ account.accountType }}</h4>
+                  <p class="text-slate-400 font-mono text-sm tracking-wider">{{ account.accountNumber }}</p>
+                </div>
+              </div>
+
+              <div class="text-right w-full md:w-auto pl-20 md:pl-0">
+                <p class="text-xs text-slate-400 uppercase font-bold tracking-widest mb-1">Solde Disponible</p>
+                <p class="text-2xl font-bold text-slate-900 group-hover:text-amber-600 transition-colors">
+                  {{ account.balance | number: '1.2-2' }} <span class="text-sm text-slate-400">FCFA</span>
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div *ngIf="accounts.length === 0"
+            class="text-center py-12 bg-white rounded-lg border-2 border-dashed border-slate-200">
+            <div
+              class="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-300">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                stroke="currentColor" class="w-8 h-8">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <p class="text-slate-500 font-medium">Vous n'avez aucun compte actif.</p>
+            <a routerLink="/dashboard/accounts"
+              class="mt-4 inline-block text-amber-600 font-bold hover:text-amber-700">Ouvrir un compte</a>
+          </div>
+        </div>
+
+        <!-- Right Column: Last Transaction -->
+        <div class="lg:col-span-1">
+          <div class="bg-white rounded-lg p-5 shadow-sm border border-slate-100 h-full flex flex-col">
+            <h3 class="text-lg font-bold text-slate-900 mb-6 flex items-center justify-between font-primary">
+              Dernière Activité
+              <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+            </h3>
+
+            <div
+              class="flex-1 flex flex-col items-center justify-center p-5 bg-slate-50 rounded-lg border border-slate-100"
+              *ngIf="!lastTransaction">
+              <div
+                class="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-sm text-slate-300 mb-3">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                  stroke="currentColor" class="w-6 h-6">
+                  <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <p class="text-slate-400 text-sm font-medium">Aucune activité récente</p>
+            </div>
+
+            <div
+              class="flex-1 flex flex-col items-center justify-center text-center p-5 bg-gradient-to-b from-white to-slate-50 rounded-lg border border-slate-100"
+              *ngIf="lastTransaction">
+              <div
+                [class]="'w-16 h-16 rounded-full flex items-center justify-center mb-4 shadow-lg ' + (lastTransaction.amount > 0 ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600')">
+                <svg *ngIf="lastTransaction.amount > 0" xmlns="http://www.w3.org/2000/svg" fill="none"
+                  viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-8 h-8">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                </svg>
+                <svg *ngIf="lastTransaction.amount <= 0" xmlns="http://www.w3.org/2000/svg" fill="none"
+                  viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-8 h-8">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 12h-15" />
+                </svg>
+              </div>
+
+              <p class="text-xs text-slate-400 font-bold uppercase tracking-wider mb-2">{{
+                lastTransaction.transactionDate | date:'dd MMM yyyy' }}</p>
+              <h4 class="text-xl font-bold text-slate-900 mb-2 line-clamp-2 px-4">{{ lastTransaction.description ||
+                lastTransaction.transactionType }}</h4>
+
+              <div
+                [class]="'text-2xl font-bold mb-6 ' + (lastTransaction.amount > 0 ? 'text-green-600' : 'text-red-600')">
+                {{ lastTransaction.amount > 0 ? '+' : '' }}{{ lastTransaction.amount | number:'1.2-2' }} FCFA
+              </div>
+
+              <a routerLink="/dashboard/transactions"
+                class="w-full py-2.5 rounded-lg border border-slate-200 text-slate-600 font-bold hover:bg-white hover:border-amber-400 hover:text-amber-600 transition-all shadow-sm">
+                Voir l'historique
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+  </div>
+</div>

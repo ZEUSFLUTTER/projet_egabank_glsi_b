@@ -27,7 +27,7 @@ export class AuthService {
 
     login(credentials: AuthRequest): Observable<AuthResponse> {
         const usernameClean = credentials.username.trim();
-        const passwordClean = credentials.password.trim();
+        const passwordClean = credentials.password; // Ne pas trimmer les mots de passe
 
         // Détecter si c'est une connexion client
         const userIsAccount = this.isAccountNumber(usernameClean);

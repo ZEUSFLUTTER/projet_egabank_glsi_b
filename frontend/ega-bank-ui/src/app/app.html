@@ -1,0 +1,9 @@
+<div class="flex h-screen bg-gray-50">
+  <app-sidebar *ngIf="showLayout()" class="sidebar-container"></app-sidebar>
+  <div class="flex-1 flex flex-col overflow-hidden" [class.full-width]="!showLayout()">
+    <dashboard-header *ngIf="showLayout()"></dashboard-header>
+    <main class="flex-1 overflow-auto" [ngClass]="showLayout() ? 'p-4 md:p-6' : 'p-0'">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>

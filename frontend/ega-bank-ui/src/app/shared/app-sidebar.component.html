@@ -1,0 +1,33 @@
+<aside class="sidebar">
+    <!-- Logo -->
+    <div class="logo-area" routerLink="/dashboard" title="Tableau de bord">
+        <img src="/assets/logo.jpeg" alt="EGA Bank" style="height: 40px; width: auto;">
+        <span style="font-size: 1.25rem; font-weight: 600;">EGA Bank</span>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="nav-area">
+        <div class="section-label">Navigation</div>
+
+        <a *ngFor="let item of navItems" [routerLink]="item.href" routerLinkActive="active-nav-item"
+            [routerLinkActiveOptions]="{exact: item.href === '/'}" class="nav-item">
+            <i [class]="item.icon"></i>
+            <span>{{ item.label }}</span>
+        </a>
+    </nav>
+
+    <!-- Footer Actions -->
+    <div class="footer-area">
+        <div class="section-label">Préférences</div>
+
+        <a routerLink="/settings" class="nav-item" routerLinkActive="active-nav-item">
+            <i class="ri-settings-4-line"></i>
+            <span>Paramètres</span>
+        </a>
+
+        <button (click)="logout()" class="nav-item text-danger">
+            <i class="ri-logout-circle-r-line"></i>
+            <span>Déconnexion</span>
+        </button>
+    </div>
+</aside>

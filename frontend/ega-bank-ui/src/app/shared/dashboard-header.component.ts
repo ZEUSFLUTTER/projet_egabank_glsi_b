@@ -12,8 +12,13 @@ import { ClientService } from '../services/client.service';
   imports: [CommonModule, FormsModule, RouterModule],
   template: `
     <header class="app-header">
-      <!-- Search Bar -->
-      <div class="header-search-wrapper">
+      <!-- Client Title (when no search) -->
+      <div class="header-left" *ngIf="!isAdmin">
+        <h1 class="header-title">Espace Client</h1>
+      </div>
+
+      <!-- Search Bar (Admin only) -->
+      <div class="header-search-wrapper" *ngIf="isAdmin">
         <div class="header-search">
           <i class="ri-search-line search-icon"></i>
           <input 
@@ -122,18 +127,18 @@ import { ClientService } from '../services/client.service';
 
         <!-- User Profile -->
         <button (click)="toggleProfile()" class="profile-btn" [class.active]="showProfile">
-          <div class="profile-avatar">A</div>
-          <span class="profile-name">Admin</span>
+          <div class="profile-avatar">{{ userInitial }}</div>
+          <span class="profile-name">{{ username }}</span>
           <i class="ri-arrow-down-s-line" [class.rotated]="showProfile"></i>
         </button>
 
         <!-- Profile Dropdown -->
         <div *ngIf="showProfile" class="dropdown-menu profile-dropdown">
             <div class="profile-header">
-                <div class="profile-avatar-lg">A</div>
+                <div class="profile-avatar-lg">{{ userInitial }}</div>
                 <div class="profile-info">
-                    <span class="profile-fullname">Administrateur</span>
-                    <span class="profile-email">admin@egabank.com</span>
+                    <span class="profile-fullname">{{ username }}</span>
+                    <span class="profile-email">{{ email }}</span>
                 </div>
             </div>
             
@@ -188,6 +193,17 @@ import { ClientService } from '../services/client.service';
       max-width: 480px;
       margin: 0 auto;
       position: relative;
+    }
+
+    .header-left {
+      flex: 1;
+    }
+
+    .header-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #1e293b;
+      margin: 0;
     }
 
     .header-search {
@@ -682,6 +698,23 @@ export class DashboardHeader {
     private clientService: ClientService,
     private accountService: AccountService
   ) { }
+
+  get userInitial(): string {
+    const username = this.auth.getUsername();
+    return username ? username.charAt(0).toUpperCase() : 'U';
+  }
+
+  get isAdmin(): boolean {
+    return this.auth.getUserRole() === 'ROLE_ADMIN';
+  }
+
+  get username(): string {
+    return this.auth.getUsername();
+  }
+
+  get email(): string {
+    return this.auth.getEmail();
+  }
 
   onSearch() {
     if (this.searchQuery.length < 2) {

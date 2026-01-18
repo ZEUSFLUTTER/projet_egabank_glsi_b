@@ -19,6 +19,10 @@ export class AuthService {
       tap((res: AuthResponse) => {
         if (res?.accessToken) localStorage.setItem('accessToken', res.accessToken);
         if (res?.refreshToken) localStorage.setItem('refreshToken', res.refreshToken);
+        if (res?.username) localStorage.setItem('username', res.username);
+        if (res?.email) localStorage.setItem('email', res.email);
+        if (res?.clientId) localStorage.setItem('clientId', res.clientId.toString());
+        if (res?.role) localStorage.setItem('role', res.role);
       })
     );
   }
@@ -28,6 +32,10 @@ export class AuthService {
       tap((res: AuthResponse) => {
         if (res?.accessToken) localStorage.setItem('accessToken', res.accessToken);
         if (res?.refreshToken) localStorage.setItem('refreshToken', res.refreshToken);
+        if (res?.clientId) localStorage.setItem('clientId', res.clientId.toString());
+        if (res?.role) localStorage.setItem('role', res.role);
+        if (res?.username) localStorage.setItem('username', res.username);
+        if (res?.email) localStorage.setItem('email', res.email);
       })
     );
   }
@@ -39,6 +47,11 @@ export class AuthService {
   logout(): void {
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
+    localStorage.removeItem('clientId');
+    localStorage.removeItem('clientId');
+    localStorage.removeItem('role');
+    localStorage.removeItem('username');
+    localStorage.removeItem('email');
 
     // Réinitialiser le store pour nettoyer l'état
     this.store.reset();
@@ -127,5 +140,28 @@ export class AuthService {
    */
   hasRefreshToken(): boolean {
     return !!localStorage.getItem('refreshToken');
+  }
+
+  /**
+   * Récupère l'ID du client connecté (si disponible)
+   */
+  getClientId(): number | null {
+    const id = localStorage.getItem('clientId');
+    return id ? parseInt(id, 10) : null;
+  }
+
+  /**
+   * Récupère le rôle de l'utilisateur connecté
+   */
+  getUserRole(): string | null {
+    return localStorage.getItem('role');
+  }
+
+  getUsername(): string {
+    return localStorage.getItem('username') || 'Utilisateur';
+  }
+
+  getEmail(): string {
+    return localStorage.getItem('email') || '';
   }
 }

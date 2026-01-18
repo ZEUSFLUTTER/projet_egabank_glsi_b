@@ -39,15 +39,22 @@ public class DataInitializer implements CommandLineRunner {
             userRepository.save(admin);
             log.info("Utilisateur admin créé (admin / admin123)");
 
-            // Création de quelques clients de test
-            createClient("Jean", "Dupont", "jean.dupont@email.com", "+22890000001", "Lomé, Togo", Sexe.MASCULIN);
-            createClient("Marie", "Curie", "marie.curie@email.com", "+22890000002", "Kara, Togo", Sexe.FEMININ);
+            // Création de quelques clients de test avec comptes utilisateurs associés
+            Client jean = createClient("Jean", "Dupont", "jean.dupont@email.com", "+22890000001", "Lomé, Togo",
+                    Sexe.MASCULIN);
+            createUserForClient(jean, "jean", "jean123");
+            log.info("Client Jean créé avec utilisateur (jean / jean123)");
+
+            Client marie = createClient("Marie", "Curie", "marie.curie@email.com", "+22890000002", "Kara, Togo",
+                    Sexe.FEMININ);
+            createUserForClient(marie, "marie", "marie123");
+            log.info("Client Marie créé avec utilisateur (marie / marie123)");
 
             log.info("Données initialisées avec succès !");
         }
     }
 
-    private void createClient(String prenom, String nom, String email, String telephone, String adresse, Sexe sexe) {
+    private Client createClient(String prenom, String nom, String email, String telephone, String adresse, Sexe sexe) {
         Client client = Client.builder()
                 .prenom(prenom)
                 .nom(nom)
@@ -58,6 +65,18 @@ public class DataInitializer implements CommandLineRunner {
                 .sexe(sexe)
                 .nationalite("Togolaise")
                 .build();
-        clientRepository.save(client);
+        return clientRepository.save(client);
+    }
+
+    private void createUserForClient(Client client, String username, String password) {
+        User user = User.builder()
+                .username(username)
+                .email(client.getCourriel())
+                .password(passwordEncoder.encode(password))
+                .role(Role.ROLE_USER)
+                .enabled(true)
+                .client(client)
+                .build();
+        userRepository.save(user);
     }
 }

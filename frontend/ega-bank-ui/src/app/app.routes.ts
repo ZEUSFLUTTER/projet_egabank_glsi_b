@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { AdminGuard } from './guards/admin.guard';
 import { AuthGuard } from './guards/auth.guard';
 import { AccountCreateComponent } from './pages/account-create.component';
 import { AccountsComponent } from './pages/accounts.component';
@@ -18,8 +19,8 @@ export const routes: Routes = [
 
 	// Routes protégées (nécessitent authentification)
 	{ path: '', component: DashboardComponent, canActivate: [AuthGuard] },
-	{ path: 'clients', component: ClientsComponent, canActivate: [AuthGuard] },
-	{ path: 'clients/new', component: ClientCreateComponent, canActivate: [AuthGuard] },
+	{ path: 'clients', component: ClientsComponent, canActivate: [AuthGuard, AdminGuard] },
+	{ path: 'clients/new', component: ClientCreateComponent, canActivate: [AuthGuard, AdminGuard] },
 	{ path: 'accounts', component: AccountsComponent, canActivate: [AuthGuard] },
 	{ path: 'accounts/new', component: AccountCreateComponent, canActivate: [AuthGuard] },
 	{ path: 'transactions', component: TransactionsComponent, canActivate: [AuthGuard] },

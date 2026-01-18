@@ -2,10 +2,11 @@
     <!-- Page Header -->
     <header class="page-header animate-slide-in">
         <div class="header-content">
-            <h1 class="page-title">Gestion des Comptes</h1>
-            <p class="page-subtitle">Aperçu de tous les comptes clients et leurs avoirs financiers.</p>
+            <h1 class="page-title">{{ isAdmin ? 'Gestion des Comptes' : 'Mes Comptes' }}</h1>
+            <p class="page-subtitle">{{ isAdmin ? 'Aperçu de tous les comptes clients et leurs avoirs financiers.' :
+                'Consultez le solde et l\'historique de vos comptes.' }}</p>
         </div>
-        <a routerLink="/accounts/new" class="btn btn-primary">
+        <a routerLink="/accounts/new" class="btn btn-primary" *ngIf="isAdmin">
             <i class="ri-add-circle-line"></i> Ouvrir un Compte
         </a>
     </header>
@@ -75,7 +76,7 @@
                 <thead>
                     <tr>
                         <th>Compte</th>
-                        <th>Client</th>
+                        <th *ngIf="isAdmin">Client</th>
                         <th>Statut</th>
                         <th>Créé le</th>
                         <th class="text-right">Solde</th>
@@ -95,7 +96,7 @@
                                 </div>
                             </div>
                         </td>
-                        <td>
+                        <td *ngIf="isAdmin">
                             <span *ngIf="account.clientNomComplet" class="client-name">
                                 <i class="ri-user-3-line"></i>
                                 {{ account.clientNomComplet }}
@@ -141,13 +142,14 @@
                 <div class="empty-decoration"></div>
             </div>
 
-            <h2 class="empty-title">Aucun compte bancaire</h2>
+            <h2 class="empty-title">{{ isAdmin ? 'Aucun compte bancaire' : 'Vous n\'avez pas encore de compte' }}</h2>
             <p class="empty-description">
-                Commencez par ouvrir le premier compte pour vos clients.<br>
-                Les comptes permettent de gérer les dépôts, retraits et virements.
+                {{ isAdmin ? 'Commencez par ouvrir le premier compte pour vos clients.' : 'Veuillez contacter votre
+                conseiller pour ouvrir un compte.' }}<br>
+                {{ isAdmin ? 'Les comptes permettent de gérer les dépôts, retraits et virements.' : '' }}
             </p>
 
-            <a routerLink="/accounts/new" class="btn btn-primary btn-lg">
+            <a routerLink="/accounts/new" class="btn btn-primary btn-lg" *ngIf="isAdmin">
                 <i class="ri-add-line"></i> Ouvrir le premier compte
             </a>
 

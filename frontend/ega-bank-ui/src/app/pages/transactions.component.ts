@@ -7,6 +7,7 @@ import { TransactionResponse } from '../models/transaction.model';
 import { AccountService } from '../services/account.service';
 import { TransactionService } from '../services/transaction.service';
 import { AppStore } from '../stores/app.store';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   standalone: true,
@@ -21,6 +22,8 @@ export class TransactionsComponent implements OnInit, OnDestroy {
   isLoading = true;
   errorMessage = '';
 
+  isAdmin = false;
+  clientId: number | null = null;
   private destroy$ = new Subject<void>();
 
   constructor(
@@ -28,16 +31,20 @@ export class TransactionsComponent implements OnInit, OnDestroy {
     private txService: TransactionService,
     private accountService: AccountService,
     private store: AppStore,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private authService: AuthService
   ) { }
 
   ngOnInit(): void {
+    this.isAdmin = this.authService.getUserRole() === 'ROLE_ADMIN';
+    this.clientId = this.authService.getClientId();
+
     this.route.queryParamMap.subscribe((map) => {
       this.accountId = map.get('accountId');
       if (this.accountId) {
         this.loadAccountAndTransactions(this.accountId);
       } else {
-        // Charger toutes les transactions de tous les comptes
+        // Charger toutes les transactions (filtrées par backend si client)
         this.loadAllTransactions();
       }
     });
@@ -63,7 +70,8 @@ export class TransactionsComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Charge toutes les transactions de tous les comptes
+   * Charge toutes les transactions
+   * Le backend filtre automatiquement selon le rôle (Admin = tout, Client = ses comptes)
    */
   private loadAllTransactions(): void {
     this.isLoading = true;
@@ -73,19 +81,25 @@ export class TransactionsComponent implements OnInit, OnDestroy {
 
     this.txService.getAll().subscribe({
       next: (transactions) => {
-        this.transactions = transactions.sort(
-          (a, b) => new Date(b.dateTransaction).getTime() - new Date(a.dateTransaction).getTime()
-        );
-        this.isLoading = false;
-        this.cdr.detectChanges();
+        this.processTransactions(transactions);
       },
-      error: (err) => {
-        console.error('Failed to load all transactions', err);
-        this.errorMessage = 'Échec du chargement des transactions.';
-        this.isLoading = false;
-        this.cdr.detectChanges();
-      },
+      error: (err) => this.handleError(err)
     });
+  }
+
+  private processTransactions(transactions: TransactionResponse[]) {
+    this.transactions = transactions.sort(
+      (a, b) => new Date(b.dateTransaction).getTime() - new Date(a.dateTransaction).getTime()
+    );
+    this.isLoading = false;
+    this.cdr.detectChanges();
+  }
+
+  private handleError(err: any) {
+    console.error('Failed to load transactions', err);
+    this.errorMessage = 'Échec du chargement des transactions.';
+    this.isLoading = false;
+    this.cdr.detectChanges();
   }
 
   private loadAccountAndTransactions(numeroCompte: string): void {

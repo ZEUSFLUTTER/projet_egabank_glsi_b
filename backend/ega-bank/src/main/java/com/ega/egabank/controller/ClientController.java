@@ -23,6 +23,11 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import com.ega.egabank.repository.UserRepository;
+import com.ega.egabank.entity.User;
+import com.ega.egabank.exception.OperationNotAllowedException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 /**
  * Contrôleur pour la gestion des clients
@@ -34,12 +39,14 @@ import lombok.RequiredArgsConstructor;
 public class ClientController {
 
     private final ClientService clientService;
+    private final UserRepository userRepository;
 
     @Operation(summary = "Récupérer tous les clients avec pagination")
     @GetMapping
     public ResponseEntity<PageResponse<ClientResponse>> getAllClients(
             @Parameter(description = "Numéro de page (commence à 0)") @RequestParam(defaultValue = "0") int page,
             @Parameter(description = "Taille de la page") @RequestParam(defaultValue = "10") int size) {
+        checkAdmin();
         return ResponseEntity.ok(clientService.getAllClients(page, size));
     }
 
@@ -49,6 +56,7 @@ public class ClientController {
             @Parameter(description = "Terme de recherche (nom, prénom, courriel)") @RequestParam String q,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
+        checkAdmin();
         return ResponseEntity.ok(clientService.searchClients(q, page, size));
     }
 
@@ -56,18 +64,21 @@ public class ClientController {
     @GetMapping("/{id}")
     public ResponseEntity<ClientResponse> getClientById(
             @Parameter(description = "Identifiant du client") @PathVariable Long id) {
+        checkAccess(id);
         return ResponseEntity.ok(clientService.getClientById(id));
     }
 
     @Operation(summary = "Récupérer un client avec ses comptes")
     @GetMapping("/{id}/details")
     public ResponseEntity<ClientResponse> getClientWithAccounts(@PathVariable Long id) {
+        checkAccess(id);
         return ResponseEntity.ok(clientService.getClientWithAccounts(id));
     }
 
     @Operation(summary = "Créer un nouveau client")
     @PostMapping
     public ResponseEntity<ClientResponse> createClient(@Valid @RequestBody ClientRequest request) {
+        checkAdmin();
         ClientResponse response = clientService.createClient(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
@@ -77,13 +88,39 @@ public class ClientController {
     public ResponseEntity<ClientResponse> updateClient(
             @PathVariable Long id,
             @Valid @RequestBody ClientRequest request) {
+        checkAccess(id);
         return ResponseEntity.ok(clientService.updateClient(id, request));
     }
 
     @Operation(summary = "Supprimer un client")
     @DeleteMapping("/{id}")
     public ResponseEntity<MessageResponse> deleteClient(@PathVariable Long id) {
+        checkAdmin();
         clientService.deleteClient(id);
         return ResponseEntity.ok(MessageResponse.success("Client supprimé avec succès"));
+    }
+
+    private void checkAdmin() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        boolean isAdmin = auth.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+        if (!isAdmin) {
+            throw new OperationNotAllowedException("Action réservée aux administrateurs");
+        }
+    }
+
+    private void checkAccess(Long clientId) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        boolean isAdmin = auth.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+
+        if (!isAdmin) {
+            User user = userRepository.findByUsername(auth.getName())
+                    .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
+
+            if (user.getClient() == null || !user.getClient().getId().equals(clientId)) {
+                throw new OperationNotAllowedException("Accès refusé à ce profil client");
+            }
+        }
     }
 }

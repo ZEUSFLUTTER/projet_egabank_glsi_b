@@ -3,6 +3,7 @@ import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 import { AccountResponse } from '../models/account.model';
+import { AuthService } from '../services/auth.service';
 import { AccountService } from '../services/account.service';
 import { ClientService } from '../services/client.service';
 import { AppStore } from '../stores/app.store';
@@ -18,6 +19,7 @@ export class AccountsComponent implements OnInit, OnDestroy {
   clientId: number | null = null;
   isLoading = true;
   errorMessage = '';
+  isAdmin = false;
   // Cache for client names
   private clientCache: Map<number, string> = new Map();
   private destroy$ = new Subject<void>();
@@ -28,13 +30,23 @@ export class AccountsComponent implements OnInit, OnDestroy {
     private accountService: AccountService,
     private clientService: ClientService,
     private store: AppStore,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private authService: AuthService
   ) { }
 
   ngOnInit(): void {
+    const role = this.authService.getUserRole();
+    this.isAdmin = role === 'ROLE_ADMIN';
+
     this.route.queryParamMap.subscribe((map) => {
-      const clientIdParam = map.get('clientId');
-      this.clientId = clientIdParam ? Number(clientIdParam) : null;
+      if (!this.isAdmin) {
+        // Si c'est un client, on force son ID
+        this.clientId = this.authService.getClientId();
+      } else {
+        // Si c'est un admin, on prend le paramètre d'URL s'il existe
+        const clientIdParam = map.get('clientId');
+        this.clientId = clientIdParam ? Number(clientIdParam) : null;
+      }
       this.loadAccounts();
     });
 

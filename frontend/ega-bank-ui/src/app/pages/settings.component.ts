@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   standalone: true,
@@ -57,15 +58,15 @@ import { FormsModule } from '@angular/forms';
               <div class="avatar-area">
                 <div class="avatar-container">
                   <div class="avatar-lg">
-                    <span>A</span>
+                    <span>{{ username.charAt(0).toUpperCase() }}</span>
                   </div>
                   <button class="avatar-edit-btn">
                     <i class="ri-camera-line"></i>
                   </button>
                 </div>
                 <div class="avatar-info">
-                  <h3 class="avatar-name">Admin User</h3>
-                  <p class="avatar-email">admin@egabank.com</p>
+                  <h3 class="avatar-name">{{ username }}</h3>
+                  <p class="avatar-email">{{ email }}</p>
                   <button class="change-avatar-btn">Changer l'avatar</button>
                 </div>
               </div>
@@ -74,18 +75,14 @@ import { FormsModule } from '@angular/forms';
             <form class="settings-form">
               <div class="form-row">
                 <div class="form-group">
-                  <label>Prénom</label>
-                  <input type="text" value="Admin" />
-                </div>
-                <div class="form-group">
-                  <label>Nom</label>
-                  <input type="text" value="User" />
+                  <label>Nom d'utilisateur</label>
+                  <input type="text" [value]="username" readonly class="readonly" />
                 </div>
               </div>
               
               <div class="form-group">
                 <label>Adresse Email</label>
-                <input type="email" value="admin@egabank.com" readonly class="readonly" />
+                <input type="email" [value]="email" readonly class="readonly" />
                 <span class="form-hint">Contactez le support pour modifier l'email.</span>
               </div>
               
@@ -692,9 +689,19 @@ import { FormsModule } from '@angular/forms';
     }
   `]
 })
-export class SettingsComponent {
+export class SettingsComponent implements OnInit {
   activeTab: 'profile' | 'security' | 'notifications' = 'profile';
   isSaving = false;
+
+  username = '';
+  email = '';
+
+  constructor(private auth: AuthService) { }
+
+  ngOnInit() {
+    this.username = this.auth.getUsername();
+    this.email = this.auth.getEmail();
+  }
 
   saveProfile() {
     this.isSaving = true;

@@ -9,6 +9,7 @@ import { AccountService } from '../services/account.service';
 import { ClientService } from '../services/client.service';
 import { DashboardService } from '../services/dashboard.service';
 import { AppStore } from '../stores/app.store';
+import { AuthService } from '../services/auth.service';
 
 @Component({
     selector: 'app-dashboard',
@@ -32,6 +33,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
     recentClients: ClientResponse[] = [];
     recentAccounts: AccountResponse[] = [];
 
+    isAdmin = false;
+    clientId: number | null = null;
+
     private destroy$ = new Subject<void>();
 
     constructor(
@@ -39,12 +43,16 @@ export class DashboardComponent implements OnInit, OnDestroy {
         private accountService: AccountService,
         private dashboardService: DashboardService,
         private store: AppStore,
-        cdr: ChangeDetectorRef
+        cdr: ChangeDetectorRef,
+        private authService: AuthService
     ) {
         this.cdr = cdr;
     }
 
     ngOnInit() {
+        this.isAdmin = this.authService.getUserRole() === 'ROLE_ADMIN';
+        this.clientId = this.authService.getClientId();
+
         this.loadData();
 
         // S'abonner aux changements du store pour rafraîchir automatiquement
@@ -94,21 +102,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
         console.log('[Dashboard] Starting data load...');
 
-        // Execute requests in parallel using forkJoin
-        forkJoin({
-            // Récupérer les vraies statistiques depuis le backend
+        const requests: any = {
             dashboardStats: this.dashboardService.getStats().pipe(
                 timeout(10000),
                 catchError(err => {
                     console.error('[Dashboard] Error loading stats:', err);
                     return of(null);
-                })
-            ),
-            recentClients: this.clientService.getAll(0, 5).pipe(
-                timeout(10000),
-                catchError(err => {
-                    console.error('[Dashboard] Error loading recentClients:', err);
-                    return of({ content: [], totalElements: 0, pageNumber: 0, pageSize: 5, totalPages: 0, first: true, last: true } as PageResponse<ClientResponse>);
                 })
             ),
             recentAccounts: this.accountService.getAll(0, 5).pipe(
@@ -118,40 +117,34 @@ export class DashboardComponent implements OnInit, OnDestroy {
                     return of({ content: [], totalElements: 0, pageNumber: 0, pageSize: 5, totalPages: 0, first: true, last: true } as PageResponse<AccountResponse>);
                 })
             )
-        }).subscribe({
-            next: (results) => {
+        };
+
+        if (this.isAdmin) {
+            requests.recentClients = this.clientService.getAll(0, 5).pipe(
+                timeout(10000),
+                catchError(err => {
+                    console.error('[Dashboard] Error loading recentClients:', err);
+                    return of({ content: [], totalElements: 0, pageNumber: 0, pageSize: 5, totalPages: 0, first: true, last: true } as PageResponse<ClientResponse>);
+                })
+            );
+        } else {
+            requests.recentClients = of(null);
+        }
+
+        forkJoin(requests).subscribe({
+            next: (results: any) => {
                 console.log('[Dashboard] Received results:', results);
 
                 const { dashboardStats, recentClients, recentAccounts } = results;
 
-                // Utiliser les statistiques du backend si disponibles
+                // Stats
                 if (dashboardStats) {
-                    this.stats.totalClients = dashboardStats.totalClients;
-                    this.stats.totalAccounts = dashboardStats.totalAccounts;
-                    this.stats.activeAccounts = dashboardStats.activeAccounts;
-                    this.stats.totalBalance = dashboardStats.totalBalance;
-                    this.stats.totalTransactions = dashboardStats.totalTransactions;
-                } else {
-                    // Fallback: calculer depuis les listes récentes
-                    this.stats.totalClients = recentClients?.totalElements || 0;
-                    this.stats.totalAccounts = recentAccounts?.totalElements || 0;
-                    const sampleAccounts = recentAccounts?.content || [];
-                    this.stats.totalBalance = sampleAccounts.reduce((sum, acc) => sum + (acc?.solde || 0), 0);
-                    this.stats.activeAccounts = sampleAccounts.filter(a => a?.actif).length;
+                    this.stats = dashboardStats;
                 }
 
                 // Lists
                 this.recentClients = recentClients?.content || [];
                 this.recentAccounts = recentAccounts?.content || [];
-
-                console.log('[Dashboard] Data loaded successfully:', {
-                    totalClients: this.stats.totalClients,
-                    totalAccounts: this.stats.totalAccounts,
-                    activeAccounts: this.stats.activeAccounts,
-                    totalBalance: this.stats.totalBalance,
-                    recentClientsCount: this.recentClients.length,
-                    recentAccountsCount: this.recentAccounts.length
-                });
 
                 this.isLoading = false;
                 this.cdr.detectChanges();
@@ -160,7 +153,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
                 console.error('[Dashboard] Fatal error loading data:', err);
                 this.isLoading = false;
                 this.hasError = true;
-                this.errorMessage = 'Échec du chargement des données. Veuillez vérifier que le serveur est en marche.';
+                this.errorMessage = 'Échec du chargement des données.';
                 this.cdr.detectChanges();
             }
         });

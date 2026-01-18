@@ -23,6 +23,7 @@ export interface AuthResponse {
   username: string;
   email: string;
   role: string;
+  clientId?: number;
 }
 
 /** Informations utilisateur extraites du token */

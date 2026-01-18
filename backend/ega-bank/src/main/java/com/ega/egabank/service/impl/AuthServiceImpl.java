@@ -35,6 +35,7 @@ public class AuthServiceImpl implements AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider tokenProvider;
     private final AuthenticationManager authenticationManager;
+    private final com.ega.egabank.repository.ClientRepository clientRepository;
 
     @Override
     public AuthResponse register(RegisterRequest request) {
@@ -59,6 +60,21 @@ public class AuthServiceImpl implements AuthService {
                 .enabled(true)
                 .build();
 
+        // Créer l'entité Client associée
+        com.ega.egabank.entity.Client client = com.ega.egabank.entity.Client.builder()
+                .nom(request.getUsername()) // Utiliser le username comme nom par défaut
+                .prenom("")
+                .courriel(request.getEmail())
+                .telephone("")
+                .adresse("")
+                .nationalite("")
+                .sexe(com.ega.egabank.enums.Sexe.MASCULIN) // Valeur par défaut
+                .dateNaissance(java.time.LocalDate.now()) // Valeur par défaut
+                .build();
+
+        client = clientRepository.save(client);
+        user.setClient(client);
+
         user = userRepository.save(user);
 
         // Générer les tokens
@@ -73,7 +89,8 @@ public class AuthServiceImpl implements AuthService {
                 tokenProvider.getExpirationTime(),
                 user.getUsername(),
                 user.getEmail(),
-                user.getRole().name());
+                user.getRole().name(),
+                user.getClient() != null ? user.getClient().getId() : null);
     }
 
     @Override
@@ -100,7 +117,8 @@ public class AuthServiceImpl implements AuthService {
                 tokenProvider.getExpirationTime(),
                 user.getUsername(),
                 user.getEmail(),
-                user.getRole().name());
+                user.getRole().name(),
+                user.getClient() != null ? user.getClient().getId() : null);
     }
 
     @Override
@@ -126,6 +144,7 @@ public class AuthServiceImpl implements AuthService {
                 tokenProvider.getExpirationTime(),
                 user.getUsername(),
                 user.getEmail(),
-                user.getRole().name());
+                user.getRole().name(),
+                user.getClient() != null ? user.getClient().getId() : null);
     }
 }

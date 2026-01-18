@@ -18,6 +18,7 @@ import com.ega.egabank.exception.OperationNotAllowedException;
 import com.ega.egabank.exception.ResourceNotFoundException;
 import com.ega.egabank.mapper.ClientMapper;
 import com.ega.egabank.repository.ClientRepository;
+import com.ega.egabank.repository.UserRepository;
 import com.ega.egabank.service.ClientService;
 
 import lombok.RequiredArgsConstructor;
@@ -34,6 +35,7 @@ public class ClientServiceImpl implements ClientService {
 
     private final ClientRepository clientRepository;
     private final ClientMapper clientMapper;
+    private final UserRepository userRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -133,6 +135,13 @@ public class ClientServiceImpl implements ClientService {
             throw new OperationNotAllowedException(
                     "Impossible de supprimer le client: des comptes ont un solde non nul");
         }
+
+        // Supprimer l'utilisateur associé au client (si existe)
+        // Cela évite l'erreur de contrainte FK lors de la suppression du client
+        userRepository.findByClient(client).ifPresent(user -> {
+            log.info("Suppression de l'utilisateur associé - userId: {}", user.getId());
+            userRepository.delete(user);
+        });
 
         clientRepository.delete(client);
         log.info("Client supprimé avec succès - id: {}", id);

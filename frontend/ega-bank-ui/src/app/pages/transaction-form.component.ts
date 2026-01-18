@@ -8,6 +8,7 @@ import { TransactionResponse } from '../models/transaction.model';
 import { AccountService } from '../services/account.service';
 import { TransactionService } from '../services/transaction.service';
 import { AppStore } from '../stores/app.store';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-transaction-form',
@@ -849,7 +850,8 @@ export class TransactionFormComponent implements OnInit, OnDestroy {
     private router: Router,
     private route: ActivatedRoute,
     private store: AppStore,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private authService: AuthService
   ) {
     this.form = this.fb.group({
       type: ['DEPOT', Validators.required],
@@ -890,23 +892,45 @@ export class TransactionFormComponent implements OnInit, OnDestroy {
     this.errorMessage = '';
     this.cdr.detectChanges();
 
-    this.accountService.getAll(0, 200).subscribe({
-      next: (response) => {
-        this.accounts = (response.content || []).filter(a => a.actif);
-        this.isLoadingAccounts = false;
+    const role = this.authService.getUserRole();
+    const isAdmin = role === 'ROLE_ADMIN';
+    const clientId = this.authService.getClientId();
 
-        if (this.returnAccountId) {
-          this.sourceAccount = this.accounts.find(a => a.numeroCompte === this.returnAccountId) || null;
-        }
-        this.cdr.detectChanges();
-      },
-      error: (err) => {
-        console.error('Failed to load accounts', err);
-        this.errorMessage = 'Échec du chargement des comptes. Veuillez réessayer.';
-        this.isLoadingAccounts = false;
-        this.cdr.detectChanges();
-      }
-    });
+    if (!isAdmin && clientId) {
+      // Mode Client
+      this.accountService.getByClient(clientId).subscribe({
+        next: (accounts) => {
+          this.accounts = (accounts || []).filter(a => a.actif);
+          this.isLoadingAccounts = false;
+          this.postLoadAccounts();
+        },
+        error: (err) => this.handleLoadError(err)
+      });
+    } else {
+      // Mode Admin
+      this.accountService.getAll(0, 200).subscribe({
+        next: (response) => {
+          this.accounts = (response.content || []).filter(a => a.actif);
+          this.isLoadingAccounts = false;
+          this.postLoadAccounts();
+        },
+        error: (err) => this.handleLoadError(err)
+      });
+    }
+  }
+
+  private postLoadAccounts() {
+    if (this.returnAccountId) {
+      this.sourceAccount = this.accounts.find(a => a.numeroCompte === this.returnAccountId) || null;
+    }
+    this.cdr.detectChanges();
+  }
+
+  private handleLoadError(err: any) {
+    console.error('Failed to load accounts', err);
+    this.errorMessage = 'Échec du chargement des comptes. Veuillez réessayer.';
+    this.isLoadingAccounts = false;
+    this.cdr.detectChanges();
   }
 
   getTargetAccounts(): AccountResponse[] {

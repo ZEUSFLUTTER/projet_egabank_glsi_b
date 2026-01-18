@@ -5,6 +5,7 @@ import { Router, RouterLink } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 import { ClientResponse } from '../models/client.model';
 import { AccountService } from '../services/account.service';
+import { AuthService } from '../services/auth.service';
 import { ClientSearchInputComponent } from '../shared/client-search-input.component';
 import { AppStore } from '../stores/app.store';
 
@@ -36,8 +37,8 @@ import { AppStore } from '../stores/app.store';
         </div>
 
         <form [formGroup]="form" (ngSubmit)="submit()">
-          <!-- Client Selection with Search -->
-          <div class="form-group">
+          <!-- Client Selection (Admin Only) -->
+          <div class="form-group" *ngIf="isAdmin">
             <label>
               <i class="ri-user-3-line"></i> Sélectionner un Client <span class="required">*</span>
             </label>
@@ -437,6 +438,7 @@ export class AccountCreateComponent implements OnDestroy {
   isSubmitting = false;
   errorMessage = '';
   successMessage = '';
+  isAdmin = false;
 
   private destroy$ = new Subject<void>();
 
@@ -444,12 +446,26 @@ export class AccountCreateComponent implements OnDestroy {
     private fb: FormBuilder,
     private accountService: AccountService,
     private router: Router,
-    private store: AppStore
+    private store: AppStore,
+    private authService: AuthService
   ) {
     this.form = this.fb.group({
       clientId: [null, Validators.required],
       typeCompte: ['EPARGNE', Validators.required],
     });
+  }
+
+  ngOnInit() {
+    this.isAdmin = this.authService.getUserRole() === 'ROLE_ADMIN';
+
+    if (!this.isAdmin) {
+      const clientId = this.authService.getClientId();
+      if (clientId) {
+        this.form.patchValue({ clientId: clientId });
+      } else {
+        this.errorMessage = "Impossible de récupérer votre identifiant client.";
+      }
+    }
   }
 
   ngOnDestroy(): void {

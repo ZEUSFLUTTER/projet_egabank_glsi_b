@@ -27,6 +27,17 @@ import { Client } from '../../../core/models';
               </button>
             </div>
 
+            <!-- Error Message -->
+            <div *ngIf="errorMessage" class="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg flex items-start gap-3">
+              <span class="iconify text-red-600 flex-shrink-0 mt-0.5" data-icon="lucide:alert-circle" data-width="20"></span>
+              <div class="flex-1">
+                <p class="text-sm text-red-800">{{ errorMessage }}</p>
+              </div>
+              <button (click)="errorMessage = ''" class="text-red-400 hover:text-red-600">
+                <span class="iconify" data-icon="lucide:x" data-width="16"></span>
+              </button>
+            </div>
+
             <form (submit)="createAccount()" class="space-y-5">
               <div>
                 <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Client</label>
@@ -83,6 +94,7 @@ export class AccountFormModalComponent implements OnInit, OnChanges {
   @Output() save = new EventEmitter<void>();
 
   saving = false;
+  errorMessage = '';
   clients: Client[] = [];
 
   clientId = 0;
@@ -130,6 +142,8 @@ export class AccountFormModalComponent implements OnInit, OnChanges {
     if (this.clientId === 0) return;
 
     this.saving = true;
+    this.errorMessage = ''; // Clear previous errors
+
     const request = this.accountType === 'COURANT'
       ? this.apiService.createCompteCourant(this.clientId, this.decouvert)
       : this.apiService.createCompteEpargne(this.clientId, this.taux);
@@ -142,11 +156,11 @@ export class AccountFormModalComponent implements OnInit, OnChanges {
       },
       error: (err) => {
         this.saving = false;
-        let errorMessage = 'Erreur lors de la création du compte.';
         if (err.error?.message) {
-          errorMessage = err.error.message;
+          this.errorMessage = err.error.message;
+        } else {
+          this.errorMessage = 'Erreur lors de la création du compte.';
         }
-        alert(errorMessage);
       }
     });
   }

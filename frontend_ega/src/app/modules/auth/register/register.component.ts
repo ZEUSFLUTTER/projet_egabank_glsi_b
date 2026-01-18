@@ -16,43 +16,85 @@ import { RegisterRequest } from '../../../core/models';
           <span class="iconify text-blue-600" data-icon="lucide:hexagon" data-width="48"></span>
         </div>
         <h2 class="text-3xl font-bold tracking-tight text-gray-900">Ega<span class="text-blue-500">Bank</span></h2>
-        <p class="mt-2 text-sm text-gray-600">Créez votre compte gestionnaire</p>
+        <p class="mt-2 text-sm text-gray-600">Ouvrez votre compte en ligne</p>
       </div>
 
-      <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+      <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-lg">
         <div class="bg-white py-8 px-4 shadow-sm border border-gray-200 sm:rounded-xl sm:px-10">
           <form (submit)="onSubmit()" class="space-y-4">
+            
+            <div class="grid grid-cols-2 gap-4">
+               <div>
+                <label for="nom" class="block text-sm font-medium text-gray-700">Nom</label>
+                <input id="nom" name="nom" type="text" required [(ngModel)]="userData.nom"
+                  class="mt-1 block w-full px-3 py-2 border border-blue-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-600 focus:border-blue-600 sm:text-sm">
+              </div>
+              <div>
+                <label for="prenom" class="block text-sm font-medium text-gray-700">Prénom</label>
+                <input id="prenom" name="prenom" type="text" required [(ngModel)]="userData.prenom"
+                  class="mt-1 block w-full px-3 py-2 border border-blue-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-600 focus:border-blue-600 sm:text-sm">
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label for="dateNaissance" class="block text-sm font-medium text-gray-700">Date de naissance</label>
+                <input id="dateNaissance" name="dateNaissance" type="date" required [(ngModel)]="userData.dateNaissance"
+                  class="mt-1 block w-full px-3 py-2 border border-blue-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-600 focus:border-blue-600 sm:text-sm">
+              </div>
+              <div>
+                <label for="sexe" class="block text-sm font-medium text-gray-700">Sexe</label>
+                <select id="sexe" name="sexe" required [(ngModel)]="userData.sexe"
+                  class="mt-1 block w-full px-3 py-2 border border-blue-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-600 focus:border-blue-600 sm:text-sm">
+                  <option value="M">Masculin</option>
+                  <option value="F">Féminin</option>
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <label for="nationalite" class="block text-sm font-medium text-gray-700">Nationalité</label>
+              <input id="nationalite" name="nationalite" type="text" required [(ngModel)]="userData.nationalite"
+                  class="mt-1 block w-full px-3 py-2 border border-blue-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-600 focus:border-blue-600 sm:text-sm">
+            </div>
+
+            <div>
+              <label for="adresse" class="block text-sm font-medium text-gray-700">Adresse complète</label>
+              <textarea id="adresse" name="adresse" rows="2" required [(ngModel)]="userData.adresse"
+                  class="mt-1 block w-full px-3 py-2 border border-blue-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-600 focus:border-blue-600 sm:text-sm"></textarea>
+            </div>
+
+            <div>
+              <label for="telephone" class="block text-sm font-medium text-gray-700">Téléphone</label>
+              <input id="telephone" name="telephone" type="tel" required [(ngModel)]="userData.telephone"
+                  class="mt-1 block w-full px-3 py-2 border border-blue-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-600 focus:border-blue-600 sm:text-sm">
+            </div>
+
+            <div class="relative py-2">
+                <div class="absolute inset-0 flex items-center" aria-hidden="true">
+                    <div class="w-full border-t border-gray-300"></div>
+                </div>
+                <div class="relative flex justify-center">
+                    <span class="bg-white px-2 text-sm text-gray-500">Identifiants de connexion</span>
+                </div>
+            </div>
+
             <div>
               <label for="username" class="block text-sm font-medium text-gray-700">Nom d'utilisateur</label>
-              <div class="mt-1 relative">
-                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
-                  <span class="iconify" data-icon="lucide:user" data-width="18"></span>
-                </div>
-                <input id="username" name="username" type="text" required [(ngModel)]="userData.username"
-                  class="block w-full pl-10 pr-3 py-2 border border-blue-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-600 focus:border-blue-600 sm:text-sm">
-              </div>
+              <input id="username" name="username" type="text" required [(ngModel)]="userData.username"
+                  class="mt-1 block w-full px-3 py-2 border border-blue-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-600 focus:border-blue-600 sm:text-sm">
             </div>
 
             <div>
               <label for="email" class="block text-sm font-medium text-gray-700">Adresse Email</label>
-              <div class="mt-1 relative">
-                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
-                  <span class="iconify" data-icon="lucide:mail" data-width="18"></span>
-                </div>
-                <input id="email" name="email" type="email" required [(ngModel)]="userData.email"
-                  class="block w-full pl-10 pr-3 py-2 border border-blue-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-600 focus:border-blue-600 sm:text-sm">
-              </div>
+              <input id="email" name="email" type="email" required [(ngModel)]="userData.email"
+                  class="mt-1 block w-full px-3 py-2 border border-blue-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-600 focus:border-blue-600 sm:text-sm">
             </div>
 
             <div>
               <label for="password" class="block text-sm font-medium text-gray-700">Mot de passe</label>
-              <div class="mt-1 relative">
-                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
-                  <span class="iconify" data-icon="lucide:lock" data-width="18"></span>
-                </div>
-                <input id="password" name="password" type="password" required [(ngModel)]="userData.password"
-                  class="block w-full pl-10 pr-3 py-2 border border-blue-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-600 focus:border-blue-600 sm:text-sm">
-              </div>
+              <input id="password" name="password" type="password" required [(ngModel)]="userData.password"
+                  class="mt-1 block w-full px-3 py-2 border border-blue-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-600 focus:border-blue-600 sm:text-sm">
             </div>
 
             <div *ngIf="error" class="text-red-500 text-xs mt-2 bg-red-50 p-2 rounded border border-red-100 flex items-center gap-2">
@@ -81,7 +123,18 @@ import { RegisterRequest } from '../../../core/models';
   `
 })
 export class RegisterComponent {
-  userData: RegisterRequest = { username: '', email: '', password: '' };
+  userData: RegisterRequest = {
+    username: '',
+    email: '',
+    password: '',
+    nom: '',
+    prenom: '',
+    dateNaissance: '',
+    sexe: 'M',
+    adresse: '',
+    telephone: '',
+    nationalite: ''
+  };
   loading = false;
   error = '';
 
@@ -95,8 +148,12 @@ export class RegisterComponent {
     this.error = '';
 
     this.authService.register(this.userData).subscribe({
-      next: () => {
-        this.router.navigate(['/dashboard'], { replaceUrl: true });
+      next: (response) => {
+        if (response.role === 'ROLE_ADMIN') {
+          this.router.navigate(['/dashboard'], { replaceUrl: true });
+        } else {
+          this.router.navigate(['/client-dashboard'], { replaceUrl: true });
+        }
       },
       error: (err: any) => {
         if (err.error && err.error.details) {

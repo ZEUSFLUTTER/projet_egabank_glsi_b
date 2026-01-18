@@ -90,6 +90,13 @@ export class LoginComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    if (this.authService.isAuthenticated()) {
+      if (this.authService.isAdmin()) {
+        this.router.navigate(['/dashboard'], { replaceUrl: true });
+      } else {
+        this.router.navigate(['/client/dashboard'], { replaceUrl: true });
+      }
+    }
   }
 
   onSubmit() {
@@ -97,8 +104,12 @@ export class LoginComponent implements OnInit {
     this.error = '';
 
     this.authService.login(this.credentials).subscribe({
-      next: () => {
-        this.router.navigate(['/dashboard'], { replaceUrl: true });
+      next: (response) => {
+        if (response.role === 'ROLE_ADMIN') {
+          this.router.navigate(['/dashboard'], { replaceUrl: true });
+        } else {
+          this.router.navigate(['/client/dashboard'], { replaceUrl: true });
+        }
       },
       error: (err) => {
         this.error = 'Identifiants invalides ou erreur serveur.';

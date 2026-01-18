@@ -36,6 +36,9 @@ services:
       - JWT_SECRET=egaBankingSecretKeyForJWTTokenGeneration2024VerySecureAndLong
     networks:
       - ega-network
+    dns:
+      - 8.8.8.8
+      - 8.8.4.4
 
   frontend:
     build:

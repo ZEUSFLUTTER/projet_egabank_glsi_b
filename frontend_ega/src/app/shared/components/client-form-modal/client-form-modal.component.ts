@@ -27,6 +27,17 @@ import { Client } from '../../../core/models';
               </button>
             </div>
 
+            <!-- Error Message -->
+            <div *ngIf="errorMessage" class="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg flex items-start gap-3">
+              <span class="iconify text-red-600 flex-shrink-0 mt-0.5" data-icon="lucide:alert-circle" data-width="20"></span>
+              <div class="flex-1">
+                <p class="text-sm text-red-800 whitespace-pre-line">{{ errorMessage }}</p>
+              </div>
+              <button (click)="errorMessage = ''" class="text-red-400 hover:text-red-600">
+                <span class="iconify" data-icon="lucide:x" data-width="16"></span>
+              </button>
+            </div>
+
             <form (submit)="saveClient()" class="space-y-5">
               <div class="grid grid-cols-2 gap-4">
                 <div>
@@ -62,8 +73,8 @@ import { Client } from '../../../core/models';
 
               <div>
                 <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Téléphone</label>
-                <input type="text" [(ngModel)]="currentClient.telephone" name="telephone" required placeholder="+221771234567" class="block w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-gray-900 focus:bg-white transition-all text-sm">
-                <p class="text-xs text-gray-400 mt-1">Format: +221771234567 (sans espaces)</p>
+                <input type="text" [(ngModel)]="currentClient.telephone" name="telephone" required placeholder="+22890123456" class="block w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-gray-900 focus:bg-white transition-all text-sm">
+                <p class="text-xs text-gray-400 mt-1">Format: +22890123456 (sans espaces)</p>
               </div>
 
               <div>
@@ -96,10 +107,11 @@ export class ClientFormModalComponent implements OnChanges {
   @Input() isVisible = false;
   @Input() clientToEdit: Client | null = null;
   @Output() close = new EventEmitter<void>();
-  @Output() save = new EventEmitter<void>(); // Emits when save is successful
+  @Output() save = new EventEmitter<Client>(); // Emits the created/updated client
 
   submitting = false;
   isEdit = false;
+  errorMessage = '';
   currentClient: Partial<Client> = this.getEmptyClient();
 
   nationalities = [
@@ -135,12 +147,14 @@ export class ClientFormModalComponent implements OnChanges {
   }
 
   closeModal() {
+    console.log('🚪 Fermeture de la modal client');
     this.isVisible = false;
     this.close.emit();
   }
 
   saveClient() {
     this.submitting = true;
+    this.errorMessage = ''; // Clear previous errors
 
     // Clean phone number
     const clientData = { ...this.currentClient };
@@ -153,20 +167,39 @@ export class ClientFormModalComponent implements OnChanges {
       : this.apiService.createClient(clientData as Client);
 
     request.subscribe({
-      next: () => {
+      next: (createdClient) => {
+        console.log('✅ Client créé avec succès:', createdClient);
+        console.log('📋 Username:', createdClient.username);
+        console.log('🔑 Password:', createdClient.temporaryPassword);
         this.submitting = false;
-        this.save.emit();
-        this.closeModal();
+        this.save.emit(createdClient);
+
+        // Ne fermer automatiquement que si on est en mode édition
+        // En mode création, le dashboard fermera la modal après avoir affiché les identifiants
+        if (this.isEdit) {
+          this.closeModal();
+        }
       },
       error: (err) => {
+        console.error('❌ Erreur création client:', err);
         this.submitting = false;
-        let errorMessage = 'Erreur lors de l\'enregistrement du client.';
-        if (err.error?.details && Array.isArray(err.error.details)) {
-          errorMessage = err.error.details.join('\n');
+
+        if (err.status === 409) {
+          this.errorMessage = '⚠️ Ce client existe déjà !\n\n';
+          if (err.error?.message?.includes('email')) {
+            this.errorMessage += 'L\'email est déjà utilisé. Veuillez utiliser un autre email.';
+          } else if (err.error?.message?.includes('téléphone')) {
+            this.errorMessage += 'Le numéro de téléphone est déjà utilisé. Veuillez utiliser un autre numéro.';
+          } else {
+            this.errorMessage += err.error?.message || 'Email ou téléphone déjà utilisé.';
+          }
+        } else if (err.error?.details && Array.isArray(err.error.details)) {
+          this.errorMessage = err.error.details.join('\n');
         } else if (err.error?.message) {
-          errorMessage = err.error.message;
+          this.errorMessage = err.error.message;
+        } else {
+          this.errorMessage = 'Erreur lors de l\'enregistrement du client.';
         }
-        alert(errorMessage);
       }
     });
   }

@@ -96,3 +96,4 @@ export class LayoutComponent {
     this.authService.logout();
   }
 }
+

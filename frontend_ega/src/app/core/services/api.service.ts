@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Client, Compte, Transaction } from '../models';
+import { Client, Compte, Transaction, Notification } from '../models';
 
 @Injectable({
     providedIn: 'root'
@@ -40,6 +40,10 @@ export class ApiService {
         return this.http.get<Compte[]>(`${this.baseUrl}/clients/${id}/comptes`);
     }
 
+    getMyProfile(): Observable<Client> {
+        return this.http.get<Client>(`${this.baseUrl}/clients/me`);
+    }
+
     // Comptes
     getComptes(): Observable<Compte[]> {
         return this.http.get<Compte[]>(`${this.baseUrl}/comptes`);
@@ -63,6 +67,10 @@ export class ApiService {
 
     deleteCompte(id: number): Observable<void> {
         return this.http.delete<void>(`${this.baseUrl}/comptes/${id}`);
+    }
+
+    getMyAccounts(): Observable<Compte[]> {
+        return this.http.get<Compte[]>(`${this.baseUrl}/comptes/me`);
     }
 
     // Transactions
@@ -121,5 +129,26 @@ export class ApiService {
             params: { dateDebut, dateFin },
             responseType: 'blob'
         });
+    }
+
+    // Notifications
+    getNotifications(): Observable<Notification[]> {
+        return this.http.get<Notification[]>(`${this.baseUrl}/notifications`);
+    }
+
+    getUnreadNotifications(): Observable<Notification[]> {
+        return this.http.get<Notification[]>(`${this.baseUrl}/notifications/unread`);
+    }
+
+    getUnreadCount(): Observable<{ count: number }> {
+        return this.http.get<{ count: number }>(`${this.baseUrl}/notifications/unread/count`);
+    }
+
+    markNotificationAsRead(id: number): Observable<void> {
+        return this.http.put<void>(`${this.baseUrl}/notifications/${id}/read`, {});
+    }
+
+    markAllNotificationsAsRead(): Observable<void> {
+        return this.http.put<void>(`${this.baseUrl}/notifications/read-all`, {});
     }
 }

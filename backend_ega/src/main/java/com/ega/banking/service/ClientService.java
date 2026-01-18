@@ -34,10 +34,15 @@ public class ClientService {
             throw new DuplicateResourceException("Client", "téléphone", clientDTO.getTelephone());
         }
 
+        // Créer le client directement (plus besoin de User)
         Client client = mapToEntity(clientDTO);
         Client savedClient = clientRepository.save(client);
 
-        log.info("Client créé avec succès: ID={}", savedClient.getId());
+        log.info("Client créé avec succès: ID={}, Nom={} {}",
+                savedClient.getId(), savedClient.getPrenom(), savedClient.getNom());
+        log.info("Le client pourra se connecter avec son nom et le numéro de son compte");
+
+        // Retourner le DTO (sans identifiants de connexion)
         return mapToDTO(savedClient);
     }
 
@@ -62,6 +67,29 @@ public class ClientService {
         log.info("Récupération du client par email: {}", email);
         Client client = clientRepository.findByEmail(email)
                 .orElseThrow(() -> new ResourceNotFoundException("Client", "email", email));
+        return mapToDTO(client);
+    }
+
+    @Transactional(readOnly = true)
+    public ClientDTO obtenirClientConnecte() {
+        org.springframework.security.core.Authentication authentication = org.springframework.security.core.context.SecurityContextHolder
+                .getContext().getAuthentication();
+        String username = authentication.getName();
+        log.info("Récupération du client connecté: username={}", username);
+
+        Client client;
+
+        if (username.startsWith("CLIENT_ID:")) {
+            Long clientId = Long.parseLong(username.substring(10));
+            client = clientRepository.findById(clientId)
+                    .orElseThrow(() -> new ResourceNotFoundException("Client", "id", clientId));
+        } else {
+            // Pour les anciens clients avec User associé
+            client = clientRepository.findByUserUsername(username)
+                    .orElseThrow(() -> new ResourceNotFoundException("Client", "username", username));
+        }
+
+        log.info("✅ Client trouvé: ID={}, Nom={} {}", client.getId(), client.getPrenom(), client.getNom());
         return mapToDTO(client);
     }
 
@@ -138,4 +166,5 @@ public class ClientService {
                 .nationalite(dto.getNationalite())
                 .build();
     }
+
 }

@@ -1,7 +1,6 @@
 package com.ega.banking.controller;
 
 import com.ega.banking.dto.CompteDTO;
-import com.ega.banking.model.TypeCompte;
 import com.ega.banking.service.CompteService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -64,6 +63,12 @@ public class CompteController {
     @Operation(summary = "Obtenir un compte par numéro IBAN")
     public ResponseEntity<CompteDTO> obtenirCompteParNumero(@PathVariable String numeroCompte) {
         return ResponseEntity.ok(compteService.obtenirCompteParNumero(numeroCompte));
+    }
+
+    @GetMapping("/me")
+    @Operation(summary = "Obtenir les comptes du client connecté")
+    public ResponseEntity<List<CompteDTO>> obtenirMesComptes() {
+        return ResponseEntity.ok(compteService.obtenirComptesDuClientConnecte());
     }
 
     @DeleteMapping("/{id}")

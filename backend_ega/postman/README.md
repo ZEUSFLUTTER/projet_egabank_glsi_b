@@ -1,5 +1,6 @@
 # Tests Postman - EGA Banking API
 
+
 Ce dossier contient les tests end-to-end et d'intégration pour l'API EGA Banking.
 
 ## 📁 Fichiers
@@ -25,8 +26,7 @@ Fichier d'environnement avec toutes les variables nécessaires pour l'exécution
 **Option A: Via l'interface Postman**
 1. Ouvrez Postman
 2. Cliquez sur "Import" en haut à gauche
-3. Sélectionnez les fichiers JSON ou glissez-les dans la fenêtre
-4. Les collections et environnement seront importés automatiquement
+   4. Les collections et environnement seront importés automatiquement
 
 **Option B: Via ligne de commande**
 ```bash

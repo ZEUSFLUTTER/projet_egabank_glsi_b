@@ -47,6 +47,12 @@ public class ClientController {
         return ResponseEntity.ok(clientService.obtenirClientParEmail(email));
     }
 
+    @GetMapping("/me")
+    @Operation(summary = "Obtenir le profil du client connecté")
+    public ResponseEntity<ClientDTO> obtenirMonProfil() {
+        return ResponseEntity.ok(clientService.obtenirClientConnecte());
+    }
+
     @PutMapping("/{id}")
     @Operation(summary = "Modifier un client")
     public ResponseEntity<ClientDTO> modifierClient(

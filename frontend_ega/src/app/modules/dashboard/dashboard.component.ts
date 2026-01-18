@@ -188,7 +188,7 @@ import { AccountFormModalComponent } from '../../shared/components/account-form-
       <app-client-form-modal
         [isVisible]="showClientModal"
         (close)="showClientModal = false"
-        (save)="loadData()">
+        (save)="onClientCreated($event)">
       </app-client-form-modal>
 
       <app-account-form-modal
@@ -247,5 +247,15 @@ export class DashboardComponent implements OnInit {
 
   openNewAccountModal() {
     this.showAccountModal = true;
+  }
+
+  onClientCreated(client: Client) {
+    console.log('🎉 Client créé:', client);
+
+    // Fermer la modal de création
+    this.showClientModal = false;
+
+    // Recharger les données
+    this.loadData();
   }
 }

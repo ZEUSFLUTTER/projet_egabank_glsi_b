@@ -2,6 +2,7 @@ package com.ega.banking.controller;
 
 import com.ega.banking.dto.AuthRequest;
 import com.ega.banking.dto.AuthResponse;
+import com.ega.banking.dto.ClientLoginRequest;
 import com.ega.banking.dto.RegisterRequest;
 import com.ega.banking.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -20,9 +21,15 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/login")
-    @Operation(summary = "Se connecter")
+    @Operation(summary = "Se connecter (Admin)")
     public ResponseEntity<AuthResponse> login(@Valid @RequestBody AuthRequest request) {
         return ResponseEntity.ok(authService.login(request));
+    }
+
+    @PostMapping("/client-login")
+    @Operation(summary = "Se connecter (Client avec nom + numéro de compte)")
+    public ResponseEntity<AuthResponse> clientLogin(@Valid @RequestBody ClientLoginRequest request) {
+        return ResponseEntity.ok(authService.clientLogin(request));
     }
 
     @PostMapping("/register")

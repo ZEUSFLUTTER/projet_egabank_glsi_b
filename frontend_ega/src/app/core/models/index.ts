@@ -8,6 +8,8 @@ export interface Client {
     dateNaissance: string;
     nationalite: string;
     sexe: 'M' | 'F';
+    username?: string;
+    temporaryPassword?: string;
 }
 
 export enum TypeCompte {
@@ -61,6 +63,13 @@ export interface RegisterRequest {
     username: string;
     email: string;
     password: string;
+    nom: string;
+    prenom: string;
+    dateNaissance: string;
+    sexe: 'M' | 'F';
+    adresse: string;
+    telephone: string;
+    nationalite: string;
 }
 
 export interface ApiError {
@@ -70,4 +79,13 @@ export interface ApiError {
     message: string;
     path: string;
     details?: string[];
+}
+
+export interface Notification {
+    id: number;
+    title: string;
+    message: string;
+    type: string;
+    read: boolean;
+    createdAt: string;
 }

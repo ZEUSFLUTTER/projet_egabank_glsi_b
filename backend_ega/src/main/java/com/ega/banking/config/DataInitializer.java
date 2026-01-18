@@ -14,23 +14,13 @@ import org.springframework.stereotype.Component;
 public class DataInitializer implements CommandLineRunner {
 
     private final UserRepository userRepository;
+    private final com.ega.banking.repository.ClientRepository clientRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Override
     public void run(String... args) {
-        if (userRepository.count() == 0) {
-            log.info("Aucun utilisateur trouvé. Création de l'utilisateur administrateur par défaut...");
-
-            User admin = User.builder()
-                    .username("admin")
-                    .email("admin@ega-bank.com")
-                    .password(passwordEncoder.encode("admin123"))
-                    .role("ROLE_ADMIN")
-                    .enabled(true)
-                    .build();
-
-            userRepository.save(admin);
-            log.info("Utilisateur 'admin' créé avec succès (Mot de passe: admin123)");
-        }
+        // Auto-initialization disabled per user request
+        // Users must register themselves via /api/auth/register
+        log.info("DataInitializer: Auto-création de comptes désactivée. Les utilisateurs doivent s'inscrire.");
     }
 }

@@ -4,6 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { ApiService } from '../../core/services/api.service';
 import { Client, Compte } from '../../core/models';
 
+import { AuthService } from '../../core/services/auth.service';
+
 @Component({
   selector: 'app-operations',
   standalone: true,
@@ -23,31 +25,46 @@ import { Client, Compte } from '../../core/models';
         </div>
 
         <form (ngSubmit)="submit()" class="p-6 space-y-6">
-          <!-- Compte Source/Principal avec recherche IBAN -->
+          <!-- Compte Source/Principal -->
           <div class="space-y-3">
              <div class="flex justify-between items-center">
-                <label class="block text-sm font-medium text-gray-700">ID du Compte {{ type === 'DEPOT' ? 'Bénéficiaire' : 'Débiteur' }}</label>
-                <button type="button" (click)="showIbanSearch = !showIbanSearch" class="text-xs text-blue-600 hover:text-blue-500 font-medium">
-                  {{ showIbanSearch ? 'Masquer recherche IBAN' : 'Trouver par IBAN' }}
-                </button>
+                <label class="block text-sm font-medium text-gray-700">Compte {{ type === 'DEPOT' ? 'Bénéficiaire' : 'Débiteur' }}</label>
+                <div *ngIf="!isClient && !showIbanSearch">
+                    <button type="button" (click)="showIbanSearch = !showIbanSearch" class="text-xs text-blue-600 hover:text-blue-500 font-medium">
+                      Trouver par IBAN
+                    </button>
+                </div>
              </div>
              
-             <div *ngIf="showIbanSearch" class="p-3 bg-gray-50 rounded-lg border border-gray-200 animate-in fade-in slide-in-from-top-1 duration-300">
-                <div class="flex gap-2">
-                   <input type="text" [(ngModel)]="ibanQuery" name="ibanQuery" placeholder="Saisir IBAN complet..." class="flex-1 px-3 py-1.5 text-xs border-gray-300 rounded focus:ring-blue-900 focus:border-blue-900 border">
-                   <button type="button" (click)="searchByIban('SOURCE')" class="px-3 py-1.5 bg-blue-900 text-white text-xs font-medium rounded hover:bg-blue-800">Chercher</button>
-                </div>
-                <p *ngIf="searchError" class="text-[10px] text-rose-600 mt-1">{{ searchError }}</p>
-             </div>
+            <!-- Mode Client : Dropdown -->
+            <div *ngIf="isClient">
+                <select [(ngModel)]="compteId" name="compteId" class="block w-full px-3 py-2 text-sm border-gray-300 rounded-md focus:ring-blue-900 focus:border-blue-900 border shadow-sm">
+                    <option value="" disabled selected>Sélectionnez un compte</option>
+                    <option *ngFor="let c of myAccounts" [value]="c.id">
+                        {{ c.type }} - {{ c.numeroCompte }} ({{ c.solde | number:'1.0-0' }} FCFA)
+                    </option>
+                </select>
+                <p *ngIf="myAccounts.length === 0" class="text-xs text-orange-600 mt-1">Aucun compte trouvé.</p>
+            </div>
 
-             <input type="text" [(ngModel)]="compteId" name="compteId" placeholder="Ex: 1" class="block w-full px-3 py-2 text-sm border-gray-300 rounded-md focus:ring-blue-900 focus:border-blue-900 border shadow-sm">
-             <p class="text-xs text-gray-500">L'identifiant numérique du compte est requis pour la validation.</p>
+            <!-- Mode Admin : Input ID / Search -->
+             <div *ngIf="!isClient">
+                 <div *ngIf="showIbanSearch" class="p-3 bg-gray-50 rounded-lg border border-gray-200 animate-in fade-in slide-in-from-top-1 duration-300 mb-2">
+                    <div class="flex gap-2">
+                       <input type="text" [(ngModel)]="ibanQuery" name="ibanQuery" placeholder="Saisir IBAN complet..." class="flex-1 px-3 py-1.5 text-xs border-gray-300 rounded focus:ring-blue-900 focus:border-blue-900 border">
+                       <button type="button" (click)="searchByIban('SOURCE')" class="px-3 py-1.5 bg-blue-900 text-white text-xs font-medium rounded hover:bg-blue-800">Chercher</button>
+                    </div>
+                    <p *ngIf="searchError" class="text-[10px] text-rose-600 mt-1">{{ searchError }}</p>
+                 </div>
+
+                 <input type="text" [(ngModel)]="compteId" name="compteId" placeholder="ID du compte (Ex: 1)" class="block w-full px-3 py-2 text-sm border-gray-300 rounded-md focus:ring-blue-900 focus:border-blue-900 border shadow-sm">
+             </div>
           </div>
 
           <!-- Compte Destinataire (pour virement) -->
           <div *ngIf="type === 'VIREMENT'" class="space-y-3">
             <div class="flex justify-between items-center">
-                <label class="block text-sm font-medium text-gray-700">ID du Compte Destinataire</label>
+                <label class="block text-sm font-medium text-gray-700">Compte Destinataire</label>
                 <button type="button" (click)="showDestIbanSearch = !showDestIbanSearch" class="text-xs text-blue-600 hover:text-blue-500 font-medium">
                   Trouver par IBAN
                 </button>
@@ -60,7 +77,7 @@ import { Client, Compte } from '../../core/models';
                 </div>
             </div>
 
-            <input type="text" [(ngModel)]="destCompteId" name="destCompteId" placeholder="Ex: 2" class="block w-full px-3 py-2 text-sm border-gray-300 rounded-md focus:ring-blue-900 focus:border-blue-900 border shadow-sm">
+            <input type="text" [(ngModel)]="destCompteId" name="destCompteId" placeholder="ID ou IBAN trouvé..." class="block w-full px-3 py-2 text-sm border-gray-300 rounded-md focus:ring-blue-900 focus:border-blue-900 border shadow-sm">
           </div>
 
           <div>
@@ -104,9 +121,27 @@ export class OperationsComponent implements OnInit {
   searchError = '';
   submitting = false;
 
-  constructor(private apiService: ApiService) { }
+  isClient = false;
+  myAccounts: Compte[] = [];
 
-  ngOnInit() { }
+  constructor(
+    private apiService: ApiService,
+    private authService: AuthService
+  ) {
+    this.isClient = this.authService.isClient();
+  }
+
+  ngOnInit() {
+    if (this.isClient) {
+      this.loadMyAccounts();
+    }
+  }
+
+  loadMyAccounts() {
+    this.apiService.getMyAccounts().subscribe(accounts => {
+      this.myAccounts = accounts;
+    });
+  }
 
   searchByIban(target: 'SOURCE' | 'DEST') {
     const query = target === 'SOURCE' ? this.ibanQuery : this.destIbanQuery;
@@ -172,7 +207,9 @@ export class OperationsComponent implements OnInit {
   }
 
   reset() {
-    this.compteId = '';
+    if (!this.isClient) {
+      this.compteId = '';
+    }
     this.destCompteId = '';
     this.montant = 0;
     this.description = '';

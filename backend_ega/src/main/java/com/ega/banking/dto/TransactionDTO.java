@@ -11,26 +11,26 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 public class TransactionDTO {
-    
+
     private Long id;
-    
-    private TypeTransaction type;
-    
+
+    private TypeTransaction typeTransaction;
+
     private BigDecimal montant;
-    
+
     private String description;
-    
+
     private Long compteSourceId;
-    
+
     private String compteSourceNumero;
-    
+
     private Long compteDestinationId;
-    
+
     private String compteDestinationNumero;
-    
+
     private LocalDateTime dateTransaction;
-    
+
     private BigDecimal soldePrecedent;
-    
+
     private BigDecimal nouveauSolde;
 }

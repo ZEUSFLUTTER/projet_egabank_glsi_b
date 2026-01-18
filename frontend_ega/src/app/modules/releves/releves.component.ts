@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ApiService } from '../../core/services/api.service';
+import { AuthService } from '../../core/services/auth.service';
 import { Compte, Transaction } from '../../core/models';
 
 @Component({
@@ -18,10 +19,10 @@ import { Compte, Transaction } from '../../core/models';
       <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm space-y-4">
         <div class="flex flex-wrap gap-4 items-end">
           <div class="flex-1 min-w-[200px]">
-            <label class="block text-xs font-medium text-gray-700 mb-1.5">Compte</label>
-            <select [(ngModel)]="selectedCompteId" class="block w-full px-3 py-2 text-sm border-gray-300 rounded-md focus:ring-gray-900 focus:border-gray-900 border">
+             <label class="block text-xs font-medium text-gray-700 mb-1.5">Compte</label>
+             <select [(ngModel)]="selectedCompteId" class="block w-full px-3 py-2 text-sm border-gray-300 rounded-md focus:ring-gray-900 focus:border-gray-900 border">
               <option *ngFor="let acc of comptes" [value]="acc.id">{{ acc.type }} - {{ acc.numeroCompte }}</option>
-            </select>
+             </select>
           </div>
           
           <div>
@@ -117,10 +118,17 @@ export class StatementComponent implements OnInit {
     'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'
   ];
 
-  constructor(private apiService: ApiService) { }
+  constructor(
+    private apiService: ApiService,
+    private authService: AuthService
+  ) { }
 
   ngOnInit() {
-    this.apiService.getComptes().subscribe((comptes) => {
+    const fetchAccounts$ = this.authService.isClient()
+      ? this.apiService.getMyAccounts()
+      : this.apiService.getComptes();
+
+    fetchAccounts$.subscribe((comptes) => {
       this.comptes = comptes;
       if (comptes.length > 0) this.selectedCompteId = comptes[0].id;
     });
@@ -161,7 +169,6 @@ export class StatementComponent implements OnInit {
 
     request.subscribe({
       next: (blob) => {
-        // Créer un lien de téléchargement
         const url = window.URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;
@@ -183,4 +190,3 @@ export class StatementComponent implements OnInit {
     });
   }
 }
-

@@ -107,6 +107,36 @@ public class CompteService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
+    public List<CompteDTO> obtenirComptesDuClientConnecte() {
+        org.springframework.security.core.Authentication authentication = org.springframework.security.core.context.SecurityContextHolder
+                .getContext().getAuthentication();
+        String username = authentication.getName();
+        log.info("Récupération des comptes du client connecté: username={}", username);
+
+        Client client;
+
+        if (username.startsWith("CLIENT_ID:")) {
+            Long clientId = Long.parseLong(username.substring(10));
+            client = clientRepository.findById(clientId)
+                    .orElseThrow(() -> new ResourceNotFoundException("Client", "id", clientId));
+        } else {
+            // Pour les anciens clients avec User associé
+            client = clientRepository.findByUserUsername(username)
+                    .orElseThrow(() -> new ResourceNotFoundException("Client", "username", username));
+        }
+
+        log.info("✅ Client trouvé: ID={}, Nom={} {}", client.getId(), client.getPrenom(), client.getNom());
+
+        List<CompteDTO> comptes = compteRepository.findByClientId(client.getId()).stream()
+                .map(this::mapToDTO)
+                .collect(java.util.stream.Collectors.toList());
+
+        log.info("✅ {} compte(s) trouvé(s) pour le client ID={}", comptes.size(), client.getId());
+
+        return comptes;
+    }
+
     public void supprimerCompte(Long id) {
         log.info("Suppression du compte: ID={}", id);
 

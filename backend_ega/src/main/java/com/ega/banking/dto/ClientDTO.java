@@ -46,4 +46,8 @@ public class ClientDTO {
     private String nationalite;
 
     private Integer nombreComptes;
+
+    // Identifiants de connexion (uniquement remplis lors de la création)
+    private String username;
+    private String temporaryPassword;
 }

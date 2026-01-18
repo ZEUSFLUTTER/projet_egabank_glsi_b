@@ -31,12 +31,22 @@ public class JwtTokenProvider {
     }
 
     public String generateToken(Authentication authentication) {
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        String subject;
+
+        // Gérer les deux types de principal : UserDetails (admin) ou String (client ID)
+        Object principal = authentication.getPrincipal();
+        if (principal instanceof UserDetails) {
+            subject = ((UserDetails) principal).getUsername();
+        } else {
+            // Pour les clients, le principal est directement l'ID du client
+            subject = principal.toString();
+        }
+
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + jwtExpirationMs);
 
         return Jwts.builder()
-                .subject(userDetails.getUsername())
+                .subject(subject)
                 .issuedAt(now)
                 .expiration(expiryDate)
                 .signWith(key)

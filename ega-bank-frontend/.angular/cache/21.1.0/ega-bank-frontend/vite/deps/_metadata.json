@@ -1,0 +1,70 @@
+{
+  "hash": "fdfdc9aa",
+  "configHash": "3bc01c50",
+  "lockfileHash": "8f4525a3",
+  "browserHash": "6b35b6ad",
+  "optimized": {
+    "@angular/common": {
+      "src": "../../../../../../node_modules/@angular/common/fesm2022/common.mjs",
+      "file": "@angular_common.js",
+      "fileHash": "165b037c",
+      "needsInterop": false
+    },
+    "@angular/common/http": {
+      "src": "../../../../../../node_modules/@angular/common/fesm2022/http.mjs",
+      "file": "@angular_common_http.js",
+      "fileHash": "e0043c81",
+      "needsInterop": false
+    },
+    "@angular/core": {
+      "src": "../../../../../../node_modules/@angular/core/fesm2022/core.mjs",
+      "file": "@angular_core.js",
+      "fileHash": "c41b1def",
+      "needsInterop": false
+    },
+    "@angular/forms": {
+      "src": "../../../../../../node_modules/@angular/forms/fesm2022/forms.mjs",
+      "file": "@angular_forms.js",
+      "fileHash": "e7af14fe",
+      "needsInterop": false
+    },
+    "@angular/platform-browser": {
+      "src": "../../../../../../node_modules/@angular/platform-browser/fesm2022/platform-browser.mjs",
+      "file": "@angular_platform-browser.js",
+      "fileHash": "7a542365",
+      "needsInterop": false
+    },
+    "@angular/router": {
+      "src": "../../../../../../node_modules/@angular/router/fesm2022/router.mjs",
+      "file": "@angular_router.js",
+      "fileHash": "022fef49",
+      "needsInterop": false
+    },
+    "rxjs": {
+      "src": "../../../../../../node_modules/rxjs/dist/esm5/index.js",
+      "file": "rxjs.js",
+      "fileHash": "27a80b25",
+      "needsInterop": false
+    }
+  },
+  "chunks": {
+    "chunk-DAV2T7E4": {
+      "file": "chunk-DAV2T7E4.js"
+    },
+    "chunk-6ASTNXBR": {
+      "file": "chunk-6ASTNXBR.js"
+    },
+    "chunk-7GHJ4PUI": {
+      "file": "chunk-7GHJ4PUI.js"
+    },
+    "chunk-WRJ3OIFZ": {
+      "file": "chunk-WRJ3OIFZ.js"
+    },
+    "chunk-YCR3CWZC": {
+      "file": "chunk-YCR3CWZC.js"
+    },
+    "chunk-PJVWDKLX": {
+      "file": "chunk-PJVWDKLX.js"
+    }
+  }
+}

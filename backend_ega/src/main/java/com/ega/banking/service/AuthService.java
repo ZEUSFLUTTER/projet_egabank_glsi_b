@@ -38,7 +38,9 @@ public class AuthService {
         private final JwtTokenProvider tokenProvider;
 
         public AuthResponse login(AuthRequest request) {
-                log.info("Tentative de connexion pour l'utilisateur: {}", request.getUsername());
+                log.info("Tentative de connexion pour l'utilisateur: {}, longueur password: {}",
+                                request.getUsername(),
+                                request.getPassword() != null ? request.getPassword().length() : "null");
 
                 Authentication authentication = authenticationManager.authenticate(
                                 new UsernamePasswordAuthenticationToken(

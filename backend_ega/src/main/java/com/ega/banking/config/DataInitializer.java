@@ -21,19 +21,19 @@ public class DataInitializer implements CommandLineRunner {
     public void run(String... args) {
         userRepository.findByUsername("admin").ifPresentOrElse(
                 admin -> {
-                    admin.setPassword(passwordEncoder.encode("admin"));
+                    admin.setPassword(passwordEncoder.encode("admin123"));
                     userRepository.save(admin);
-                    log.info("DataInitializer: Mot de passe pour 'admin' réinitialisé à 'admin'");
+                    log.info("DataInitializer: Mot de passe pour 'admin' réinitialisé à 'admin123'");
                 },
                 () -> {
                     User admin = new User();
                     admin.setUsername("admin");
-                    admin.setPassword(passwordEncoder.encode("admin"));
+                    admin.setPassword(passwordEncoder.encode("admin123"));
                     admin.setRole("ROLE_ADMIN");
                     admin.setEmail("admin@egabank.com");
                     admin.setEnabled(true);
                     userRepository.save(admin);
-                    log.info("DataInitializer: Compte administrateur par défaut créé (admin/admin)");
+                    log.info("DataInitializer: Compte administrateur par défaut créé (admin/admin123)");
                 });
     }
 }

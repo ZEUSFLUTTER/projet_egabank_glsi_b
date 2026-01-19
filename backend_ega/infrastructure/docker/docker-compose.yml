@@ -3,16 +3,16 @@ version: '3.8'
 services:
   # PostgreSQL Database
   postgres:
-    image: postgres:16-alpine
+    image: postgres:15-alpine
     container_name: ega-postgres
     environment:
       POSTGRES_DB: egabank
       POSTGRES_USER: egauser
       POSTGRES_PASSWORD: egapassword
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - docker_db-data:/var/lib/postgresql/data
     networks:
       - ega-network
     healthcheck:
@@ -23,9 +23,10 @@ services:
 
   # Spring Boot Application
   backend:
+    # image: ega-backend:latest
     build:
-      context: .
-      dockerfile: Dockerfile
+      context: ../..
+      dockerfile: infrastructure/docker/Dockerfile
     container_name: ega-backend
     ports:
       - "8080:8080"
@@ -52,30 +53,29 @@ services:
     networks:
       - ega-network
     restart: unless-stopped
-
   # PgAdmin - Interface web pour PostgreSQL (optionnel)
-  pgadmin:
-    image: dpage/pgadmin4:latest
-    container_name: ega-pgadmin
-    environment:
-      PGADMIN_DEFAULT_EMAIL: admin@ega.com
-      PGADMIN_DEFAULT_PASSWORD: admin
-      PGADMIN_CONFIG_SERVER_MODE: 'False'
-    ports:
-      - "5050:80"
-    volumes:
-      - pgadmin_data:/var/lib/pgadmin
-    networks:
-      - ega-network
-    depends_on:
-      - postgres
+  # pgadmin:
+  #   image: dpage/pgadmin4:latest
+  #   container_name: ega-pgadmin
+  #   environment:
+  #     PGADMIN_DEFAULT_EMAIL: admin@ega.com
+  #     PGADMIN_DEFAULT_PASSWORD: admin
+  #     PGADMIN_CONFIG_SERVER_MODE: 'False'
+  #   ports:
+  #     - "5050:80"
+  #   volumes:
+  #     - pgadmin_data:/var/lib/pgadmin
+  #   networks:
+  #     - ega-network
+  #   depends_on:
+  #     - postgres
 
 networks:
   ega-network:
     driver: bridge
 
 volumes:
-  postgres_data:
-    driver: local
+  docker_db-data:
+    external: true
   pgadmin_data:
     driver: local

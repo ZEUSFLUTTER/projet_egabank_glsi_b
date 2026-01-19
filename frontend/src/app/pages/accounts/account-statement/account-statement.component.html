@@ -1,0 +1,344 @@
+<div class="statement-container">
+  <!-- Header -->
+  <div class="statement-header">
+    <div class="header-content">
+      <div class="header-left">
+        <button nbButton ghost size="small" (click)="onBack()" class="back-btn">
+          <nb-icon icon="arrow-back-outline"></nb-icon>
+        </button>
+        <div>
+          <h1 class="statement-title">
+            <nb-icon icon="file-text-outline"></nb-icon>
+            Génération de Relevé
+          </h1>
+          <p class="statement-subtitle" *ngIf="account">
+            {{ formatAccountNumber(account.accountNumber) }}
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="isLoading" class="loading-container">
+    <nb-spinner size="giant" status="primary"></nb-spinner>
+    <p class="loading-text">Chargement...</p>
+  </div>
+
+  <!-- Contenu -->
+  <div *ngIf="!isLoading && account" class="statement-content">
+    <div class="content-grid">
+      <!-- Colonne principale -->
+      <div class="content-main">
+        <!-- Sélection de la période -->
+        <nb-card class="period-card">
+          <nb-card-header>
+            <div class="card-header-content">
+              <div class="step-badge">1</div>
+              <div>
+                <h5>Période du Relevé</h5>
+                <p class="text-muted">Sélectionnez la période à inclure</p>
+              </div>
+            </div>
+          </nb-card-header>
+          <nb-card-body>
+            <!-- Périodes rapides -->
+            <div class="quick-periods">
+              <button
+                *ngFor="let period of quickPeriods"
+                nbButton
+                ghost
+                size="small"
+                (click)="period.action()"
+                class="period-btn"
+              >
+                <nb-icon [icon]="period.icon"></nb-icon>
+                {{ period.label }}
+              </button>
+            </div>
+
+            <!-- Dates personnalisées -->
+            <div class="date-inputs">
+              <div class="date-field">
+                <label for="startDate" class="form-label required"
+                  >Date de début</label
+                >
+                <input
+                  type="date"
+                  id="startDate"
+                  [(ngModel)]="startDate"
+                  (change)="onDateChange()"
+                  nbInput
+                  fullWidth
+                  [max]="endDate"
+                />
+              </div>
+
+              <div class="date-separator">
+                <nb-icon icon="arrow-forward-outline"></nb-icon>
+              </div>
+
+              <div class="date-field">
+                <label for="endDate" class="form-label required"
+                  >Date de fin</label
+                >
+                <input
+                  type="date"
+                  id="endDate"
+                  [(ngModel)]="endDate"
+                  (change)="onDateChange()"
+                  nbInput
+                  fullWidth
+                  [min]="startDate"
+                  [max]="today"
+                />
+              </div>
+            </div>
+
+            <!-- Info période -->
+            <div class="period-info" *ngIf="startDate && endDate">
+              <nb-badge
+                [text]="
+                  'Du ' +
+                  formatDate(startDate) +
+                  ' au ' +
+                  formatDate(endDate) +
+                  ' (' +
+                  getDaysBetween() +
+                  ' jours)'
+                "
+                status="info"
+              ></nb-badge>
+            </div>
+          </nb-card-body>
+        </nb-card>
+
+        <!-- Aperçu des transactions -->
+        <nb-card class="preview-card" *ngIf="startDate && endDate">
+          <nb-card-header>
+            <div class="card-header-flex">
+              <h6>
+                <nb-icon icon="eye-outline"></nb-icon>
+                Aperçu des Transactions
+              </h6>
+              <nb-badge
+                [text]="
+                  formatNumber(previewStats.totalTransactions) +
+                  ' transaction(s)'
+                "
+                status="primary"
+              ></nb-badge>
+            </div>
+          </nb-card-header>
+          <nb-card-body>
+            <div *ngIf="isLoadingPreview" class="loading-preview">
+              <nb-spinner size="large" status="primary"></nb-spinner>
+            </div>
+
+            <div *ngIf="!isLoadingPreview && previewTransactions.length > 0">
+              <!-- Résumé -->
+              <div class="preview-summary">
+                <div class="summary-row">
+                  <span class="summary-label">Solde d'ouverture: </span>
+                  <span class="summary-value">{{
+                    formatCurrency(previewStats.openingBalance)
+                  }}</span>
+                </div>
+                <div class="summary-row positive">
+                  <span class="summary-label">
+                    <nb-icon icon="arrow-downward-outline"></nb-icon>
+                    Dépôts ({{ previewStats.totalDeposits }}):
+                  </span>
+                  <span class="summary-value"
+                    >+{{ formatCurrency(previewStats.depositAmount) }}</span
+                  >
+                </div>
+                <div class="summary-row negative">
+                  <span class="summary-label">
+                    <nb-icon icon="arrow-upward-outline"></nb-icon>
+                    Retraits ({{ previewStats.totalWithdrawals }}):
+                  </span>
+                  <span class="summary-value"
+                    >-{{ formatCurrency(previewStats.withdrawalAmount) }}</span
+                  >
+                </div>
+                <div class="summary-row negative">
+                  <span class="summary-label">
+                    <nb-icon icon="swap-outline"></nb-icon>
+                    Virements ({{ previewStats.totalTransfers }}):
+                  </span>
+                  <span class="summary-value"
+                    >-{{ formatCurrency(previewStats.transferAmount) }}</span
+                  >
+                </div>
+                <div class="summary-divider"></div>
+                <div
+                  class="summary-row total"
+                  [ngClass]="{
+                    positive: previewStats.netChange > 0,
+                    negative: previewStats.netChange < 0
+                  }"
+                >
+                  <span class="summary-label"
+                    ><strong>Variation nette:</strong></span
+                  >
+                  <span class="summary-value">
+                    <strong
+                      >{{ previewStats.netChange >= 0 ? "+" : ""
+                      }}{{ formatCurrency(previewStats.netChange) }}</strong
+                    >
+                  </span>
+                </div>
+                <div class="summary-row total">
+                  <span class="summary-label"
+                    ><strong>Solde de clôture:</strong></span
+                  >
+                  <span class="summary-value">
+                    <strong>{{
+                      formatCurrency(previewStats.closingBalance)
+                    }}</strong>
+                  </span>
+                </div>
+              </div>
+
+              <!-- Transactions (5 premières) -->
+              <div class="preview-transactions">
+                <small class="text-muted"
+                  >Aperçu des 5 premières transactions</small
+                >
+                <div
+                  *ngFor="let transaction of previewTransactions.slice(0, 5)"
+                  class="preview-transaction-item"
+                >
+                  <div
+                    class="transaction-icon"
+                    [ngClass]="
+                      'icon-' + transaction.transactionType.toLowerCase()
+                    "
+                  >
+                    <nb-icon
+                      [icon]="
+                        getTransactionTypeIcon(transaction.transactionType)
+                      "
+                    ></nb-icon>
+                  </div>
+                  <div class="transaction-details">
+                    <div class="transaction-type">
+                      {{ getTransactionTypeLabel(transaction.transactionType) }}
+                    </div>
+                    <small class="transaction-date">{{
+                      formatDateTime(transaction.transactionDate)
+                    }}</small>
+                  </div>
+                  <div
+                    class="transaction-amount"
+                    [ngClass]="{
+                      positive: transaction.transactionType === 'DEPOSIT',
+                      negative: transaction.transactionType !== 'DEPOSIT'
+                    }"
+                  >
+                    {{ transaction.transactionType === "DEPOSIT" ? "+" : "-"
+                    }}{{ formatCurrency(Math.abs(transaction.amount)) }}
+                  </div>
+                </div>
+                <div
+                  *ngIf="previewTransactions.length > 5"
+                  class="more-transactions"
+                >
+                  <small
+                    >+ {{ previewTransactions.length - 5 }} autre(s)
+                    transaction(s)</small
+                  >
+                </div>
+              </div>
+            </div>
+
+            <div
+              *ngIf="!isLoadingPreview && previewTransactions.length === 0"
+              class="no-preview"
+            >
+              <nb-icon icon="inbox-outline"></nb-icon>
+              <p>Aucune transaction sur cette période</p>
+            </div>
+          </nb-card-body>
+        </nb-card>
+
+        <!-- Actions -->
+        <div class="form-actions">
+          <button
+            nbButton
+            size="large"
+            status="basic"
+            (click)="onBack()"
+            [disabled]="isGenerating"
+          >
+            <nb-icon icon="close-outline"></nb-icon>
+            Annuler
+          </button>
+
+          <button
+            nbButton
+            size="large"
+            status="primary"
+            (click)="generateStatement()"
+            [disabled]="!startDate || !endDate || isGenerating"
+          >
+            <nb-icon
+              [icon]="isGenerating ? 'loader-outline' : 'download-outline'"
+              [class.
+              spin]="isGenerating"
+            ></nb-icon>
+            {{ isGenerating ? "Génération en cours..." : "Générer le relevé" }}
+          </button>
+        </div>
+      </div>
+
+      <!-- Sidebar -->
+      <div class="content-sidebar">
+        <!-- Info compte -->
+        <nb-card class="account-info-card">
+          <nb-card-header>
+            <h6>
+              <nb-icon icon="credit-card-outline"></nb-icon>
+              Informations du Compte
+            </h6>
+          </nb-card-header>
+          <nb-card-body>
+            <div class="account-display">
+              <div class="account-number-display">
+                <small>Numéro de compte</small>
+                <div class="number-mono">
+                  {{ formatAccountNumber(account.accountNumber) }}
+                </div>
+              </div>
+              <div class="account-balance-display">
+                <small>Solde actuel</small>
+                <div class="balance-large">
+                  {{ formatCurrency(account.balance) }}
+                </div>
+              </div>
+              <div class="account-details">
+                <div class="detail-item">
+                  <nb-icon icon="person-outline"></nb-icon>
+                  <span>{{ account.customerFullName }}</span>
+                </div>
+                <div class="detail-item">
+                  <nb-icon icon="pricetags-outline"></nb-icon>
+                  <span>{{
+                    account.accountType === "SAVINGS"
+                      ? "Compte Épargne"
+                      : "Compte Courant"
+                  }}</span>
+                </div>
+                <div class="detail-item">
+                  <nb-icon icon="globe-outline"></nb-icon>
+                  <span>{{ account.currency }}</span>
+                </div>
+              </div>
+            </div>
+          </nb-card-body>
+        </nb-card>
+      </div>
+    </div>
+  </div>
+</div>

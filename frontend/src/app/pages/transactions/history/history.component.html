@@ -1,0 +1,351 @@
+<div class="history-container">
+  <!-- Header -->
+  <div class="page-header">
+    <div class="header-content">
+      <div class="header-left">
+        <button
+          nbButton
+          ghost
+          size="small"
+          [routerLink]="['/pages/transactions']"
+          class="back-btn"
+        >
+          <nb-icon icon="arrow-back-outline"></nb-icon>
+        </button>
+        <div>
+          <h1 class="page-title">
+            <nb-icon icon="archive-outline"></nb-icon>
+            Historique des Transactions
+          </h1>
+          <p class="page-subtitle">
+            {{ formatNumber(totalItems) }} transaction{{ totalItems > 1 ? 's' : '' }} enregistrée{{ totalItems > 1 ? 's' : '' }}
+          </p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Barre de recherche et filtres -->
+  <nb-card class="filters-card">
+    <nb-card-body>
+      <div class="search-bar">
+        <nb-icon icon="search-outline" class="search-icon"></nb-icon>
+        <input
+          type="text"
+          nbInput
+          fullWidth
+          placeholder="Rechercher par référence, description ou numéro de compte..."
+          [(ngModel)]="searchTerm"
+          (keyup)="applyFilters()"
+        />
+        <button
+          nbButton
+          ghost
+          size="small"
+          *ngIf="searchTerm"
+          (click)="searchTerm = ''; applyFilters()"
+          class="clear-btn"
+        >
+          <nb-icon icon="close-outline"></nb-icon>
+        </button>
+      </div>
+
+      <div class="filters-grid">
+        <!-- Compte -->
+        <div class="filter-group">
+          <label class="filter-label">Compte</label>
+          <nb-select
+            fullWidth
+            size="small"
+            [(ngModel)]="selectedAccountId"
+            (ngModelChange)="loadTransactions()"
+            placeholder="Sélectionnez un compte"
+          >
+            <nb-option value="ALL">Tous les comptes</nb-option>
+            <nb-option *ngFor="let account of accounts" [value]="account.id">
+              {{ formatAccountNumber(account.accountNumber) }} - {{ account.customerFullName }}
+            </nb-option>
+          </nb-select>
+        </div>
+
+        <!-- Type -->
+        <div class="filter-group">
+          <label class="filter-label">Type</label>
+          <nb-select
+            fullWidth
+            size="small"
+            [(ngModel)]="selectedType"
+            (ngModelChange)="applyFilters()"
+          >
+            <nb-option
+              *ngFor="let type of filterOptions.types"
+              [value]="type.value"
+            >
+              <span class="option-with-icon">
+                <nb-icon [icon]="type.icon"></nb-icon>
+                {{ type.label }}
+              </span>
+            </nb-option>
+          </nb-select>
+        </div>
+
+        <!-- Statut -->
+        <div class="filter-group">
+          <label class="filter-label">Statut</label>
+          <nb-select
+            fullWidth
+            size="small"
+            [(ngModel)]="selectedStatus"
+            (ngModelChange)="applyFilters()"
+          >
+            <nb-option
+              *ngFor="let status of filterOptions.statuses"
+              [value]="status.value"
+            >
+              {{ status.label }}
+            </nb-option>
+          </nb-select>
+        </div>
+
+        <!-- Date début -->
+        <div class="filter-group">
+          <label class="filter-label">Date de début</label>
+          <input
+            type="date"
+            nbInput
+            fullWidth
+            size="small"
+            [(ngModel)]="startDate"
+            (change)="loadTransactions()"
+          />
+        </div>
+
+        <!-- Date fin -->
+        <div class="filter-group">
+          <label class="filter-label">Date de fin</label>
+          <input
+            type="date"
+            nbInput
+            fullWidth
+            size="small"
+            [(ngModel)]="endDate"
+            (change)="loadTransactions()"
+          />
+        </div>
+      </div>
+
+      <!-- Périodes rapides -->
+      <div class="quick-filters">
+        <span class="quick-label">Périodes :</span>
+        <div class="quick-buttons">
+          <button
+            nbButton
+            ghost
+            size="tiny"
+            [status]="currentPeriod === 'today' ? 'primary' : 'basic'"
+            (click)="setToday()"
+          >
+            Aujourd'hui
+          </button>
+          <button
+            nbButton
+            ghost
+            size="tiny"
+            [status]="currentPeriod === 'yesterday' ? 'primary' : 'basic'"
+            (click)="setYesterday()"
+          >
+            Hier
+          </button>
+          <button
+            nbButton
+            ghost
+            size="tiny"
+            [status]="currentPeriod === 'week' ? 'primary' : 'basic'"
+            (click)="setLast7Days()"
+          >
+            7 jours
+          </button>
+          <button
+            nbButton
+            ghost
+            size="tiny"
+            [status]="currentPeriod === '30days' ? 'primary' : 'basic'"
+            (click)="setLast30Days()"
+          >
+            30 jours
+          </button>
+          <button
+            nbButton
+            ghost
+            size="tiny"
+            [status]="currentPeriod === 'month' ? 'primary' : 'basic'"
+            (click)="setCurrentMonth()"
+          >
+            Ce mois
+          </button>
+          <button
+            nbButton
+            ghost
+            size="tiny"
+            [status]="currentPeriod === 'year' ? 'primary' : 'basic'"
+            (click)="setCurrentYear()"
+          >
+            Cette année
+          </button>
+        </div>
+      </div>
+    </nb-card-body>
+  </nb-card>
+
+  <!-- Loading -->
+  <div *ngIf="isLoading" class="loading-container">
+    <nb-spinner size="giant" status="primary"></nb-spinner>
+    <p class="loading-text">Chargement des transactions...</p>
+  </div>
+
+  <!-- Contenu -->
+  <div *ngIf="!isLoading">
+    <!-- Statistiques -->
+    <div class="stats-grid" *ngIf="filteredTransactions.length > 0">
+      <nb-card class="stat-card primary">
+        <nb-card-body>
+          <div class="stat-icon">
+            <nb-icon icon="repeat-outline"></nb-icon>
+          </div>
+          <div class="stat-content">
+            <div class="stat-value">
+              {{ formatNumber(stats.totalTransactions) }}
+            </div>
+            <div class="stat-label">Transactions</div>
+          </div>
+        </nb-card-body>
+      </nb-card>
+
+      <nb-card class="stat-card success">
+        <nb-card-body>
+          <div class="stat-icon">
+            <nb-icon icon="trending-up-outline"></nb-icon>
+          </div>
+          <div class="stat-content">
+            <div class="stat-value">
+              {{ formatCurrency(stats.totalDeposits) }}
+            </div>
+            <div class="stat-label">Dépôts ({{ stats.depositsCount }})</div>
+          </div>
+        </nb-card-body>
+      </nb-card>
+
+      <nb-card class="stat-card danger">
+        <nb-card-body>
+          <div class="stat-icon">
+            <nb-icon icon="trending-down-outline"></nb-icon>
+          </div>
+          <div class="stat-content">
+            <div class="stat-value">
+              {{ formatCurrency(stats.totalWithdrawals) }}
+            </div>
+            <div class="stat-label">Retraits ({{ stats.withdrawalsCount }})</div>
+          </div>
+        </nb-card-body>
+      </nb-card>
+
+      <nb-card class="stat-card info">
+        <nb-card-body>
+          <div class="stat-icon">
+            <nb-icon icon="bar-chart-outline"></nb-icon>
+          </div>
+          <div class="stat-content">
+            <div class="stat-value" [ngClass]="{
+              'text-success': getNetBalance() > 0,
+              'text-danger': getNetBalance() < 0
+            }">
+              {{ formatCurrency(getNetBalance()) }}
+            </div>
+            <div class="stat-label">Solde net</div>
+          </div>
+        </nb-card-body>
+      </nb-card>
+    </div>
+
+    <!-- VUE TABLEAU -->
+    <div *ngIf="filteredTransactions.length > 0">
+      <nb-card class="table-card">
+        <nb-card-body>
+          <ng2-smart-table
+            [settings]="settings"
+            [source]="source"
+            (custom)="onCustomAction($event)"
+          >
+          </ng2-smart-table>
+
+          <!-- Pagination -->
+          <div class="pagination-wrapper">
+            <div class="pagination-info">
+              Page {{ currentPageDisplay }} sur {{ totalPages }}
+              <span class="text-hint">({{ formatNumber(totalItems) }} transaction{{ totalItems > 1 ? 's' : '' }})</span>
+            </div>
+            <div class="pagination-controls">
+              <button
+                nbButton
+                ghost
+                size="small"
+                [disabled]="currentPage === 0"
+                (click)="goToFirstPage()"
+                nbTooltip="Première page"
+              >
+                <nb-icon icon="arrowhead-left-outline"></nb-icon>
+              </button>
+              <button
+                nbButton
+                ghost
+                size="small"
+                [disabled]="currentPage === 0"
+                (click)="goToPreviousPage()"
+                nbTooltip="Page précédente"
+              >
+                <nb-icon icon="chevron-left-outline"></nb-icon>
+              </button>
+              <button
+                nbButton
+                ghost
+                size="small"
+                [disabled]="currentPage >= totalPages - 1"
+                (click)="goToNextPage()"
+                nbTooltip="Page suivante"
+              >
+                <nb-icon icon="chevron-right-outline"></nb-icon>
+              </button>
+              <button
+                nbButton
+                ghost
+                size="small"
+                [disabled]="currentPage >= totalPages - 1"
+                (click)="goToLastPage()"
+                nbTooltip="Dernière page"
+              >
+                <nb-icon icon="arrowhead-right-outline"></nb-icon>
+              </button>
+            </div>
+          </div>
+        </nb-card-body>
+      </nb-card>
+    </div>
+
+    <!-- Message si vide -->
+    <div *ngIf="filteredTransactions.length === 0 && !isLoading" class="empty-state">
+      <nb-icon icon="archive-outline"></nb-icon>
+      <h4>Aucune transaction trouvée</h4>
+      <p *ngIf="searchTerm || selectedType !== 'ALL' || selectedStatus !== 'ALL'">
+        Aucune transaction ne correspond à vos critères de recherche
+      </p>
+      <p *ngIf="!searchTerm && selectedType === 'ALL' && selectedStatus === 'ALL'">
+        Aucune transaction pour le compte sélectionné
+      </p>
+      <button nbButton status="primary" size="large" (click)="resetFilters()">
+        <nb-icon icon="refresh-outline"></nb-icon>
+        Réinitialiser les filtres
+      </button>
+    </div>
+  </div>
+</div>

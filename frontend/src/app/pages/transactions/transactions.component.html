@@ -1,0 +1,55 @@
+<div class="transactions-container">
+  <!-- Header -->
+  <div class="page-header">
+    <div class="header-content">
+      <div class="header-left">
+        <h1 class="page-title">
+          <nb-icon icon="repeat-outline"></nb-icon>
+          Opérations Bancaires
+        </h1>
+        <p class="page-subtitle">Gérez toutes vos transactions bancaires en toute sécurité</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Opérations disponibles -->
+  <div class="operations-section">
+    <div class="section-header">
+      <h2 class="section-title">
+        <nb-icon icon="grid-outline"></nb-icon>
+        Opérations Disponibles
+      </h2>
+      <p class="section-subtitle">Sélectionnez l'opération que vous souhaitez effectuer</p>
+    </div>
+
+    <div class="operations-grid">
+      <div *ngFor="let op of operations" class="operation-card" (click)="navigateTo(op.route)">
+        <div class="operation-header" [ngClass]="'header-' + op.color">
+          <div class="operation-icon-wrapper">
+            <nb-icon [icon]="op.icon"></nb-icon>
+          </div>
+        </div>
+
+        <div class="operation-body">
+          <h3 class="operation-title">{{ op.title }}</h3>
+          <p class="operation-description">{{ op.description }}</p>
+          <small class="operation-subtitle">{{ op.subtitle }}</small>
+
+          <ul class="operation-features">
+            <li *ngFor="let feature of op.features">
+              <nb-icon icon="checkmark-circle-outline"></nb-icon>
+              <span>{{ feature }}</span>
+            </li>
+          </ul>
+        </div>
+
+        <div class="operation-footer">
+          <button nbButton [status]="op.color" fullWidth size="large">
+            <nb-icon icon="arrow-forward-outline"></nb-icon>
+            Accéder
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

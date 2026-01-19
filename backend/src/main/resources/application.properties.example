@@ -1,0 +1,53 @@
+# ========================================
+# CONFIGURATION DU SERVEUR
+# ========================================
+server.port=8080
+
+# ========================================
+# CONFIGURATION BASE DE DONNÉES SUPABASE
+# ========================================
+# Remplacez spring.datasource.password] par le vrai mot de passe Supabase
+spring.datasource.url=jdbc:postgresql://aws-1-eu-north-1.pooler.supabase.com:5432/postgres
+spring.datasource.username=postgres.tzubemfqoiphqztmkzbb
+spring.datasource.password=[MOT-DE-PASSE-SUPABASE]
+spring.datasource.driver-class-name=org.postgresql.Driver
+
+# ========================================
+# CONFIGURATION JPA/HIBERNATE POUR POSTGRESQL
+# ========================================
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.format_sql=true
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
+spring.jpa.properties.hibernate.jdbc.lob.non_contextual_creation=true
+
+# ========================================
+# CONFIGURATION JWT
+# ========================================
+jwt.secret=uneCleSecreteTresLongueEtSecuriseePourLaSignatureDesTokensJWT123456789
+jwt.expiration=86400000
+
+# ========================================
+# CONFIGURATION CORS
+# ========================================
+cors.allowed-origins=http://localhost:4200
+
+# ========================================
+# CONFIGURATION SWAGGER/OPENAPI
+# ========================================
+springdoc.api-docs.enabled=true
+springdoc.api-docs.path=/v3/api-docs
+springdoc.swagger-ui.enabled=true
+springdoc.swagger-ui.path=/swagger-ui.html
+springdoc.swagger-ui.operationsSorter=method
+springdoc.swagger-ui.tagsSorter=alpha
+springdoc.swagger-ui.tryItOutEnabled=true
+springdoc.packages-to-scan=com.ega.banking.controller
+springdoc.paths-to-match=/api/**
+
+# ========================================
+# CONFIGURATION DES LOGS
+# ========================================
+logging.level.com.ega.banking=INFO
+logging.level.org.springframework.web=INFO
+logging.level.org.hibernate.SQL=DEBUG

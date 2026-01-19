@@ -1,0 +1,279 @@
+<div class="customers-container">
+  <!-- Header -->
+  <div class="page-header">
+    <div class="header-content">
+      <div class="header-left">
+        <h1 class="page-title">
+          <nb-icon icon="people-outline"></nb-icon>
+          Gestion des Clients
+        </h1>
+        <p class="page-subtitle">
+          {{ formatNumber(totalItems) }} client{{ totalItems > 1 ? "s" : "" }} enregistré{{ totalItems > 1 ? "s" : "" }}
+        </p>
+      </div>
+      <div class="header-actions">
+        <!-- Sélecteur de vue -->
+        <nb-button-group>
+          <button
+            nbButton
+            size="small"
+            [status]="viewMode === 'table' ? 'primary' : 'basic'"
+            (click)="setViewMode('table')"
+            nbTooltip="Tableau"
+          >
+            <nb-icon icon="list-outline"></nb-icon>
+          </button>
+          <button
+            nbButton
+            size="small"
+            [status]="viewMode === 'cards' ? 'primary' : 'basic'"
+            (click)="setViewMode('cards')"
+            nbTooltip="Cartes"
+          >
+            <nb-icon icon="grid-outline"></nb-icon>
+          </button>
+        </nb-button-group>
+
+        <button nbButton status="primary" (click)="onCreate()">
+          <nb-icon icon="person-add-outline"></nb-icon>
+          Nouveau Client
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Barre de recherche -->
+  <nb-card class="search-card">
+    <nb-card-body>
+      <div class="search-bar">
+        <nb-icon icon="search-outline" class="search-icon"></nb-icon>
+        <input
+          type="text"
+          nbInput
+          fullWidth
+          placeholder="Rechercher par nom, prénom, email ou téléphone..."
+          [(ngModel)]="searchTerm"
+          (keyup)="onSearch()"
+        />
+        <button
+          nbButton
+          ghost
+          size="small"
+          *ngIf="searchTerm"
+          (click)="clearSearch()"
+          class="clear-btn"
+        >
+          <nb-icon icon="close-outline"></nb-icon>
+        </button>
+      </div>
+    </nb-card-body>
+  </nb-card>
+
+  <!-- Loading -->
+  <div *ngIf="isLoading" class="loading-container">
+    <nb-spinner size="giant" status="primary"></nb-spinner>
+    <p class="loading-text">Chargement des clients... </p>
+  </div>
+
+  <!-- Contenu -->
+  <div *ngIf="!isLoading">
+    <!-- VUE TABLEAU -->
+    <div *ngIf="viewMode === 'table'">
+      <nb-card class="table-card">
+        <nb-card-body>
+          <ng2-smart-table
+            [settings]="settings"
+            [source]="source"
+            (edit)="onEdit($event)"
+            (delete)="onDelete($event)"
+            (userRowSelect)="onView($event)"
+          >
+          </ng2-smart-table>
+
+          <!-- Pagination -->
+          <div class="pagination-wrapper">
+            <div class="pagination-info">
+              Page {{ currentPageDisplay }} sur {{ totalPages }}
+              <span class="text-hint">({{ formatNumber(totalItems) }} résultat{{ totalItems > 1 ? "s" : "" }})</span>
+            </div>
+            <div class="pagination-controls">
+              <button
+                nbButton
+                ghost
+                size="small"
+                [disabled]="currentPage === 0"
+                (click)="goToFirstPage()"
+                nbTooltip="Première page"
+              >
+                <nb-icon icon="arrowhead-left-outline"></nb-icon>
+              </button>
+              <button
+                nbButton
+                ghost
+                size="small"
+                [disabled]="currentPage === 0"
+                (click)="goToPreviousPage()"
+                nbTooltip="Page précédente"
+              >
+                <nb-icon icon="chevron-left-outline"></nb-icon>
+              </button>
+              <button
+                nbButton
+                ghost
+                size="small"
+                [disabled]="currentPage >= totalPages - 1"
+                (click)="goToNextPage()"
+                nbTooltip="Page suivante"
+              >
+                <nb-icon icon="chevron-right-outline"></nb-icon>
+              </button>
+              <button
+                nbButton
+                ghost
+                size="small"
+                [disabled]="currentPage >= totalPages - 1"
+                (click)="goToLastPage()"
+                nbTooltip="Dernière page"
+              >
+                <nb-icon icon="arrowhead-right-outline"></nb-icon>
+              </button>
+            </div>
+          </div>
+        </nb-card-body>
+      </nb-card>
+    </div>
+
+    <!-- VUE CARTES -->
+    <div *ngIf="viewMode === 'cards'">
+      <div class="cards-grid">
+        <nb-card
+          *ngFor="let customer of customers"
+          class="customer-card"
+        >
+          <nb-card-body>
+            <div class="customer-avatar">
+              <nb-icon icon="person-outline"></nb-icon>
+            </div>
+
+            <div class="customer-name">
+              {{ customer.lastName }} {{ customer.firstName }}
+            </div>
+
+            <div class="customer-email">{{ customer.email }}</div>
+
+            <div class="customer-info">
+              <div class="info-item">
+                <nb-icon icon="phone-outline"></nb-icon>
+                <span>{{ customer.phoneNumber }}</span>
+              </div>
+              <div class="info-item">
+                <nb-icon icon="calendar-outline"></nb-icon>
+                <span>{{ customer.age }} ans</span>
+              </div>
+              <div class="info-item">
+                <nb-icon icon="flag-outline"></nb-icon>
+                <span>{{ customer.nationality }}</span>
+              </div>
+            </div>
+
+            <div class="customer-badges">
+              <nb-badge
+                [text]="getGenderLabel(customer.gender)"
+                [status]="customer.gender === 'MALE' ? 'primary' : customer. gender === 'FEMALE' ?  'success' : 'basic'"
+              ></nb-badge>
+              <nb-badge
+                [text]="getAgeCategory(customer.age)"
+                [status]="getAgeCategoryStatus(customer.age)"
+              ></nb-badge>
+            </div>
+          </nb-card-body>
+
+          <nb-card-footer>
+            <button
+              nbButton
+              size="small"
+              status="primary"
+              fullWidth
+              (click)="onView({ data: customer })"
+            >
+              <nb-icon icon="eye-outline"></nb-icon>
+              Détails
+            </button>
+            <div class="footer-actions">
+              <button
+                nbButton
+                ghost
+                size="small"
+                (click)="onEdit({ data: customer })"
+              >
+                <nb-icon icon="edit-outline"></nb-icon>
+              </button>
+              <button
+                nbButton
+                ghost
+                size="small"
+                status="danger"
+                (click)="onDelete({ data: customer })"
+              >
+                <nb-icon icon="trash-outline"></nb-icon>
+              </button>
+            </div>
+          </nb-card-footer>
+        </nb-card>
+      </div>
+
+      <!-- Pagination cartes -->
+      <div class="cards-pagination" *ngIf="customers.length > 0">
+        <button
+          nbButton
+          ghost
+          size="small"
+          [disabled]="currentPage === 0"
+          (click)="goToFirstPage()"
+        >
+          <nb-icon icon="arrowhead-left-outline"></nb-icon>
+        </button>
+        <button
+          nbButton
+          ghost
+          size="small"
+          [disabled]="currentPage === 0"
+          (click)="goToPreviousPage()"
+        >
+          <nb-icon icon="chevron-left-outline"></nb-icon>
+        </button>
+        <span class="page-info">Page {{ currentPageDisplay }} / {{ totalPages }}</span>
+        <button
+          nbButton
+          ghost
+          size="small"
+          [disabled]="currentPage >= totalPages - 1"
+          (click)="goToNextPage()"
+        >
+          <nb-icon icon="chevron-right-outline"></nb-icon>
+        </button>
+        <button
+          nbButton
+          ghost
+          size="small"
+          [disabled]="currentPage >= totalPages - 1"
+          (click)="goToLastPage()"
+        >
+          <nb-icon icon="arrowhead-right-outline"></nb-icon>
+        </button>
+      </div>
+    </div>
+
+    <!-- Message si vide -->
+    <div *ngIf="customers.length === 0 && !isLoading" class="empty-state">
+      <nb-icon icon="people-outline"></nb-icon>
+      <h4>Aucun client trouvé</h4>
+      <p *ngIf="searchTerm">Aucun résultat pour "{{ searchTerm }}"</p>
+      <p *ngIf="!searchTerm">Commencez par ajouter votre premier client</p>
+      <button nbButton status="primary" size="large" (click)="onCreate()">
+        <nb-icon icon="person-add-outline"></nb-icon>
+        Ajouter un client
+      </button>
+    </div>
+  </div>
+</div>

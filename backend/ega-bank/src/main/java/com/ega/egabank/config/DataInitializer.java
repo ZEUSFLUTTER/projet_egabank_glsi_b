@@ -23,6 +23,15 @@ public class DataInitializer implements CommandLineRunner {
     private final ClientRepository clientRepository;
     private final PasswordEncoder passwordEncoder;
 
+    @org.springframework.beans.factory.annotation.Value("${app.admin.username:admin}")
+    private String adminUsername;
+
+    @org.springframework.beans.factory.annotation.Value("${app.admin.email:admin@egabank.com}")
+    private String adminEmail;
+
+    @org.springframework.beans.factory.annotation.Value("${app.admin.password:admin123}")
+    private String adminPassword;
+
     @Override
     public void run(String... args) {
         if (userRepository.count() == 0) {
@@ -30,14 +39,14 @@ public class DataInitializer implements CommandLineRunner {
 
             // Création d'un administrateur
             User admin = User.builder()
-                    .username("admin")
-                    .email("admin@egabank.com")
-                    .password(passwordEncoder.encode("admin123"))
+                    .username(adminUsername)
+                    .email(adminEmail)
+                    .password(passwordEncoder.encode(adminPassword))
                     .role(Role.ROLE_ADMIN)
                     .enabled(true)
                     .build();
             userRepository.save(admin);
-            log.info("Utilisateur admin créé (admin / admin123)");
+            log.info("Utilisateur admin créé (username: " + adminUsername + ")");
 
             // Création de quelques clients de test
             createClient("Jean", "Dupont", "jean.dupont@email.com", "+22890000001", "Lomé, Togo", Sexe.MASCULIN);

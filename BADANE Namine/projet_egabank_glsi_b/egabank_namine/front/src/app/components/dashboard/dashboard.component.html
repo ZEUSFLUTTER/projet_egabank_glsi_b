@@ -1,0 +1,106 @@
+<div class="dashboard-container">
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-header">
+      <div class="logo">
+        <i class="fas fa-university"></i>
+        <h2>EgaBank</h2>
+      </div>
+      <div class="user-info">
+        <div class="avatar">
+          <i class="fas fa-user-circle"></i>
+        </div>
+        <div class="user-details">
+          <p class="username">{{ user?.username }}</p>
+          <p class="role">{{ user?.role }}</p>
+        </div>
+      </div>
+    </div>
+
+    <nav class="nav-menu">
+      <a [class.active]="currentPage === 'dashboard'" (click)="navigateTo('dashboard')">
+        <i class="fas fa-home"></i> Tableau de bord
+      </a>
+      
+      <a [class.active]="currentPage === 'comptes'" (click)="navigateTo('comptes')">
+        <i class="fas fa-wallet"></i> Mes comptes
+      </a>
+      
+      <a [class.active]="currentPage === 'depot'" (click)="navigateTo('depot')">
+        <i class="fas fa-plus-circle"></i> Dépôt
+      </a>
+      
+      <a [class.active]="currentPage === 'retrait'" (click)="navigateTo('retrait')">
+        <i class="fas fa-minus-circle"></i> Retrait
+      </a>
+      
+      <a [class.active]="currentPage === 'virement'" (click)="navigateTo('virement')">
+        <i class="fas fa-exchange-alt"></i> Virement
+      </a>
+      
+      <a [class.active]="currentPage === 'transactions'" (click)="navigateTo('transactions')">
+        <i class="fas fa-history"></i> Historique
+      </a>
+      
+      <a [class.active]="currentPage === 'profile'" (click)="navigateTo('profile')">
+        <i class="fas fa-user"></i> Mon profil
+      </a>
+
+      <!-- ADMIN MENU -->
+      <div *ngIf="isAdminOrAgent()" class="admin-section">
+        <div class="section-title">Administration</div>
+        <a [class.active]="currentPage === 'clients'" (click)="navigateTo('clients')">
+          <i class="fas fa-users"></i> Gestion clients
+        </a>
+        <a [class.active]="currentPage === 'admin-comptes'" (click)="navigateTo('admin-comptes')">
+          <i class="fas fa-credit-card"></i> Gestion comptes
+        </a>
+        <a [class.active]="currentPage === 'rapports'" (click)="navigateTo('rapports')">
+          <i class="fas fa-chart-bar"></i> Rapports
+        </a>
+      </div>
+    </nav>
+
+    <div class="sidebar-footer">
+      <button (click)="logout()" class="btn-logout">
+        <i class="fas fa-sign-out-alt"></i> Déconnexion
+      </button>
+    </div>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <div class="main-content">
+    <div class="content-header">
+      <h1>{{ getPageTitle() }}</h1>
+      <div class="header-actions">
+        <!-- Actions supplémentaires si besoin -->
+      </div>
+    </div>
+
+    <div class="content-body">
+      <!-- ICI LE CONTENU CHANGE SELON LA PAGE -->
+      <router-outlet></router-outlet>
+      
+      <!-- Ou contenu conditionnel -->
+      <div *ngIf="currentPage === 'dashboard'" class="dashboard-home">
+        <div class="welcome-card">
+          <h3>Bienvenue, {{ user?.username }}!</h3>
+          <p>Solde total: <strong>0 FCFA</strong></p>
+          <p>Nombre de comptes: <strong>0</strong></p>
+        </div>
+        
+        <div class="quick-actions">
+          <button (click)="navigateTo('depot')" class="quick-btn">
+            <i class="fas fa-plus"></i> Dépôt
+          </button>
+          <button (click)="navigateTo('retrait')" class="quick-btn">
+            <i class="fas fa-minus"></i> Retrait
+          </button>
+          <button (click)="navigateTo('virement')" class="quick-btn">
+            <i class="fas fa-exchange-alt"></i> Virement
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

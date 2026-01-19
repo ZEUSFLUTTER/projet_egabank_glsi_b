@@ -1,0 +1,37 @@
+<div class="retrait-container">
+  <div class="card">
+    <h2><i class="fas fa-minus-circle"></i> Retrait d'argent</h2>
+    
+    <div class="form-group">
+      <label for="compteId">ID du compte</label>
+      <input 
+        type="number" 
+        id="compteId" 
+        [(ngModel)]="compteId" 
+        placeholder="Numéro du compte">
+    </div>
+    
+    <div class="form-group">
+      <label for="montant">Montant (FCFA)</label>
+      <input 
+        type="number" 
+        id="montant" 
+        [(ngModel)]="montant" 
+        placeholder="Montant à retirer"
+        step="0.01"
+        min="0">
+    </div>
+    
+    <div *ngIf="message" class="alert success">
+      <i class="fas fa-check-circle"></i> {{ message }}
+    </div>
+    
+    <div *ngIf="error" class="alert error">
+      <i class="fas fa-exclamation-circle"></i> {{ error }}
+    </div>
+    
+    <button (click)="submitRetrait()" class="btn-submit">
+      <i class="fas fa-paper-plane"></i> Effectuer le retrait
+    </button>
+  </div>
+</div>

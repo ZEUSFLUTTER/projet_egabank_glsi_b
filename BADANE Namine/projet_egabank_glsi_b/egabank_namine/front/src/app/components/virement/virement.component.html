@@ -1,0 +1,20 @@
+<div class="card">
+  <h3>Virement</h3>
+  <form (ngSubmit)="onSubmit()">
+    <div class="form-group">
+      <label for="compteSourceId">Compte source (ID)</label>
+      <input type="number" id="compteSourceId" [(ngModel)]="compteSourceId" name="compteSourceId" required>
+    </div>
+    <div class="form-group">
+      <label for="compteDestinationId">Compte destination (ID)</label>
+      <input type="number" id="compteDestinationId" [(ngModel)]="compteDestinationId" name="compteDestinationId" required>
+    </div>
+    <div class="form-group">
+      <label for="montant">Montant</label>
+      <input type="number" step="0.01" id="montant" [(ngModel)]="montant" name="montant" required>
+    </div>
+    <div class="success" *ngIf="message">{{ message }}</div>
+    <div class="error" *ngIf="error">{{ error }}</div>
+    <button type="submit" class="btn btn-primary">Effectuer le virement</button>
+  </form>
+</div>

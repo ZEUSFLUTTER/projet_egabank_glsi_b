@@ -1,0 +1,119 @@
+.login-container {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg, #C62828 0%, #FF5722 100%);
+}
+
+.login-box {
+  background: white;
+  border-radius: 15px;
+  width: 90%;
+  max-width: 400px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+.logo {
+  background: linear-gradient(135deg, #C62828 0%, #FF5722 100%);
+  color: white;
+  padding: 30px;
+  text-align: center;
+  
+  h1 {
+    margin: 0;
+    font-size: 1.8rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
+  
+  p {
+    margin: 10px 0 0;
+    opacity: 0.9;
+  }
+}
+
+.form-container {
+  padding: 30px;
+  
+  h2 {
+    color: #C62828;
+    text-align: center;
+    margin-bottom: 25px;
+  }
+}
+
+.form-group {
+  margin-bottom: 20px;
+  
+  label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #333;
+  }
+  
+  input {
+    width: 100%;
+    padding: 12px 15px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+    
+    &:focus {
+      border-color: #FF5722;
+      outline: none;
+    }
+  }
+}
+
+.error-message {
+  background: #FFEBEE;
+  color: #C62828;
+  padding: 10px;
+  border-radius: 5px;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.btn-login {
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, #C62828 0%, #FF5722 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: all 0.3s;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(198, 40, 40, 0.3);
+  }
+}
+
+.register-link {
+  text-align: center;
+  margin-top: 20px;
+  color: #666;
+  
+  a {
+    color: #FF5722;
+    text-decoration: none;
+    font-weight: 600;
+    cursor: pointer;
+    
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}

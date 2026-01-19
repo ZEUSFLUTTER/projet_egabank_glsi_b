@@ -1,0 +1,15 @@
+<div class="transactions-container">
+  <h2>Historique des Transactions</h2>
+  <form (ngSubmit)="loadTransactions()">
+    <input type="date" [(ngModel)]="fromDate" required>
+    <input type="date" [(ngModel)]="toDate" required>
+    <input type="number" [(ngModel)]="compteId" placeholder="ID Compte" required>
+    <button type="submit">Charger</button>
+  </form>
+  <ul>
+    <li *ngFor="let tx of transactions">
+      {{ tx.type }} - Montant: {{ tx.montant }} - Date: {{ tx.date }}
+    </li>
+  </ul>
+  <button (click)="printStatement()">Imprimer Relevé</button>
+</div>

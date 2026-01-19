@@ -1,0 +1,9 @@
+<div class="comptes-container">
+  <h2>Mes Comptes</h2>
+  <div *ngIf="comptes.length === 0">Aucun compte trouvé.</div>
+  <ul>
+    <li *ngFor="let compte of comptes">
+      {{ compte.type }} - Numéro: {{ compte.numero }} - Solde: {{ compte.solde }} FCFA
+    </li>
+  </ul>
+</div>

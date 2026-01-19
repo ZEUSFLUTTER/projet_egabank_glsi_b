@@ -8,7 +8,7 @@ Avant de démarrer l'application, assurez-vous d'avoir installé:
 - ✅ **Node.js 18+** et **npm** (pour le frontend Angular)
 - ✅ **Maven** (inclus dans le projet via Maven Wrapper)
 
-> **Note :** Ce projet utilise une base de données **H2 en mémoire**. Aucune installation de base de données n'est requise !
+
 
 ## 🗄️ Base de Données
 

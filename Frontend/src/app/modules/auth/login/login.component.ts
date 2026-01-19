@@ -146,9 +146,18 @@ export class LoginComponent implements OnInit, OnDestroy {
       }
     }
 
-    // Si déjà connecté, rediriger
-    if (this.authService.isAuthenticated()) {
-      this.redirectByRole();
+    // Si déjà connecté avec un token valide, rediriger
+    // Vérifier aussi que le token existe pour éviter les boucles de redirection
+    const token = this.authService.getToken();
+    const isAuthenticated = this.authService.isAuthenticated();
+
+    console.log('LoginComponent ngOnInit - isAuthenticated:', isAuthenticated, 'hasToken:', !!token);
+
+    if (isAuthenticated && token) {
+      // Delay redirect slightly to ensure Angular is fully initialized
+      setTimeout(() => {
+        this.redirectByRole();
+      }, 100);
     }
   }
 

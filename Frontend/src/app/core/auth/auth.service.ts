@@ -37,14 +37,23 @@ export class AuthService {
                     }
 
                     const token = response.token || response.accessToken;
-                    let role = response.role || response.user?.role || this.decodeRoleFromToken(token);
+                    let rawRole = response.role || response.user?.role || this.decodeRoleFromToken(token);
 
-                    // Normalisation du rôle
-                    if (role) {
-                        role = role.toUpperCase().replace('ROLE_', '') as UserRole;
-                    } else {
-                        role = 'CLIENT';
+                    console.log('AuthService: Raw role from response:', rawRole);
+
+                    // Normalisation robuste du rôle (supporte ROLE_CLIENT, role_client, CLIENT, client)
+                    let normalizedRole: UserRole = 'CLIENT';
+                    if (rawRole) {
+                        // Convertir en majuscules et supprimer le préfixe ROLE_ s'il existe
+                        const roleStr = String(rawRole).toUpperCase().replace(/^ROLE_/, '');
+                        if (roleStr === 'ADMIN') {
+                            normalizedRole = 'ADMIN';
+                        } else if (roleStr === 'CLIENT') {
+                            normalizedRole = 'CLIENT';
+                        }
                     }
+
+                    console.log('AuthService: Normalized role:', normalizedRole);
 
                     const user: AuthUser = {
                         id: response.id || response.user?.id || '',
@@ -52,9 +61,11 @@ export class AuthService {
                         nom: response.lastName || response.user?.lastName || response.nom || '',
                         prenom: response.firstName || response.user?.firstName || response.prenom || '',
                         email: response.email || response.user?.email || '',
-                        role: role as UserRole,
+                        role: normalizedRole,
                         token: token
                     };
+
+                    console.log('AuthService: User object created:', { ...user, token: '[HIDDEN]' });
 
                     this.saveUser(user);
                     return user;

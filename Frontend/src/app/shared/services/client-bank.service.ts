@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable, map } from 'rxjs';
+import { Observable, map, switchMap, of, forkJoin, catchError } from 'rxjs';
 import { Client, Compte, Releve, Transaction } from '../models/bank.models';
 import { ClientService } from './client.service';
 import { CompteService } from './compte.service';
@@ -36,14 +36,51 @@ export class ClientBankService {
         return this.compteService.getCompteByNumero(numeroCompte);
     }
 
-    // Historique des transactions (par compte)
+    // Historique des transactions (par compte ou global pour le client)
     getTransactions(filters?: {
         type?: string;
         dateDebut?: string;
         dateFin?: string;
         compteId?: string
     }): Observable<Transaction[]> {
-        return this.transactionService.getTransactions(filters);
+        // Si un compte spécifique est demandé
+        if (filters?.compteId) {
+            return this.transactionService.getTransactions(filters);
+        }
+
+        // Sinon, pour un client, on doit récupérer l'historique de TOUS ses comptes
+        // car il n'a pas accès à l'endpoint global /transactions/history (réservé ADMIN)
+        return this.getAccounts().pipe(
+            switchMap(accounts => {
+                if (!accounts || accounts.length === 0) {
+                    return of([]);
+                }
+
+                // Créer un appel pour chaque compte
+                const requests = accounts.map(acc =>
+                    this.transactionService.getTransactions({
+                        ...filters,
+                        compteId: acc.numeroCompte // Utiliser le numéro de compte (IBAN)
+                    }).pipe(
+                        // En cas d'erreur sur un compte, on retourne une liste vide pour ne pas bloquer tout
+                        catchError(() => of([]))
+                    )
+                );
+
+                // Exécuter tous les appels en parallèle
+                return forkJoin(requests).pipe(
+                    map(results => {
+                        // Aplatir le tableau de tableaux [[t1, t2], [t3]] -> [t1, t2, t3]
+                        const allTransactions = results.flat();
+
+                        // Trier par date décroissante
+                        return allTransactions.sort((a, b) =>
+                            new Date(b.date).getTime() - new Date(a.date).getTime()
+                        );
+                    })
+                );
+            })
+        );
     }
 
     // Effectuer un virement

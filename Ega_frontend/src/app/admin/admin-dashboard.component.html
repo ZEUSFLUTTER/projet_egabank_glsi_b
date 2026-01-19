@@ -1,0 +1,202 @@
+<div class="flex h-screen bg-gray-50 font-sans overflow-hidden relative">
+
+  <div *ngIf="isSidebarOpen" (click)="isSidebarOpen = false" class="fixed inset-0 z-20 bg-black/50 transition-opacity md:hidden"></div>
+
+  <aside class="fixed inset-y-0 left-0 z-30 w-64 bg-gradient-to-b from-[#E040FB] to-[#530062] text-white flex flex-col shadow-2xl transition-transform duration-300 transform md:translate-x-0 md:static"
+       [ngClass]="isSidebarOpen ? 'translate-x-0' : '-translate-x-full'">
+
+    <div class="h-20 flex items-center px-6 justify-between md:justify-start">
+      <div class="flex items-center">
+        <div class="logo w-8 h-8 mr-3"><img src="../../assets/logo.jpg" alt="Logo"></div>
+        <span class="text-lg font-bold tracking-wide">EGA ADMIN</span>
+      </div>
+      <button (click)="isSidebarOpen = false" class="md:hidden text-white">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+      </button>
+    </div>
+
+    <nav class="flex-1 py-6 space-y-1 px-3">
+
+      <a routerLink="/admin" class="flex items-center px-4 py-3 bg-white/10 text-white rounded-lg font-medium border-l-4 border-white transition">
+        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+        </svg>
+        Tableau de bord
+      </a>
+
+      <a routerLink="/admin/clients" class="flex items-center px-4 py-3 text-white/80 hover:bg-white/5 hover:text-white rounded-lg transition duration-200">
+        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+        </svg>
+        Gestion Clients
+      </a>
+
+      <a routerLink="/admin/comptes" class="flex items-center px-4 py-3 text-white/80 hover:bg-white/5 hover:text-white rounded-lg transition duration-200">
+          <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path>
+          </svg>
+          Gestion Comptes
+      </a>
+
+      <a routerLink="/admin/transactions" class="flex items-center px-4 py-3 text-white/80 hover:bg-white/5 hover:text-white rounded-lg transition duration-200">
+          <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+          Gestion Transactions
+      </a>
+
+      <!-- <a routerLink="/admin/documents" class="flex items-center px-4 py-3 text-white/80 hover:bg-white/5 hover:text-white rounded-lg transition duration-200">
+         <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+         </svg>
+          Relevés & RIB
+      </a> -->
+    </nav>
+
+    <div class="p-6">
+        <button (click)="logout()" class="w-full bg-white/20 hover:bg-white/30 text-white font-bold py-3 rounded-lg transition shadow-lg flex justify-center items-center">
+            <!-- <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg> -->
+            Déconnexion
+        </button>
+    </div>
+</aside>
+
+  <div class="flex-1 flex flex-col min-w-0 overflow-hidden bg-white">
+
+    <header class="h-16 border-b border-gray-200 flex items-center justify-between px-8 bg-white">
+        <h1 class="text-xl font-bold text-black uppercase tracking-wide">TABLEAU DE BORD</h1>
+        <div class="flex items-center gap-3 pl-3 border-l border-gray-200">
+            <div class="block text-right">
+                <p class="text-sm font-bold text-gray-800 uppercase leading-tight">Administrateur</p>
+                <p class="text-xs text-purple-600 font-bold">{{ user?.email }}</p>
+            </div>
+            <div class="h-9 w-9 rounded-full bg-purple-600 flex items-center justify-center text-white font-bold border border-purple-200 shadow-sm">A</div>
+        </div>
+    </header>
+
+    <main class="flex-1 overflow-y-auto p-8 bg-white">
+
+        <div class="grid grid-cols-3 gap-8 mb-10">
+            <div class="bg-white border border-gray-200 rounded-3xl p-6 shadow-sm flex items-center justify-between hover:shadow-md transition">
+                <div><p class="text-sm text-purple-900 font-bold mb-1">Total Clients</p><h2 class="text-4xl font-extrabold text-black">{{ stats.totalClients }}</h2></div>
+                <div class="bg-purple-100 p-3 rounded-xl text-purple-600"><svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0z"></path></svg></div>
+            </div>
+            <div class="bg-white border border-gray-200 rounded-3xl p-6 shadow-sm flex items-center justify-between hover:shadow-md transition">
+                <div><p class="text-sm text-purple-900 font-bold mb-1">Demandes traitées</p><h2 class="text-4xl font-extrabold text-black">{{ stats.demandesTraitees }}</h2></div>
+                <div class="bg-purple-100 p-3 rounded-xl text-purple-600"><svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></div>
+            </div>
+            <div class="bg-white border border-gray-200 rounded-3xl p-6 shadow-sm flex items-center justify-between hover:shadow-md transition">
+                <div><p class="text-sm text-purple-900 font-bold mb-1">Nombre de transactions</p><h2 class="text-4xl font-extrabold text-black">{{ stats.volumeTransactions }}</h2></div>
+                <div class="bg-gray-100 p-3 rounded-xl text-gray-600"><svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg></div>
+            </div>
+        </div>
+
+        <h3 class="text-xl font-bold text-black mb-4">Demandes en attente</h3>
+
+        <div class="border border-purple-200 rounded-lg overflow-hidden">
+            <table class="w-full text-left border-collapse">
+                <thead class="bg-white text-purple-900 border-b border-purple-200">
+                    <tr>
+                        <th class="p-4 font-bold border-r border-purple-100 w-16 text-center">N°</th>
+                        <th class="p-4 font-bold border-r border-purple-100">Identité du client</th>
+                        <th class="p-4 font-bold border-r border-purple-100">Type de compte</th>
+                        <th class="p-4 font-bold border-r border-purple-100">Date de demande</th>
+                        <th class="p-4 font-bold border-r border-purple-100 text-center">Détails</th>
+                        <th class="p-4 font-bold text-center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="text-sm text-gray-700">
+                    <tr *ngFor="let d of demandesEnAttente" class="border-b border-gray-100 hover:bg-purple-50 transition">
+                        <td class="p-4 text-center border-r border-gray-100 font-mono text-purple-600 font-bold">#{{ d.id }}</td>
+                        <td class="p-4 border-r border-gray-100 font-bold uppercase">{{ d.client?.nom }} {{ d.client?.prenom }}</td>
+                        <td class="p-4 border-r border-gray-100">
+                            <span class="px-3 py-1 rounded-full text-xs font-bold bg-purple-100 text-purple-700 uppercase">{{ d.typeCompte }}</span>
+                        </td>
+                        <td class="p-4 border-r border-gray-100">{{ d.dateDemande | date:'dd/MM/yyyy' }}</td>
+                        <td class="p-4 text-center border-r border-gray-100">
+                            <button (click)="openDetailModal(d)" class="text-black font-bold underline decoration-2 decoration-purple-400 hover:text-purple-700 transition">Voir</button>
+                        </td>
+                        <td class="p-4 flex justify-center gap-2">
+                            <button (click)="onValider(d)" class="bg-green-100 hover:bg-green-200 text-green-700 px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center">
+                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>Valider
+                            </button>
+                            <button (click)="onRejeter(d)" class="bg-red-100 hover:bg-red-200 text-red-700 px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center">
+                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>Rejeter
+                            </button>
+                        </td>
+                    </tr>
+                    <tr *ngIf="demandesEnAttente.length === 0">
+                        <td colspan="6" class="p-8 text-center text-gray-400 italic">Aucune demande en attente.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+  </div>
+
+  <div *ngIf="showDetailModal" class="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity" (click)="closeModals()"></div>
+
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg relative z-10 transform transition-all scale-100 overflow-hidden">
+
+        <div class="bg-gradient-to-r from-[#530062] to-[#8A3399] p-6 text-white flex justify-between items-start">
+            <div>
+                <h3 class="text-xl font-bold tracking-wide">Détails de la demande</h3>
+                <p class="text-white/80 text-sm mt-1">Ticket #{{ selectedDemande?.id }}</p>
+            </div>
+            <button (click)="closeModals()" class="text-white/70 hover:text-white bg-white/10 p-2 rounded-full transition">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+        </div>
+
+        <div class="p-6 space-y-6">
+
+            <div class="flex items-start gap-4 p-4 bg-purple-50 rounded-xl border border-purple-100">
+                <div class="h-12 w-12 rounded-full bg-purple-200 text-purple-700 flex items-center justify-center font-bold text-lg shrink-0">
+                    {{ selectedDemande?.client?.nom?.charAt(0) }}
+                </div>
+                <div>
+                    <h4 class="font-bold text-gray-900 text-lg">{{ selectedDemande?.client?.nom }} {{ selectedDemande?.client?.prenom }}</h4>
+                    <p class="text-sm text-gray-600 flex items-center mt-1">
+                        <svg class="w-4 h-4 mr-1 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                        {{ selectedDemande?.client?.email }}
+                    </p>
+                    <p class="text-sm text-gray-600 flex items-center mt-1">
+                        <svg class="w-4 h-4 mr-1 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
+                        {{ selectedDemande?.client?.telephone || 'Non renseigné' }}
+                    </p>
+                </div>
+            </div>
+
+            <div>
+                <h5 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Informations de la demande</h5>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="bg-gray-50 p-3 rounded-lg border border-gray-100">
+                        <p class="text-xs text-gray-500 mb-1">Type de compte</p>
+                        <p class="font-bold text-purple-700">{{ selectedDemande?.typeCompte }}</p>
+                    </div>
+                    <div class="bg-gray-50 p-3 rounded-lg border border-gray-100">
+                        <p class="text-xs text-gray-500 mb-1">Date de création</p>
+                        <p class="font-bold text-gray-800">{{ selectedDemande?.dateDemande | date:'dd/MM/yyyy à HH:mm' }}</p>
+                    </div>
+                    <div class="col-span-2 bg-gray-50 p-3 rounded-lg border border-gray-100">
+                        <p class="text-xs text-gray-500 mb-1">Adresse Client</p>
+                        <p class="font-medium text-gray-800">{{ selectedDemande?.client?.adresse || 'Non renseignée' }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3 pt-4 border-t border-gray-100">
+                <button (click)="onRejeter(selectedDemande!); closeModals()" class="py-3 px-4 rounded-xl font-bold text-red-600 bg-red-50 hover:bg-red-100 border border-red-200 transition">
+                    Rejeter
+                </button>
+                <button (click)="onValider(selectedDemande!); closeModals()" class="py-3 px-4 rounded-xl font-bold text-white bg-green-500 hover:bg-green-600 shadow-lg shadow-green-200 transition">
+                    Valider le compte
+                </button>
+            </div>
+
+        </div>
+    </div>
+  </div>
+
+</div>

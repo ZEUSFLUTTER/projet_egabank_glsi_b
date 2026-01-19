@@ -3,6 +3,7 @@ package banque.controller;
 import banque.dto.OperationDto;
 import banque.dto.VirementDto;
 import banque.entity.Transaction;
+import banque.repository.TransactionRepository;
 import banque.service.OperationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,7 @@ import java.util.List;
 public class OperationController {
 
     private final OperationService operationService;
+    private final TransactionRepository transactionRepository;
 
     /**
      * 1. VERSEMENT
@@ -60,5 +62,11 @@ public class OperationController {
     @PreAuthorize("hasAnyRole('ADMIN', 'CLIENT')")
     public ResponseEntity<List<Transaction>> getHistorique(@PathVariable String numeroCompte) {
         return ResponseEntity.ok(operationService.getHistorique(numeroCompte));
+    }
+
+    @GetMapping("/historique")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<Transaction>> getTransactions(){
+        return ResponseEntity.ok(transactionRepository.findAll());
     }
 }

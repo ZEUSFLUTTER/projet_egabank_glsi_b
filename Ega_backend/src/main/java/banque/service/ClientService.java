@@ -2,10 +2,14 @@ package banque.service;
 
 import banque.entity.Client;
 import banque.entity.Compte;
+import banque.entity.Utilisateur;
+import banque.enums.Role;
 import banque.helpers.ClientHelpers;
 import banque.repository.ClientRepository;
 import banque.repository.CompteRepository;
+import banque.repository.UtilisateurRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.*;
@@ -16,6 +20,8 @@ import banque.exception.*;
 public class ClientService {
     private final ClientRepository clientRepository;
     private final CompteRepository compteRepository;
+    private final UtilisateurRepository utilisateurRepository;
+    private final PasswordEncoder passwordEncoder;
     private final ClientHelpers clientHelpers;
 
     //Créer un client
@@ -30,7 +36,24 @@ public class ClientService {
         }
         client.setTelephone(clientHelpers.normaliserTelephone(client.getTelephone()));
         client.setId(null);
-        return clientRepository.save(client);
+
+        client.setEstSupprime(false);
+        Client savedClient = clientRepository.save(client);
+
+        String rawPassword = (client.getPassword() != null && !client.getPassword().isEmpty())
+                ? client.getPassword()
+                : "Ega2026";
+
+        Utilisateur user = Utilisateur.builder()
+                .username(savedClient.getEmail()) // L'email devient l'identifiant
+                .password(passwordEncoder.encode(rawPassword))
+                .role(Role.CLIENT)
+                .actif(true)
+                .client(savedClient)
+                .build();
+
+        utilisateurRepository.save(user);
+        return savedClient;
     }
 
     //Afficher tous les clients actifs
@@ -43,7 +66,7 @@ public class ClientService {
         Client client = clientRepository.findById(id)
                 .orElseThrow(() -> new BanqueException("Client introuvable !"));
 
-        if (client.isEstSupprime()) {
+        if (Boolean.TRUE.equals(client.getEstSupprime())) {
             throw new BanqueException("Ce dossier client a été désactivé.");
         }
         return client;

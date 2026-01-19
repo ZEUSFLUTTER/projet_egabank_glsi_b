@@ -49,8 +49,7 @@ public class Compte {
     private LocalDateTime dateCloture;
 
     // Relation : Un compte appartient à UN client
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JsonIgnore
+    @ManyToOne(fetch = FetchType.EAGER)
     @JsonIgnoreProperties("comptes")
     @JoinColumn(name = "client_id", nullable = false)
     @ToString.Exclude

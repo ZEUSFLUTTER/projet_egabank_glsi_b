@@ -57,7 +57,7 @@ public class ClientController {
      * Pour modifier une adresse, un téléphone, etc.
      */
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'CLIENT')")
     public ResponseEntity<Client> updateClient(@PathVariable Long id, @RequestBody Client client) {
         return ResponseEntity.ok(clientService.updateClient(id, client));
     }

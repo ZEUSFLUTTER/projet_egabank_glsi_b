@@ -30,7 +30,7 @@ public class CompteService {
         Client client = clientRepository.findById(clientId)
                 .orElseThrow(() -> new BanqueException("Client introuvable !"));
 
-        if (client.isEstSupprime()) {
+        if (Boolean.TRUE.equals(client.getEstSupprime())) {
             throw new BanqueException("Impossible de créer un compte : Ce client est désactivé.");
         }
 
@@ -59,7 +59,7 @@ public class CompteService {
     public Compte getCompteByNumero(String numeroCompte) {
         Compte compte = compteRepository.findByNumeroCompte(numeroCompte)
                 .orElseThrow(() -> new BanqueException("Compte introuvable avec le numéro : " + numeroCompte));
-        if (compte.getClient().isEstSupprime()) {
+        if (Boolean.TRUE.equals(compte.getClient().getEstSupprime())) {
             throw new BanqueException("Compte inexistant !");
         }
 
@@ -96,7 +96,7 @@ public class CompteService {
     public boolean compteExiste(String numeroCompte) {
         return compteRepository.findByNumeroCompte(numeroCompte)
                 .filter(c -> c.getStatut() != StatutCompte.CLOTURE)
-                .filter(c -> !c.getClient().isEstSupprime())
+                .filter(c -> !Boolean.TRUE.equals(c.getClient().getEstSupprime()))
                 .isPresent();
     }
 

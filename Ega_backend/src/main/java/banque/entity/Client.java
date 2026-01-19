@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -49,14 +51,17 @@ public class Client {
     private String nationalite;
 
     @Column(nullable = false, updatable = false)
+    @CreationTimestamp
     @Builder.Default
     private LocalDateTime dateCreation = LocalDateTime.now();
 
-    @OneToMany(mappedBy = "client", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "client", fetch = FetchType.EAGER)
     @ToString.Exclude
     @JsonIgnore
     private List<Compte> comptes;
 
     @Column(name = "est_supprime", nullable = false)
-    private boolean estSupprime = false;
+    private Boolean estSupprime = false;
+    @Transient
+    private String password;
 }

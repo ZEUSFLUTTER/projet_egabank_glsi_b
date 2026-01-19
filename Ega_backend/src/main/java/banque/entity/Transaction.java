@@ -36,13 +36,13 @@ public class Transaction {
     @Builder.Default
     private LocalDateTime dateTransaction = LocalDateTime.now();
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "compte_source_id", nullable = false, updatable = false)
     @ToString.Exclude
     private Compte compteSource;
 
     // Compte destinataire (seulement pour virement)
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "compte_destination_id", nullable = true)
     @ToString.Exclude
     private Compte compteDestination;

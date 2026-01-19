@@ -1,0 +1,176 @@
+<div class="flex h-screen bg-gray-50 font-sans overflow-hidden relative">
+
+  <div *ngIf="isSidebarOpen" (click)="isSidebarOpen = false" class="fixed inset-0 z-20 bg-black/50 transition-opacity md:hidden"></div>
+
+  <aside class="fixed inset-y-0 left-0 z-30 w-64 bg-gradient-to-b from-[#E040FB] to-[#530062] text-white flex flex-col shadow-2xl transition-transform duration-300 transform md:translate-x-0 md:static"
+         [ngClass]="isSidebarOpen ? 'translate-x-0' : '-translate-x-full'">
+
+      <div class="h-20 flex items-center px-6 justify-between md:justify-start">
+        <div class="flex items-center">
+          <div class="logo w-8 h-8 mr-3"><img src="../../assets/logo.jpg" alt="Logo"></div>
+          <span class="text-lg font-bold tracking-wide">EGA ADMIN</span>
+        </div>
+        <button (click)="isSidebarOpen = false" class="md:hidden text-white"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
+      </div>
+
+      <nav class="flex-1 py-6 space-y-1 px-3">
+        <a routerLink="/admin" class="flex items-center px-4 py-3 text-white/80 hover:bg-white/5 hover:text-white rounded-lg transition duration-200"><svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>Tableau de bord</a>
+        <a routerLink="/admin/clients" class="flex items-center px-4 py-3 text-white/80 hover:bg-white/5 hover:text-white rounded-lg transition duration-200"><svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>Gestion Clients</a>
+        <a routerLink="/admin/comptes" class="flex items-center px-4 py-3 bg-white/10 text-white rounded-lg font-medium border-l-4 border-white transition"><svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg>Gestion Comptes</a>
+        <!-- <a routerLink="/admin/demandes" class="flex items-center px-4 py-3 text-white/80 hover:bg-white/5 hover:text-white rounded-lg transition duration-200"><svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path></svg>Gestion Demandes</a> -->
+        <a routerLink="/admin/transactions" class="flex items-center px-4 py-3 text-white/80 hover:bg-white/5 hover:text-white rounded-lg transition duration-200"><svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>Gestion Transactions</a>
+        <!-- <a routerLink="/admin/documents" class="flex items-center px-4 py-3 text-white/80 hover:bg-white/5 hover:text-white rounded-lg transition duration-200"><svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>Relevés & RIB</a> -->
+      </nav>
+      <div class="p-6"><button (click)="logout()" class="w-full bg-white/20 hover:bg-white/30 text-white font-bold py-3 rounded-lg transition shadow-lg flex justify-center items-center">Déconnexion</button></div>
+  </aside>
+
+  <div class="flex-1 flex flex-col min-w-0 overflow-hidden bg-white">
+
+    <header class="h-16 border-b border-gray-200 flex items-center justify-between px-8 bg-white">
+        <h1 class="text-xl font-bold text-black uppercase tracking-wide">Gestion des Comptes</h1>
+        <div class="flex items-center gap-3 pl-3 border-l border-gray-200">
+            <div class="block text-right">
+                <p class="text-sm font-bold text-gray-800 uppercase leading-tight">Administrateur</p>
+                <p class="text-xs text-purple-600 font-bold">{{ currentUser?.email }}</p>
+            </div>
+            <div class="h-9 w-9 rounded-full bg-purple-600 flex items-center justify-center text-white font-bold border border-purple-200 shadow-sm">A</div>
+        </div>
+    </header>
+
+    <main class="flex-1 overflow-y-auto p-8 bg-gray-50">
+
+        <div class="flex justify-between items-center mb-6">
+            <div class="relative w-96">
+                <input type="text" [(ngModel)]="searchTerm" (ngModelChange)="filterComptes()"
+                       placeholder="Rechercher par numéro ou client..."
+                       class="w-full p-3 pl-10 rounded-xl border border-gray-200 shadow-sm focus:ring-2 focus:ring-purple-500 outline-none transition">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+                    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                </div>
+            </div>
+
+            <button (click)="showCreateModal = true" class="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-xl font-bold shadow-lg transition flex items-center">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+                Nouveau Compte
+            </button>
+        </div>
+
+        <div *ngIf="isLoading" class="flex items-center text-purple-600 mb-4 font-bold">
+            <svg class="animate-spin -ml-1 mr-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Chargement...
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+            <table class="w-full text-left border-collapse">
+                <thead class="bg-gray-50 text-gray-500 uppercase text-xs font-bold border-b border-gray-200">
+                    <tr>
+                        <th class="p-4">Numéro Compte</th>
+                        <th class="p-4">Titulaire</th>
+                        <th class="p-4">Type</th>
+                        <th class="p-4 text-right">Solde</th>
+                        <th class="p-4 text-center">État</th>
+                        <th class="p-4 text-center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100 text-sm">
+                    <tr *ngFor="let a of filteredComptes" class="hover:bg-purple-50 transition">
+                        <td class="p-4 font-mono font-bold text-purple-700">{{ a.numeroCompte }}</td>
+
+                        <td class="p-4">
+                            <div class="flex items-center">
+                                <div class="h-8 w-8 rounded-full bg-purple-100 text-purple-700 flex items-center justify-center font-bold text-xs mr-2 border border-purple-200">
+                                    {{ a.client?.nom?.charAt(0)}}
+                                </div>
+                                <div>
+                                    <p class="font-bold text-gray-900">{{ a.client?.nom }} {{ a.client?.prenom }}</p>
+                                    <p class="text-xs text-gray-500">{{ a.client?.email }}</p>
+                                </div>
+                            </div>
+                        </td>
+
+                        <td class="p-4">
+                            <span class="px-2 py-1 rounded text-xs font-bold uppercase tracking-wide border"
+                                  [ngClass]="a.typeCompte === 'EPARGNE' ? 'bg-orange-50 text-orange-700 border-orange-100' : 'bg-blue-50 text-blue-700 border-blue-100'">
+                                {{ a.typeCompte }}
+                            </span>
+                        </td>
+                        <td class="p-4 text-right font-bold text-gray-900 font-mono">{{ a.solde | currency:'XOF':'symbol':'1.0-0' }}</td>
+                        <td class="p-4 text-center">
+                            <span class="px-2 py-1 rounded-full text-xs font-bold uppercase"
+                                  [ngClass]="{
+                                    'bg-green-100 text-green-700 border border-green-200': a.statut === StatutCompte.ACTIF,
+                                    'bg-red-100 text-red-700 border border-red-200': a.statut === StatutCompte.SUSPENDU || a.statut === StatutCompte.CLOTURE
+                                  }">
+                                {{ a.statut }}
+                            </span>
+                        </td>
+                        <td class="p-4 text-center flex justify-center gap-2">
+                            <button *ngIf="a.statut === StatutCompte.ACTIF" (click)="changerStatut(a, StatutCompte.SUSPENDU)" class="text-red-600 hover:text-red-800 bg-red-50 hover:bg-red-100 font-bold text-xs border border-red-200 px-3 py-1.5 rounded-lg transition flex items-center">
+                                <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>Suspendre
+                            </button>
+                            <button *ngIf="a.statut === StatutCompte.SUSPENDU" (click)="changerStatut(a, StatutCompte.ACTIF)" class="text-green-600 hover:text-green-800 bg-green-50 hover:bg-green-100 font-bold text-xs border border-green-200 px-3 py-1.5 rounded-lg transition flex items-center">
+                                <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z"></path></svg>Activer
+                            </button>
+                            <span *ngIf="a.statut === StatutCompte.CLOTURE" class="text-gray-400 text-xs italic">Compte clos</span>
+                        </td>
+                    </tr>
+                    <tr *ngIf="filteredComptes.length === 0 && !isLoading">
+                        <td colspan="6" class="p-12 text-center text-gray-400 flex flex-col items-center">
+                            <svg class="w-12 h-12 mb-2 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            <p>Aucun compte ne correspond à votre recherche.</p>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+  </div>
+
+  <div *ngIf="showCreateModal" class="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity" (click)="showCreateModal = false"></div>
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg relative z-10 overflow-hidden transform transition-all scale-100">
+        <div class="bg-gradient-to-r from-[#530062] to-[#8A3399] p-6 text-white flex justify-between items-start">
+            <h3 class="text-xl font-bold tracking-wide">Ouverture de Compte</h3>
+            <button (click)="showCreateModal = false" class="text-white/70 hover:text-white bg-white/10 p-2 rounded-full transition">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+        </div>
+        <div class="p-8">
+            <form (ngSubmit)="submitCreateAccount()">
+                <div class="mb-6">
+                    <label class="block text-sm font-bold text-gray-700 mb-2">Sélectionner le Client</label>
+                    <div class="relative">
+                        <select [(ngModel)]="newAccountData.clientId" name="clientId" class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 outline-none cursor-pointer appearance-none">
+                            <option [ngValue]="null" disabled selected>Choisir un client...</option>
+                            <option *ngFor="let c of clients" [ngValue]="c.id">
+                                {{ c.nom }} {{ c.prenom }} ({{ c.email }})
+                            </option>
+                        </select>
+                        <div class="absolute inset-y-0 right-0 flex items-center px-3 pointer-events-none text-gray-500">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </div>
+                    </div>
+                </div>
+                <div class="mb-8">
+                    <label class="block text-sm font-bold text-gray-700 mb-2">Type de Compte</label>
+                    <div class="flex gap-4">
+                        <label class="flex-1 border rounded-xl p-4 cursor-pointer hover:bg-purple-50 transition" [ngClass]="{'border-purple-500 bg-purple-50 ring-1 ring-purple-500': newAccountData.typeCompte === 'COURANT'}">
+                            <input type="radio" name="type" value="COURANT" [(ngModel)]="newAccountData.typeCompte" class="hidden">
+                            <div class="font-bold text-center text-gray-800">COURANT</div>
+                            <div class="text-xs text-center text-gray-500">Opérations courantes</div>
+                        </label>
+                        <label class="flex-1 border rounded-xl p-4 cursor-pointer hover:bg-purple-50 transition" [ngClass]="{'border-purple-500 bg-purple-50 ring-1 ring-purple-500': newAccountData.typeCompte === 'EPARGNE'}">
+                            <input type="radio" name="type" value="EPARGNE" [(ngModel)]="newAccountData.typeCompte" class="hidden">
+                            <div class="font-bold text-center text-gray-800">ÉPARGNE</div>
+                            <div class="text-xs text-center text-gray-500">Intérêts annuels</div>
+                        </label>
+                    </div>
+                </div>
+                <button type="submit" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 rounded-xl shadow-lg transition transform active:scale-[0.98]">
+                    Créer le compte
+                </button>
+            </form>
+        </div>
+    </div>
+  </div>
+
+</div>

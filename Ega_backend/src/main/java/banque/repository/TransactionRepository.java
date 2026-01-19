@@ -20,5 +20,4 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
         "WHERE cs.numeroCompte = :numero OR cd.numeroCompte = :numero " +
         "ORDER BY t.dateTransaction DESC")
     List<Transaction> findHistoriqueByCompte(@Param("numero") String numeroCompte);
-
 }

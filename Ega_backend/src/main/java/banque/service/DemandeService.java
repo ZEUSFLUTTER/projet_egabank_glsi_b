@@ -35,7 +35,7 @@ public class DemandeService {
                 .orElseThrow(() -> new BanqueException("Client introuvable (ID: " + clientId + ")"));
 
         // B. Sécurité : Un client désactivé ne peut pas demander de compte
-        if (client.isEstSupprime()) {
+        if (Boolean.TRUE.equals(client.getEstSupprime())) {
             throw new BanqueException("Impossible de créer une demande : Ce client est désactivé.");
         }
 
@@ -88,7 +88,7 @@ public class DemandeService {
         }
 
         // C. Vérifier si le client n'a pas été supprimé entre temps
-        if (demande.getClient().isEstSupprime()) {
+        if (Boolean.TRUE.equals(demande.getClient().getEstSupprime())) {
             // On rejette automatiquement si le client est parti
             rejeterDemande(idDemande, usernameAdmin, "Client désactivé avant validation.");
             return;

@@ -21,7 +21,7 @@ public class DemandeCompte {
     @Column(name = "id_demande")
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "client_id", nullable = false)
     @JsonIgnoreProperties("demandes")
     @ToString.Exclude
@@ -46,7 +46,7 @@ public class DemandeCompte {
     @Column(name = "date_traitement")
     private LocalDateTime dateTraitement;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "admin_id")
     @ToString.Exclude
     private Utilisateur adminTraiteur;

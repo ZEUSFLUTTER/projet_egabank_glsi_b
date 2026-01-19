@@ -112,6 +112,7 @@ Authorization: Bearer <votre_token_jwt>
 | `POST /api/transactions/deposit` | ✅ | ❌ |
 | `POST /api/transactions/withdraw` | ✅ | ❌ |
 | `POST /api/transactions/transfer` | ✅ | ✅ (son compte source seulement) |
+| `GET /api/transactions/history` | ✅ | ❌ |
 | `GET /api/transactions/history/{accountNumber}` | ✅ | ✅ (son compte seulement) |
 | `GET /api/transactions/statement/{accountNumber}` | ✅ | ✅ (son compte seulement) |
 
@@ -280,6 +281,7 @@ Authorization: Bearer <admin_token>
     "firstName": "Marie",
     "lastName": "Dupont",
     "email": "marie.dupont@example.com",
+    "status": "ACTIVE",
     "accounts": []
 }
 ```
@@ -304,6 +306,7 @@ Authorization: Bearer <admin_token>
         "firstName": "Admin",
         "lastName": "User",
         "email": "admin@ega.com",
+        "status": "ACTIVE",
         "accounts": []
     },
     {
@@ -311,6 +314,7 @@ Authorization: Bearer <admin_token>
         "firstName": "Toto",
         "lastName": "Boni",
         "email": "toto@ega.com",
+        "status": "ACTIVE",
         "accounts": [
             {
                 "id": 1,
@@ -349,6 +353,7 @@ Authorization: Bearer <token>
     "firstName": "Toto",
     "lastName": "Boni",
     "email": "toto@ega.com",
+    "status": "ACTIVE",
     "accounts": [
         {
             "id": 1,
@@ -392,6 +397,7 @@ Authorization: Bearer <token>
     "firstName": "Toto",
     "lastName": "Boni",
     "email": "toto@ega.com",
+    "status": "ACTIVE",
     "accounts": [
         {
             "id": 1,
@@ -441,6 +447,7 @@ Authorization: Bearer <admin_token>
     "firstName": "Marie-Claire",
     "lastName": "Dupont",
     "email": "marie.dupont@example.com",
+    "status": "ACTIVE",
     "accounts": []
 }
 ```
@@ -815,7 +822,22 @@ Authorization: Bearer <token>
 
 ---
 
-### 7.4 Historique des transactions
+### 7.4 Liste Global des transactions (Admin)
+
+```http
+GET /api/transactions/history
+Authorization: Bearer <admin_token>
+```
+
+**🔐 Authentification:** ADMIN uniquement
+
+#### Réponse succès (200 OK) - Array<Transaction>
+
+Identique à l'historique par compte, mais inclut toutes les transactions.
+
+---
+
+### 7.5 Historique des transactions
 
 ```http
 GET /api/transactions/history/{accountNumber}?start={start}&end={end}
@@ -878,7 +900,7 @@ GET /api/transactions/history/FR7630001007941234567890185?start=2024-01-01T00:00
 
 ---
 
-### 7.5 Relevé bancaire
+### 7.6 Relevé bancaire
 
 Génère un relevé bancaire au format texte.
 
@@ -980,6 +1002,7 @@ interface ClientResponseDTO {
     firstName: string;
     lastName: string;
     email: string;
+    status: 'ACTIVE' | 'SUSPENDED';
     accounts: AccountResponseDTO[];
 }
 ```
@@ -1312,6 +1335,7 @@ export interface ClientResponseDTO {
     firstName: string;
     lastName: string;
     email: string;
+    status: 'ACTIVE' | 'SUSPENDED';
     accounts: AccountResponseDTO[];
 }
 

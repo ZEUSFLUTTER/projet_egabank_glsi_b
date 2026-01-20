@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Component;
 
+import com.ega.egabank.dto.response.AccountLookupResponse;
 import com.ega.egabank.dto.response.AccountResponse;
 import com.ega.egabank.entity.Account;
 
@@ -27,6 +28,18 @@ public class AccountMapper {
                 .solde(account.getSolde())
                 .actif(account.getActif())
                 .clientId(account.getProprietaire() != null ? account.getProprietaire().getId() : null)
+                .clientNomComplet(account.getProprietaire() != null
+                        ? account.getProprietaire().getNomComplet()
+                        : null)
+                .build();
+    }
+
+    public AccountLookupResponse toLookupResponse(Account account) {
+        return AccountLookupResponse.builder()
+                .numeroCompte(account.getNumeroCompte())
+                .typeCompte(account.getTypeCompte())
+                .typeCompteLibelle(account.getTypeCompte().getLibelle())
+                .actif(account.getActif())
                 .clientNomComplet(account.getProprietaire() != null
                         ? account.getProprietaire().getNomComplet()
                         : null)

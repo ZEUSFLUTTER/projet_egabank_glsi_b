@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ega.egabank.dto.request.AccountRequest;
+import com.ega.egabank.dto.response.AccountLookupResponse;
 import com.ega.egabank.dto.response.AccountResponse;
 import com.ega.egabank.dto.response.PageResponse;
 import com.ega.egabank.entity.Account;
@@ -62,6 +63,14 @@ public class AccountServiceImpl implements AccountService {
         log.debug("Récupération du compte: {}", numeroCompte);
         Account account = findAccountByNumber(numeroCompte);
         return accountMapper.toResponse(account);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public AccountLookupResponse lookupAccount(String numeroCompte) {
+        log.debug("Lookup du compte: {}", numeroCompte);
+        Account account = findAccountByNumber(numeroCompte);
+        return accountMapper.toLookupResponse(account);
     }
 
     @Override

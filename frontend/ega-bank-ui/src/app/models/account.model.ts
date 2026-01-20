@@ -13,6 +13,14 @@ export interface AccountResponse {
   clientNomComplet?: string;
 }
 
+export interface AccountLookupResponse {
+  numeroCompte: string;
+  typeCompte: TypeCompte;
+  typeCompteLibelle?: string;
+  actif: boolean;
+  clientNomComplet?: string;
+}
+
 export interface AccountRequest {
   typeCompte: TypeCompte;
   clientId: number;

@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ega.egabank.dto.request.AccountRequest;
+import com.ega.egabank.dto.response.AccountLookupResponse;
 import com.ega.egabank.dto.response.AccountResponse;
 import com.ega.egabank.dto.response.MessageResponse;
 import com.ega.egabank.dto.response.PageResponse;
@@ -58,6 +59,14 @@ public class AccountController {
     public ResponseEntity<AccountResponse> getAccountByNumber(
             @Parameter(description = "Numéro de compte (IBAN)") @PathVariable String numeroCompte) {
         return ResponseEntity.ok(accountService.getAccountByNumber(numeroCompte));
+    }
+
+    @Operation(summary = "Lookup d'un compte bénéficiaire pour virement (Authentifié)")
+    @GetMapping("/lookup/{numeroCompte}")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
+    public ResponseEntity<AccountLookupResponse> lookupAccount(
+            @Parameter(description = "Numéro de compte (IBAN)") @PathVariable String numeroCompte) {
+        return ResponseEntity.ok(accountService.lookupAccount(numeroCompte));
     }
 
     @Operation(summary = "Récupérer les comptes d'un client (Authentifié)")

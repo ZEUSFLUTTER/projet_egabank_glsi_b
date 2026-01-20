@@ -5,6 +5,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Observable, Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { AccountResponse } from '../models/account.model';
+import { AccountLookupResponse } from '../models/account.model';
 import { TransactionResponse } from '../models/transaction.model';
 import { AccountService } from '../services/account.service';
 import { TransactionService } from '../services/transaction.service';
@@ -277,7 +278,7 @@ export class TransactionFormComponent implements OnInit, OnDestroy {
   form: FormGroup;
   accounts: AccountResponse[] = [];
   sourceAccount: AccountResponse | null = null;
-  targetAccount: AccountResponse | null = null;
+  targetAccount: AccountLookupResponse | null = null;
   isLoadingAccounts = true;
   isSubmitting = false;
   errorMessage = '';
@@ -318,8 +319,9 @@ export class TransactionFormComponent implements OnInit, OnDestroy {
       distinctUntilChanged()
     ).subscribe(accountNumber => {
       this.targetAccountError = '';
-      if (accountNumber && accountNumber.length >= 10) {
-        this.lookupTargetAccount(accountNumber);
+      const normalized = String(accountNumber || '').trim();
+      if (normalized && normalized.length >= 10) {
+        this.lookupTargetAccount(normalized);
       } else {
         this.targetAccount = null;
       }
@@ -336,8 +338,10 @@ export class TransactionFormComponent implements OnInit, OnDestroy {
   }
 
   private lookupTargetAccount(accountNumber: string): void {
+    const normalized = String(accountNumber || '').trim();
+
     // Ne pas permettre le virement vers soi-même
-    if (accountNumber === this.form.value.accountNumber) {
+    if (normalized && normalized === String(this.form.value.accountNumber || '').trim()) {
       this.targetAccountError = 'Cannot transfer to the same account';
       this.targetAccount = null;
       return;
@@ -346,7 +350,7 @@ export class TransactionFormComponent implements OnInit, OnDestroy {
     this.isLoadingTargetAccount = true;
     this.cdr.detectChanges();
 
-    this.accountService.getByNumber(accountNumber).subscribe({
+    this.accountService.lookup(normalized).subscribe({
       next: (account) => {
         this.targetAccount = account;
         this.isLoadingTargetAccount = false;
@@ -356,10 +360,16 @@ export class TransactionFormComponent implements OnInit, OnDestroy {
         }
         this.cdr.detectChanges();
       },
-      error: () => {
+      error: (err) => {
         this.targetAccount = null;
         this.isLoadingTargetAccount = false;
-        this.targetAccountError = 'Account not found';
+        if (err?.status === 403) {
+          this.targetAccountError = 'Accès refusé';
+        } else if (err?.status === 404) {
+          this.targetAccountError = 'Account not found';
+        } else {
+          this.targetAccountError = 'Erreur lors de la recherche du compte';
+        }
         this.cdr.detectChanges();
       }
     });

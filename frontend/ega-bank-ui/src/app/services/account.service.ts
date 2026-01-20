@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { AccountRequest, AccountResponse } from '../models/account.model';
+import { AccountLookupResponse, AccountRequest, AccountResponse } from '../models/account.model';
 import { PageResponse } from '../models/page.model';
 import { ApiService } from './api.service';
 
@@ -14,6 +14,10 @@ export class AccountService {
 
   getByNumber(numeroCompte: string): Observable<AccountResponse> {
     return this.api.get<AccountResponse>(`/accounts/${encodeURIComponent(numeroCompte)}`);
+  }
+
+  lookup(numeroCompte: string): Observable<AccountLookupResponse> {
+    return this.api.get<AccountLookupResponse>(`/accounts/lookup/${encodeURIComponent(numeroCompte)}`);
   }
 
   getByClient(clientId: number): Observable<AccountResponse[]> {

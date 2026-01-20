@@ -1,4 +1,4 @@
 [build]
-  base = "frontend_ega"
-  command = "npm run build"
-  publish = "dist/frontend_ega/browser"
+  command = "cd frontend_ega && npm run build"
+  publish = "frontend_ega/dist/frontend_ega/browser"
+

@@ -412,8 +412,8 @@ export class TransactionFormComponent implements OnInit, OnDestroy {
 
   getTypeDisplay(typeCompte: string): string {
     const types: Record<string, string> = {
-      EPARGNE: 'Savings',
-      COURANT: 'Checking',
+      EPARGNE: 'Épargne',
+      COURANT: 'Courant',
     };
     return types[typeCompte] || typeCompte;
   }
@@ -440,10 +440,10 @@ export class TransactionFormComponent implements OnInit, OnDestroy {
 
   getSubmitLabel(): string {
     switch (this.form.value.type) {
-      case 'DEPOT': return 'Deposit';
-      case 'RETRAIT': return 'Withdraw';
-      case 'VIREMENT': return 'Transfer';
-      default: return 'Submit';
+      case 'DEPOT': return 'Déposer';
+      case 'RETRAIT': return 'Retirer';
+      case 'VIREMENT': return 'Virer';
+      default: return 'Soumettre';
     }
   }
 
@@ -455,11 +455,11 @@ export class TransactionFormComponent implements OnInit, OnDestroy {
     // Validate transfer target
     if (v.type === 'VIREMENT') {
       if (!v.targetAccountNumber) {
-        this.errorMessage = 'Please enter a target account number for the transfer.';
+        this.errorMessage = 'Veuillez entrer un numéro de compte destinataire pour le virement.';
         return;
       }
       if (!this.targetAccount) {
-        this.errorMessage = 'Please enter a valid target account number.';
+        this.errorMessage = 'Veuillez entrer un numéro de compte destinataire valide.';
         return;
       }
       if (this.targetAccountError) {
@@ -479,7 +479,7 @@ export class TransactionFormComponent implements OnInit, OnDestroy {
         montant: Number(v.amount),
         description: v.description || undefined
       }).subscribe({
-        next: (tx) => this.handleSuccess('Transfer completed successfully!', tx),
+        next: (tx) => this.handleSuccess('Virement effectué avec succès !', tx),
         error: (e) => this.handleError(e)
       });
     } else if (v.type === 'DEPOT') {
@@ -487,7 +487,7 @@ export class TransactionFormComponent implements OnInit, OnDestroy {
         montant: Number(v.amount),
         description: v.description || undefined
       }).subscribe({
-        next: (tx) => this.handleSuccess('Deposit completed successfully!', tx),
+        next: (tx) => this.handleSuccess('Dépôt effectué avec succès !', tx),
         error: (e) => this.handleError(e)
       });
     } else {
@@ -495,7 +495,7 @@ export class TransactionFormComponent implements OnInit, OnDestroy {
         montant: Number(v.amount),
         description: v.description || undefined
       }).subscribe({
-        next: (tx) => this.handleSuccess('Withdrawal completed successfully!', tx),
+        next: (tx) => this.handleSuccess('Retrait effectué avec succès !', tx),
         error: (e) => this.handleError(e)
       });
     }
@@ -542,7 +542,7 @@ export class TransactionFormComponent implements OnInit, OnDestroy {
   private handleError(err: any): void {
     console.error('Transaction failed', err);
     this.isSubmitting = false;
-    this.errorMessage = err.error?.message || 'Transaction failed. Please try again.';
+    this.errorMessage = err.error?.message || 'La transaction a échoué. Veuillez réessayer.';
   }
 
   get accountsRoute(): string {

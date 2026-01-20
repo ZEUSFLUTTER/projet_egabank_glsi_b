@@ -118,13 +118,13 @@ export class AccountsComponent implements OnInit, OnDestroy {
   }
 
   getStatusDisplay(actif: boolean) {
-    return actif ? 'Active' : 'Inactive';
+    return actif ? 'Actif' : 'Inactif';
   }
 
   getTypeDisplay(typeCompte: string) {
     const types: Record<string, string> = {
-      EPARGNE: 'Savings',
-      COURANT: 'Checking',
+      EPARGNE: 'Épargne',
+      COURANT: 'Courant',
     };
     return types[typeCompte] || typeCompte;
   }
@@ -139,7 +139,7 @@ export class AccountsComponent implements OnInit, OnDestroy {
 
   toggleStatus(account: AccountResponse) {
     const newStatus = !account.actif;
-    if (confirm(`Are you sure you want to ${newStatus ? 'activate' : 'deactivate'} this account?`)) {
+    if (confirm(`Êtes-vous sûr de vouloir ${newStatus ? 'activer' : 'désactiver'} ce compte ?`)) {
       this.accountService.updateStatus(account.id, newStatus).subscribe({
         next: () => {
           account.actif = newStatus;
@@ -147,21 +147,21 @@ export class AccountsComponent implements OnInit, OnDestroy {
         },
         error: (err) => {
           console.error('Failed to toggle status', err);
-          alert('Failed to update account status.');
+          alert('Échec de la mise à jour du statut du compte.');
         }
       });
     }
   }
 
   deleteAccount(numeroCompte: string) {
-    if (confirm('Are you sure you want to delete this account? This action cannot be undone.')) {
+    if (confirm('Êtes-vous sûr de vouloir supprimer ce compte ? Cette action est irréversible.')) {
       this.accountService.delete(Number(numeroCompte)).subscribe({
         next: () => {
           this.loadAccounts();
         },
         error: (err: any) => {
           console.error('Failed to delete account', err);
-          alert('Failed to delete account.');
+          alert('Échec de la suppression du compte.');
         }
       });
     }

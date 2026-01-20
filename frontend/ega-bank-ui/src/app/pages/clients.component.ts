@@ -62,7 +62,7 @@ export class ClientsComponent implements OnInit, OnDestroy {
       },
       error: (err) => {
         console.error('Failed to load clients', err);
-        this.errorMessage = 'Failed to load clients. Please try again.';
+        this.errorMessage = 'Échec du chargement des clients. Veuillez réessayer.';
         this.isLoading = false;
         this.cdr.detectChanges();
       },
@@ -78,7 +78,7 @@ export class ClientsComponent implements OnInit, OnDestroy {
   }
 
   deleteClient(id: number) {
-    if (!confirm('Are you sure you want to delete this client?')) return;
+    if (!confirm('Êtes-vous sûr de vouloir supprimer ce client ?')) return;
 
     this.clientService.delete(id).subscribe({
       next: () => {
@@ -86,17 +86,17 @@ export class ClientsComponent implements OnInit, OnDestroy {
         this.store.removeClient(id);
         this.loadClients(); // Reload list
       },
-      error: (err) => alert('Failed to delete client')
+      error: (err) => alert('Échec de la suppression du client')
     });
   }
 
   activateClient(client: ClientResponse) {
     if (!client.userId) {
-      alert('No user account associated with this client');
+      alert('Aucun compte utilisateur associé à ce client');
       return;
     }
 
-    if (!confirm(`Activate account for ${client.prenom} ${client.nom}?`)) return;
+    if (!confirm(`Activer le compte de ${client.prenom} ${client.nom} ?`)) return;
 
     this.userService.activate(client.userId).subscribe({
       next: () => {
@@ -104,18 +104,18 @@ export class ClientsComponent implements OnInit, OnDestroy {
       },
       error: (err) => {
         console.error('Failed to activate account', err);
-        alert('Failed to activate account. Please try again.');
+        alert('Échec de l\'activation du compte. Veuillez réessayer.');
       }
     });
   }
 
   deactivateClient(client: ClientResponse) {
     if (!client.userId) {
-      alert('No user account associated with this client');
+      alert('Aucun compte utilisateur associé à ce client');
       return;
     }
 
-    if (!confirm(`Deactivate account for ${client.prenom} ${client.nom}?`)) return;
+    if (!confirm(`Désactiver le compte de ${client.prenom} ${client.nom} ?`)) return;
 
     this.userService.deactivate(client.userId).subscribe({
       next: () => {
@@ -123,7 +123,7 @@ export class ClientsComponent implements OnInit, OnDestroy {
       },
       error: (err) => {
         console.error('Failed to deactivate account', err);
-        alert('Failed to deactivate account. Please try again.');
+        alert('Échec de la désactivation du compte. Veuillez réessayer.');
       }
     });
   }

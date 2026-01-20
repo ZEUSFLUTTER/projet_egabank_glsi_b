@@ -174,10 +174,10 @@ export class TransactionsComponent implements OnInit, OnDestroy {
 
   getTypeDisplay(type: string): string {
     const types: Record<string, string> = {
-      DEPOT: 'Deposit',
-      RETRAIT: 'Withdrawal',
-      VIREMENT_ENTRANT: 'Transfer In',
-      VIREMENT_SORTANT: 'Transfer Out',
+      DEPOT: 'Dépôt',
+      RETRAIT: 'Retrait',
+      VIREMENT_ENTRANT: 'Virement Entrant',
+      VIREMENT_SORTANT: 'Virement Sortant',
     };
     return types[type] || type;
   }
@@ -208,8 +208,8 @@ export class TransactionsComponent implements OnInit, OnDestroy {
 
   getAccountTypeDisplay(typeCompte: string): string {
     const types: Record<string, string> = {
-      EPARGNE: 'Savings',
-      COURANT: 'Checking',
+      EPARGNE: 'Épargne',
+      COURANT: 'Courant',
     };
     return types[typeCompte] || typeCompte;
   }

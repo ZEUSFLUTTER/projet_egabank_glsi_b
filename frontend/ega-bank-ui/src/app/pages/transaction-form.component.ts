@@ -19,8 +19,8 @@ import { RouteHelperService } from '../services/route-helper.service';
   template: `
     <div class="p-6">
       <div class="mb-6">
-        <h1 class="text-2xl font-bold mb-2">New Transaction</h1>
-        <p class="text-gray-500">Perform a deposit, withdrawal, or transfer between accounts.</p>
+        <h1 class="text-2xl font-bold mb-2">Nouvelle Transaction</h1>
+        <p class="text-gray-500">Effectuez un dépôt, un retrait ou un virement entre comptes.</p>
       </div>
 
       <div class="card p-6" style="max-width: 700px;">
@@ -38,31 +38,31 @@ import { RouteHelperService } from '../services/route-helper.service';
           <!-- Transaction Type -->
           <div class="mb-6">
             <label class="block text-sm font-medium text-gray-700 mb-2">
-              <i class="ri-exchange-line text-primary"></i> Transaction Type *
+              <i class="ri-exchange-line text-primary"></i> Type de Transaction *
             </label>
             <div class="grid gap-3" style="grid-template-columns: repeat(3, 1fr);">
               <label class="cursor-pointer" (click)="form.patchValue({type: 'DEPOT'})">
                 <input type="radio" formControlName="type" value="DEPOT" class="sr-only">
                 <div class="txn-type-card" [class.active]="form.value.type === 'DEPOT'">
                   <i class="ri-add-circle-line text-2xl"></i>
-                  <div class="font-medium mt-1">Deposit</div>
-                  <div class="text-xs opacity-70">Dépôt</div>
+                  <div class="font-medium mt-1">Dépôt</div>
+                  <div class="text-xs opacity-70">Deposit</div>
                 </div>
               </label>
               <label class="cursor-pointer" (click)="form.patchValue({type: 'RETRAIT'})">
                 <input type="radio" formControlName="type" value="RETRAIT" class="sr-only">
                 <div class="txn-type-card" [class.active]="form.value.type === 'RETRAIT'">
                   <i class="ri-subtract-line text-2xl"></i>
-                  <div class="font-medium mt-1">Withdraw</div>
-                  <div class="text-xs opacity-70">Retrait</div>
+                  <div class="font-medium mt-1">Retrait</div>
+                  <div class="text-xs opacity-70">Withdraw</div>
                 </div>
               </label>
               <label class="cursor-pointer" (click)="form.patchValue({type: 'VIREMENT'})">
                 <input type="radio" formControlName="type" value="VIREMENT" class="sr-only">
                 <div class="txn-type-card" [class.active]="form.value.type === 'VIREMENT'">
                   <i class="ri-arrow-left-right-line text-2xl"></i>
-                  <div class="font-medium mt-1">Transfer</div>
-                  <div class="text-xs opacity-70">Virement</div>
+                  <div class="font-medium mt-1">Virement</div>
+                  <div class="text-xs opacity-70">Transfer</div>
                 </div>
               </label>
             </div>
@@ -72,7 +72,7 @@ import { RouteHelperService } from '../services/route-helper.service';
           <div class="mb-4">
             <label class="block text-sm font-medium text-gray-700 mb-2">
               <i class="ri-bank-card-line text-primary"></i>
-              {{ form.value.type === 'VIREMENT' ? 'Source Account' : 'Account' }} *
+              {{ form.value.type === 'VIREMENT' ? 'Compte Source' : 'Compte' }} *
             </label>
 
             <!-- Loading accounts -->
@@ -81,9 +81,9 @@ import { RouteHelperService } from '../services/route-helper.service';
             <!-- No accounts available -->
             <div *ngIf="!isLoadingAccounts && accounts.length === 0" class="p-4 bg-gray-50 rounded border text-center">
               <i class="ri-bank-card-2-line text-2xl text-gray-400"></i>
-              <p class="text-gray-500 mt-2">No accounts found.</p>
+              <p class="text-gray-500 mt-2">Aucun compte trouvé.</p>
               <a routerLink="/accounts/new" class="btn btn-primary btn-sm mt-2">
-                <i class="ri-add-line"></i> Create Account First
+                <i class="ri-add-line"></i> Créer un Compte d'abord
               </a>
             </div>
 
@@ -91,7 +91,7 @@ import { RouteHelperService } from '../services/route-helper.service';
             <select *ngIf="!isLoadingAccounts && accounts.length > 0"
                     formControlName="accountNumber"
                     class="w-full p-3 border rounded focus:outline-none focus:ring-2 focus:ring-primary">
-              <option value="">-- Select an account --</option>
+              <option value="">-- Sélectionner un compte --</option>
               <option *ngFor="let account of accounts" [value]="account.numeroCompte">
                 {{ account.numeroCompte }} - {{ getTypeDisplay(account.typeCompte) }}
                 ({{ account.solde | currency:'XOF':'symbol':'1.0-0' }})
@@ -113,7 +113,7 @@ import { RouteHelperService } from '../services/route-helper.service';
                   </div>
                 </div>
                 <div class="text-right">
-                  <div class="text-xs text-gray-500">Available Balance</div>
+                  <div class="text-xs text-gray-500">Solde Disponible</div>
                   <div class="font-bold font-mono text-lg" [class.text-success]="sourceAccount.solde > 0" [class.text-danger]="sourceAccount.solde <= 0">
                     {{ sourceAccount.solde | currency:'XOF':'symbol':'1.0-0' }}
                   </div>
@@ -125,18 +125,18 @@ import { RouteHelperService } from '../services/route-helper.service';
           <!-- Target Account (only for transfers) -->
           <div *ngIf="form.value.type === 'VIREMENT'" class="mb-4">
             <label class="block text-sm font-medium text-gray-700 mb-2">
-              <i class="ri-arrow-right-line text-primary"></i> Target Account *
+              <i class="ri-arrow-right-line text-primary"></i> Compte Destinataire *
             </label>
             <input type="text"
                    formControlName="targetAccountNumber"
                    class="w-full p-3 border rounded font-mono focus:outline-none focus:ring-2 focus:ring-primary"
                    [class.border-red-500]="targetAccountError"
                    [class.border-green-500]="targetAccount && !targetAccountError"
-                   placeholder="Enter or paste account number (e.g., TG73EGA0000101880345400)">
+                   placeholder="Entrez ou collez le numéro de compte (ex: TG73EGA0000101880345400)">
 
             <!-- Loading indicator -->
             <div *ngIf="isLoadingTargetAccount" class="mt-2 text-sm text-gray-500">
-              <i class="ri-loader-4-line animate-spin"></i> Searching account...
+              <i class="ri-loader-4-line animate-spin"></i> Recherche du compte...
             </div>
 
             <!-- Error message -->
@@ -146,7 +146,7 @@ import { RouteHelperService } from '../services/route-helper.service';
 
             <!-- Help text -->
             <p *ngIf="!targetAccount && !targetAccountError && !isLoadingTargetAccount" class="text-xs text-gray-500 mt-1">
-              <i class="ri-information-line"></i> Enter the recipient's account number
+              <i class="ri-information-line"></i> Entrez le numéro de compte du bénéficiaire
             </p>
 
             <!-- Target account info -->
@@ -167,7 +167,7 @@ import { RouteHelperService } from '../services/route-helper.service';
           <!-- Amount -->
           <div class="mb-4">
             <label class="block text-sm font-medium text-gray-700 mb-2">
-              <i class="ri-money-dollar-circle-line text-primary"></i> Amount (XOF) *
+              <i class="ri-money-dollar-circle-line text-primary"></i> Montant (XOF) *
             </label>
             <div class="relative">
               <input type="number"
@@ -182,10 +182,10 @@ import { RouteHelperService } from '../services/route-helper.service';
               <span *ngIf="form.value.type !== 'DEPOT'" [class.text-success]="sourceAccount.solde >= form.get('amount')?.value"
                     [class.text-danger]="sourceAccount.solde < form.get('amount')?.value">
                 <i [class]="sourceAccount.solde >= form.get('amount')?.value ? 'ri-checkbox-circle-line' : 'ri-close-circle-line'"></i>
-                {{ sourceAccount.solde >= form.get('amount')?.value ? 'Sufficient balance' : 'Insufficient balance!' }}
+                {{ sourceAccount.solde >= form.get('amount')?.value ? 'Solde suffisant' : 'Solde insuffisant !' }}
               </span>
               <span *ngIf="form.value.type === 'DEPOT'" class="text-success">
-                <i class="ri-arrow-up-line"></i> New balance will be: {{ (sourceAccount.solde + form.get('amount')?.value) | currency:'XOF':'symbol':'1.0-0' }}
+                <i class="ri-arrow-up-line"></i> Nouveau solde sera : {{ (sourceAccount.solde + form.get('amount')?.value) | currency:'XOF':'symbol':'1.0-0' }}
               </span>
             </div>
           </div>
@@ -193,21 +193,21 @@ import { RouteHelperService } from '../services/route-helper.service';
           <!-- Description -->
           <div class="mb-6">
             <label class="block text-sm font-medium text-gray-700 mb-2">
-              <i class="ri-file-text-line text-primary"></i> Description (optional)
+              <i class="ri-file-text-line text-primary"></i> Description (optionnel)
             </label>
             <input type="text"
                    formControlName="description"
                    class="w-full p-3 border rounded focus:outline-none focus:ring-2 focus:ring-primary"
-                   placeholder="Enter a description for this transaction">
+                   placeholder="Entrez une description pour cette transaction">
           </div>
 
           <!-- Actions -->
           <div class="flex gap-4">
             <a [routerLink]="transactionsRoute" class="btn btn-secondary flex-1" *ngIf="returnAccountId">
-              <i class="ri-arrow-left-line"></i> Cancel
+              <i class="ri-arrow-left-line"></i> Annuler
             </a>
             <a [routerLink]="accountsRoute" class="btn btn-secondary flex-1" *ngIf="!returnAccountId">
-              <i class="ri-arrow-left-line"></i> Cancel
+              <i class="ri-arrow-left-line"></i> Annuler
             </a>
             <button type="submit"
                     [disabled]="form.invalid || isSubmitting || accounts.length === 0 || !isBalanceSufficient() || !isTransferValid()"
@@ -216,7 +216,7 @@ import { RouteHelperService } from '../services/route-helper.service';
                     [class.btn-danger]="form.value.type === 'RETRAIT'"
                     [class.btn-primary]="form.value.type === 'VIREMENT'">
               <span *ngIf="isSubmitting">
-                <i class="ri-loader-4-line spinner-icon"></i> Processing...
+                <i class="ri-loader-4-line spinner-icon"></i> Traitement...
               </span>
               <span *ngIf="!isSubmitting">
                 <i [class]="getSubmitIcon()"></i> {{ getSubmitLabel() }}

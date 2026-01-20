@@ -1,13 +1,13 @@
 <div class="p-6">
     <div class="mb-6 flex justify-between items-center">
         <div>
-            <h1 class="text-2xl font-bold mb-2">{{ isAdmin ? 'Account Management' : 'My Accounts' }}</h1>
+            <h1 class="text-2xl font-bold mb-2">{{ isAdmin ? 'Gestion des Comptes' : 'Mes Comptes' }}</h1>
             <p class="text-gray-500">
-                {{ isAdmin ? 'Overview of all customer accounts and financial holdings.' : 'Overview of your accounts and balances.' }}
+                {{ isAdmin ? 'Vue d\'ensemble de tous les comptes clients et avoirs financiers.' : 'Vue d\'ensemble de vos comptes et soldes.' }}
             </p>
         </div>
         <a *ngIf="isAdmin" routerLink="/admin/accounts/new" class="btn btn-primary">
-            <i class="ri-add-circle-line" style="margin-right: 0.5rem;"></i> Open Account
+            <i class="ri-add-circle-line" style="margin-right: 0.5rem;"></i> Ouvrir Compte
         </a>
     </div>
 
@@ -15,7 +15,7 @@
     <div *ngIf="errorMessage && !isLoading" class="alert alert-danger mb-4">
         <i class="ri-error-warning-line"></i> {{ errorMessage }}
         <button (click)="loadAccounts()" class="btn btn-sm btn-secondary ml-2">
-            <i class="ri-refresh-line"></i> Retry
+            <i class="ri-refresh-line"></i> Réessayer
         </button>
     </div>
 
@@ -25,11 +25,11 @@
             <table>
                 <thead>
                     <tr>
-                        <th style="min-width: 180px;">Account</th>
+                        <th style="min-width: 180px;">Compte</th>
                         <th *ngIf="isAdmin" style="min-width: 150px;">Client</th>
-                        <th style="min-width: 100px;">Status</th>
-                        <th style="min-width: 120px;">Created</th>
-                        <th class="text-right" style="min-width: 130px;">Balance</th>
+                        <th style="min-width: 100px;">Statut</th>
+                        <th style="min-width: 120px;">Créé le</th>
+                        <th class="text-right" style="min-width: 130px;">Solde</th>
                         <th style="min-width: 100px;">Actions</th>
                     </tr>
                 </thead>
@@ -66,11 +66,11 @@
             <table>
                 <thead>
                     <tr>
-                        <th style="min-width: 180px;">Account</th>
+                        <th style="min-width: 180px;">Compte</th>
                         <th *ngIf="isAdmin" style="min-width: 150px;">Client</th>
-                        <th style="min-width: 100px;">Status</th>
-                        <th style="min-width: 120px;">Created</th>
-                        <th class="text-right" style="min-width: 130px;">Balance</th>
+                        <th style="min-width: 100px;">Statut</th>
+                        <th style="min-width: 120px;">Créé le</th>
+                        <th class="text-right" style="min-width: 130px;">Solde</th>
                         <th style="min-width: 100px;">Actions</th>
                     </tr>
                 </thead>
@@ -105,11 +105,13 @@
                             {{ account.solde | currency:'XOF':'symbol':'1.0-0' }}
                         </td>
                         <td>
-                            <div class="flex gap-1">
-                                <button (click)="viewTransactions(account.numeroCompte)" class="btn btn-sm btn-outline-info" title="View Transactions">
+                            <div class="flex gap-2">
+                                <button (click)="viewTransactions(account.numeroCompte)" class="btn-action btn-action-info" title="Voir Transactions">
                                     <i class="ri-history-line"></i>
                                 </button>
-                                <button *ngIf="isAdmin" (click)="toggleStatus(account)" class="btn btn-sm" [class.btn-outline-success]="!account.actif" [class.btn-outline-warning]="account.actif" [title]="account.actif ? 'Deactivate Account' : 'Activate Account'">
+                                <button *ngIf="isAdmin" (click)="toggleStatus(account)"
+                                        [class]="account.actif ? 'btn-action btn-action-warning' : 'btn-action btn-action-success'"
+                                        [title]="account.actif ? 'Désactiver le compte' : 'Activer le compte'">
                                     <i [class]="account.actif ? 'ri-stop-circle-line' : 'ri-play-circle-line'"></i>
                                 </button>
                             </div>
@@ -125,10 +127,110 @@
         <div style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.3;">
             <i class="ri-bank-card-2-line"></i>
         </div>
-        <h3 class="font-bold text-lg mb-2 text-gray-700">No Accounts Yet</h3>
-        <p class="text-gray-500 mb-4">Open your first account to get started.</p>
+        <h3 class="font-bold text-lg mb-2 text-gray-700">Aucun Compte</h3>
+        <p class="text-gray-500 mb-4">Ouvrez votre premier compte pour commencer.</p>
         <a routerLink="/admin/accounts/new" class="btn btn-primary">
-            <i class="ri-add-line" style="margin-right: 0.5rem;"></i> Open First Account
+            <i class="ri-add-line" style="margin-right: 0.5rem;"></i> Ouvrir Premier Compte
         </a>
     </div>
 </div>
+
+<style>
+/* Action Buttons */
+.btn-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 1.125rem;
+}
+
+.btn-action-primary {
+    background-color: #dbeafe;
+    color: #1d4ed8;
+    border-color: #bfdbfe;
+}
+
+.btn-action-primary:hover {
+    background-color: #3b82f6;
+    border-color: #3b82f6;
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.3);
+}
+
+.btn-action-secondary {
+    background-color: #f1f5f9;
+    color: #475569;
+    border-color: #e2e8f0;
+}
+
+.btn-action-secondary:hover {
+    background-color: #64748b;
+    border-color: #64748b;
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px -1px rgba(100, 116, 139, 0.3);
+}
+
+.btn-action-success {
+    background-color: #dcfce7;
+    color: #15803d;
+    border-color: #bbf7d0;
+}
+
+.btn-action-success:hover {
+    background-color: #22c55e;
+    border-color: #22c55e;
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px -1px rgba(34, 197, 94, 0.3);
+}
+
+.btn-action-warning {
+    background-color: #fef3c7;
+    color: #b45309;
+    border-color: #fde68a;
+}
+
+.btn-action-warning:hover {
+    background-color: #f59e0b;
+    border-color: #f59e0b;
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px -1px rgba(245, 158, 11, 0.3);
+}
+
+.btn-action-danger {
+    background-color: #fee2e2;
+    color: #dc2626;
+    border-color: #fecaca;
+}
+
+.btn-action-danger:hover {
+    background-color: #ef4444;
+    border-color: #ef4444;
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px -1px rgba(239, 68, 68, 0.3);
+}
+
+.btn-action-info {
+    background-color: #e0f2fe;
+    color: #0284c7;
+    border-color: #bae6fd;
+}
+
+.btn-action-info:hover {
+    background-color: #0ea5e9;
+    border-color: #0ea5e9;
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px -1px rgba(14, 165, 233, 0.3);
+}
+</style>

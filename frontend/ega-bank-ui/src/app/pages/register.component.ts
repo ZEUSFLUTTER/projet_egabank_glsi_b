@@ -15,8 +15,8 @@ import { AuthService } from '../services/auth.service';
            <div class="logo-container">
             <img src="/assets/logoega.png" alt="EGA Bank" class="app-logo" width="240" height="96" />
            </div>
-          <h2 class="text-2xl font-bold mb-2 text-center">Create Account</h2>
-          <p class="text-gray-500 text-sm text-center">Join EGA Bank today</p>
+          <h2 class="text-2xl font-bold mb-2 text-center">Créer un Compte</h2>
+          <p class="text-gray-500 text-sm text-center">Rejoignez EGA Bank aujourd'hui</p>
         </div>
 
         <div *ngIf="errorMessage" class="alert alert-danger">
@@ -38,12 +38,12 @@ import { AuthService } from '../services/auth.service';
               [class.error-border]="form.get('email')?.invalid && form.get('email')?.touched"
             />
             <div *ngIf="form.get('email')?.invalid && form.get('email')?.touched" class="text-xs text-danger mt-1">
-              Valid email is required
+              Un email valide est requis
             </div>
           </div>
 
           <div class="mb-4">
-            <label for="username" class="label">Username</label>
+            <label for="username" class="label">Nom d'utilisateur</label>
             <input
               id="username"
               type="text"
@@ -52,12 +52,12 @@ import { AuthService } from '../services/auth.service';
               [class.error-border]="form.get('username')?.invalid && form.get('username')?.touched"
             />
              <div *ngIf="form.get('username')?.invalid && form.get('username')?.touched" class="text-xs text-danger mt-1">
-              Username is required (min 3 characters)
+              Nom d'utilisateur requis (min 3 caractères)
             </div>
           </div>
 
           <div class="mb-6">
-            <label for="password" class="label">Password</label>
+            <label for="password" class="label">Mot de passe</label>
             <input
               id="password"
               type="password"
@@ -66,7 +66,7 @@ import { AuthService } from '../services/auth.service';
                [class.error-border]="form.get('password')?.invalid && form.get('password')?.touched"
             />
             <div *ngIf="form.get('password')?.invalid && form.get('password')?.touched" class="text-xs text-danger mt-1">
-              Password is required (min 6 characters)
+              Mot de passe requis (min 6 caractères)
             </div>
           </div>
 
@@ -76,12 +76,12 @@ import { AuthService } from '../services/auth.service';
             [disabled]="form.invalid || isLoading"
           >
             <span *ngIf="isLoading" class="spinner"></span>
-            {{ isLoading ? 'Creating account...' : 'Sign up' }}
+            {{ isLoading ? 'Création du compte...' : 'S\\'inscrire' }}
           </button>
         </form>
 
         <div class="footer">
-          Already have an account? <a routerLink="/login" class="link">Sign in</a>
+          Vous avez déjà un compte ? <a routerLink="/login" class="link">Se connecter</a>
         </div>
       </div>
     </div>
@@ -224,12 +224,12 @@ export class RegisterComponent {
 
         // Vérifier si le compte est en attente de validation
         if (res.accountPending) {
-          this.successMessage = 
+          this.successMessage =
             '✅ Votre compte a été créé avec succès ! ' +
             'Il est en attente de validation par un administrateur. ' +
             'Vous recevrez un email une fois votre compte activé. ' +
             'Vous pouvez vous connecter une fois votre compte validé.';
-          
+
           // Rediriger vers login après 5 secondes
           setTimeout(() => {
             this.router.navigateByUrl('/login');

@@ -47,4 +47,11 @@ public interface ClientRepository extends JpaRepository<Client, Long> {
            "LOWER(c.prenom) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
            "LOWER(c.courriel) LIKE LOWER(CONCAT('%', :search, '%')))")
     Page<Client> searchNonAdmin(@Param("search") String search, Pageable pageable);
+
+    /**
+     * Compte le nombre de clients non-administrateurs
+     */
+    @Query("SELECT COUNT(c) FROM Client c WHERE c.id NOT IN " +
+           "(SELECT u.client.id FROM User u WHERE u.role = 'ROLE_ADMIN' AND u.client IS NOT NULL)")
+    long countNonAdmin();
 }

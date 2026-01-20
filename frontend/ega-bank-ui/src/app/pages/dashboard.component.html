@@ -1,8 +1,8 @@
 <div class="p-6">
     <div class="mb-6">
-        <h1 class="text-2xl font-bold mb-2">Dashboard</h1>
+        <h1 class="text-2xl font-bold mb-2">Tableau de bord</h1>
         <p class="text-gray-500">
-            {{ isAdmin ? "Overview of your bank's performance." : 'Overview of your accounts and recent activity.' }}
+            {{ isAdmin ? "Vue d'ensemble des performances de votre banque." : 'Vue d\'ensemble de vos comptes et activités récentes.' }}
         </p>
     </div>
 
@@ -13,11 +13,11 @@
                 <i class="ri-error-warning-line"></i>
             </div>
             <div class="flex-1">
-                <h3 class="font-bold text-danger mb-1">Connection Error</h3>
+                <h3 class="font-bold text-danger mb-1">Erreur de connexion</h3>
                 <p class="text-gray-600">{{ errorMessage }}</p>
             </div>
             <button (click)="retry()" class="btn btn-primary">
-                <i class="ri-refresh-line" style="margin-right: 0.5rem;"></i> Retry
+                <i class="ri-refresh-line" style="margin-right: 0.5rem;"></i> Réessayer
             </button>
         </div>
     </div>
@@ -38,7 +38,7 @@
         <div class="card p-4">
             <div class="flex items-center gap-2 text-sm text-gray-500 mb-1">
                 <i class="ri-bank-card-line"></i>
-                <span>{{ isAdmin ? 'Total Accounts' : 'My Accounts' }}</span>
+                <span>{{ isAdmin ? 'Total Comptes' : 'Mes Comptes' }}</span>
             </div>
             <div *ngIf="isLoading" class="skeleton skeleton-text" style="height: 2rem; width: 60%;"></div>
             <div *ngIf="!isLoading" class="text-2xl font-bold">{{ stats.totalAccounts }}</div>
@@ -48,7 +48,7 @@
         <div class="card p-4">
             <div class="flex items-center gap-2 text-sm text-gray-500 mb-1">
                 <i class="ri-checkbox-circle-line"></i>
-                <span>{{ isAdmin ? 'Active Accounts' : 'Active My Accounts' }}</span>
+                <span>{{ isAdmin ? 'Comptes Actifs' : 'Comptes Actifs' }}</span>
             </div>
             <div *ngIf="isLoading" class="skeleton skeleton-text" style="height: 2rem; width: 60%;"></div>
             <div *ngIf="!isLoading" class="text-2xl font-bold text-success">{{ stats.activeAccounts }}</div>
@@ -58,7 +58,7 @@
         <div class="card p-4">
             <div class="flex items-center gap-2 text-sm text-gray-500 mb-1">
                 <i class="ri-money-dollar-circle-line"></i>
-                <span>{{ isAdmin ? 'Total Balance' : 'My Total Balance' }}</span>
+                <span>{{ isAdmin ? 'Solde Total' : 'Mon Solde Total' }}</span>
             </div>
             <div *ngIf="isLoading" class="skeleton skeleton-text" style="height: 2rem; width: 60%;"></div>
             <div *ngIf="!isLoading" class="text-2xl font-bold text-primary">{{ stats.totalBalance |
@@ -72,9 +72,9 @@
             <div class="p-4 border-b flex justify-between items-center">
                 <h3 class="font-bold flex items-center gap-2">
                     <i class="ri-user-line text-primary"></i>
-                    Recent Clients
+                    Clients Récents
                 </h3>
-                <a [routerLink]="clientsRoute" class="text-sm text-primary" style="text-decoration: none;">View All</a>
+                <a [routerLink]="clientsRoute" class="text-sm text-primary" style="text-decoration: none;">Voir Tout</a>
             </div>
             <div>
                 <div *ngIf="isLoading">
@@ -86,16 +86,16 @@
                 <div *ngIf="!isLoading && recentClients.length > 0">
                     <div *ngFor="let client of recentClients" class="p-4 border-b last:border-b-0 hover:bg-gray-50">
                         <div class="font-medium">{{ client.prenom }} {{ client.nom }}</div>
-                        <div class="text-sm text-gray-500">{{ client.courriel || 'No email' }}</div>
+                        <div class="text-sm text-gray-500">{{ client.courriel || 'Pas d\'email' }}</div>
                     </div>
                 </div>
                 <div *ngIf="!isLoading && recentClients.length === 0" class="p-6 text-center text-gray-500">
                     <div style="font-size: 2.5rem; margin-bottom: 0.75rem; opacity: 0.5;">
                         <i class="ri-user-add-line"></i>
                     </div>
-                    <p class="mb-2">No clients yet.</p>
+                    <p class="mb-2">Aucun client pour le moment.</p>
                     <a [routerLink]="newClientRoute" class="text-primary font-medium">
-                        <i class="ri-add-line"></i> Add your first client
+                        <i class="ri-add-line"></i> Ajouter votre premier client
                     </a>
                 </div>
             </div>
@@ -106,9 +106,9 @@
             <div class="p-4 border-b flex justify-between items-center">
                 <h3 class="font-bold flex items-center gap-2">
                     <i class="ri-bank-card-line text-primary"></i>
-                    {{ isAdmin ? 'Recent Accounts' : 'My Accounts' }}
+                    {{ isAdmin ? 'Comptes Récents' : 'Mes Comptes' }}
                 </h3>
-                <a [routerLink]="accountsRoute" class="text-sm text-primary" style="text-decoration: none;">View All</a>
+                <a [routerLink]="accountsRoute" class="text-sm text-primary" style="text-decoration: none;">Voir Tout</a>
             </div>
             <div>
                 <div *ngIf="isLoading">
@@ -125,8 +125,8 @@
                                 <div class="text-sm text-gray-500 flex items-center gap-1">
                                     <i class="ri-wallet-3-line"></i>
                                     {{ account.typeCompte }}
-                                    <span *ngIf="account.actif" class="badge badge-success ml-2">Active</span>
-                                    <span *ngIf="!account.actif" class="badge badge-danger ml-2">Inactive</span>
+                                    <span *ngIf="account.actif" class="badge badge-success ml-2">Actif</span>
+                                    <span *ngIf="!account.actif" class="badge badge-danger ml-2">Inactif</span>
                                 </div>
                             </div>
                             <div class="font-bold font-mono text-right">
@@ -139,9 +139,9 @@
                     <div style="font-size: 2.5rem; margin-bottom: 0.75rem; opacity: 0.5;">
                         <i class="ri-bank-card-2-line"></i>
                     </div>
-                    <p class="mb-2">No accounts yet.</p>
+                    <p class="mb-2">Aucun compte pour le moment.</p>
                     <a *ngIf="isAdmin" [routerLink]="newAccountRoute" class="text-primary font-medium">
-                        <i class="ri-add-line"></i> Open first account
+                        <i class="ri-add-line"></i> Ouvrir le premier compte
                     </a>
                 </div>
             </div>

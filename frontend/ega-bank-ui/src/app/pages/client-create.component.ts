@@ -11,51 +11,51 @@ import { AuthService } from '../services/auth.service';
   imports: [CommonModule, ReactiveFormsModule],
   template: `
     <div class="card p-6" style="max-width: 600px; margin: 0 auto;">
-      <h2 class="text-2xl font-bold mb-6">{{ isEditMode ? 'Edit Client' : 'Create Client' }}</h2>
+      <h2 class="text-2xl font-bold mb-6">{{ isEditMode ? 'Modifier Client' : 'Créer Client' }}</h2>
       <form [formGroup]="form" (ngSubmit)="submit()">
         <div class="mb-4">
-            <label class="block text-sm font-medium text-gray-700 mb-2">Last name</label>
-            <input formControlName="nom" class="form-input" placeholder="Enter last name" />
+            <label class="block text-sm font-medium text-gray-700 mb-2">Nom</label>
+            <input formControlName="nom" class="form-input" placeholder="Entrez le nom" />
         </div>
         <div class="mb-4">
-            <label class="block text-sm font-medium text-gray-700 mb-2">First name</label>
-            <input formControlName="prenom" class="form-input" placeholder="Enter first name" />
+            <label class="block text-sm font-medium text-gray-700 mb-2">Prénom</label>
+            <input formControlName="prenom" class="form-input" placeholder="Entrez le prénom" />
         </div>
         <div class="mb-4">
-            <label class="block text-sm font-medium text-gray-700 mb-2">Date of birth</label>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Date de naissance</label>
             <input type="date" formControlName="dateNaissance" class="form-input" />
         </div>
         <div class="mb-4">
-            <label class="block text-sm font-medium text-gray-700 mb-2">Sex</label>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Sexe</label>
             <select formControlName="sexe" class="form-input">
-                <option value="MASCULIN">Male</option>
-                <option value="FEMININ">Female</option>
+                <option value="MASCULIN">Masculin</option>
+                <option value="FEMININ">Féminin</option>
             </select>
         </div>
         <div class="mb-4">
-            <label class="block text-sm font-medium text-gray-700 mb-2">Phone</label>
-            <input formControlName="telephone" class="form-input" placeholder="+1 234 567 8900" />
+            <label class="block text-sm font-medium text-gray-700 mb-2">Téléphone</label>
+            <input formControlName="telephone" class="form-input" placeholder="+228 00 00 00 00" />
         </div>
         <div class="mb-6">
             <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
-            <input type="email" formControlName="courriel" class="form-input" placeholder="client@example.com" />
+            <input type="email" formControlName="courriel" class="form-input" placeholder="client@exemple.com" />
         </div>
         <div *ngIf="!isEditMode" class="border-t border-gray-200 pt-4 mt-4">
-          <h3 class="text-lg font-semibold mb-3">Login Credentials</h3>
+          <h3 class="text-lg font-semibold mb-3">Identifiants de Connexion</h3>
           <div class="mb-4">
-              <label class="block text-sm font-medium text-gray-700 mb-2">Username</label>
-              <input formControlName="username" class="form-input" placeholder="client username" />
+              <label class="block text-sm font-medium text-gray-700 mb-2">Nom d'utilisateur</label>
+              <input formControlName="username" class="form-input" placeholder="nom d'utilisateur client" />
           </div>
           <div class="mb-6">
-              <label class="block text-sm font-medium text-gray-700 mb-2">Temporary Password</label>
-              <input type="password" formControlName="password" class="form-input" placeholder="temporary password" />
-              <p class="text-xs text-gray-500 mt-1">Client will be asked to change password at first login.</p>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Mot de passe temporaire</label>
+              <input type="password" formControlName="password" class="form-input" placeholder="mot de passe temporaire" />
+              <p class="text-xs text-gray-500 mt-1">Le client devra changer son mot de passe à la première connexion.</p>
           </div>
         </div>
         <div class="flex gap-4">
-          <button type="button" routerLink="/admin/clients" class="btn btn-secondary flex-1">Cancel</button>
+          <button type="button" routerLink="/admin/clients" class="btn btn-secondary flex-1">Annuler</button>
           <button type="submit" [disabled]="form.invalid || isLoading" class="btn btn-primary flex-1">
-            {{ isLoading ? 'Saving...' : (isEditMode ? 'Update' : 'Create') }}
+            {{ isLoading ? 'Enregistrement...' : (isEditMode ? 'Mettre à jour' : 'Créer') }}
           </button>
         </div>
       </form>

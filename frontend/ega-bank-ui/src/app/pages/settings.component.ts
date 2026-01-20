@@ -12,8 +12,8 @@ import { AuthService } from '../services/auth.service';
     template: `
     <div class="p-6 max-w-4xl mx-auto">
       <div class="mb-8">
-        <h1 class="text-3xl font-bold text-gray-800 mb-2">Settings</h1>
-        <p class="text-gray-500">Manage your account preferences and security settings.</p>
+        <h1 class="text-3xl font-bold text-gray-800 mb-2">Paramètres</h1>
+        <p class="text-gray-500">Gérez vos préférences de compte et paramètres de sécurité.</p>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -27,7 +27,7 @@ import { AuthService } from '../services/auth.service';
               [class.text-primary]="activeTab === 'profile'"
               class="w-full text-left px-4 py-3 rounded-lg flex items-center gap-3 transition-colors hover:bg-gray-50 mb-1">
               <i class="ri-user-settings-line text-xl"></i>
-              <span class="font-medium">Profile Settings</span>
+              <span class="font-medium">Paramètres du Profil</span>
             </button>
             <button
               (click)="activeTab = 'security'"
@@ -35,7 +35,7 @@ import { AuthService } from '../services/auth.service';
               [class.text-primary]="activeTab === 'security'"
               class="w-full text-left px-4 py-3 rounded-lg flex items-center gap-3 transition-colors hover:bg-gray-50">
               <i class="ri-shield-key-line text-xl"></i>
-              <span class="font-medium">Security</span>
+              <span class="font-medium">Sécurité</span>
             </button>
           </div>
         </div>

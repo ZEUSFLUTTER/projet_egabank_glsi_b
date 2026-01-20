@@ -30,7 +30,8 @@ public class DashboardController {
     @Operation(summary = "Récupérer les statistiques du dashboard")
     @GetMapping("/stats")
     public ResponseEntity<DashboardStatsResponse> getStats() {
-        long totalClients = clientRepository.count();
+        // Count only non-admin clients
+        long totalClients = clientRepository.countNonAdmin();
         long totalAccounts = accountRepository.count();
         long activeAccounts = accountRepository.countByActifTrue();
         BigDecimal totalBalance = accountRepository.sumAllBalances();

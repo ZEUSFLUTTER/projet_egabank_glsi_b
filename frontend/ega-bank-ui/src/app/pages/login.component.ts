@@ -15,13 +15,13 @@ import { AuthService } from '../services/auth.service';
           <div class="mb-6 flex justify-center">
             <img src="/assets/logoega.png" alt="EGA Bank" width="240" height="96" style="height: 96px; width: auto;" />
           </div>
-          <h2 class="text-2xl font-bold mb-2 text-center">Welcome Back</h2>
-          <p class="text-gray-500 text-sm text-center">Sign in to access your account</p>
+          <h2 class="text-2xl font-bold mb-2 text-center">Bon Retour</h2>
+          <p class="text-gray-500 text-sm text-center">Connectez-vous pour accéder à votre compte</p>
         </div>
 
         <!-- Message de session expirée -->
         <div *ngIf="sessionExpired" class="alert alert-warning">
-          <i class="ri-lock-line"></i> Your session has expired. Please sign in again.
+          <i class="ri-lock-line"></i> Votre session a expiré. Veuillez vous reconnecter.
         </div>
 
         <div *ngIf="errorMessage" class="alert alert-danger">
@@ -30,7 +30,7 @@ import { AuthService } from '../services/auth.service';
 
         <form [formGroup]="form" (ngSubmit)="submit()">
           <div class="mb-4">
-            <label for="username" class="label">Username</label>
+            <label for="username" class="label">Nom d'utilisateur</label>
             <input
               id="username"
               type="text"
@@ -39,12 +39,12 @@ import { AuthService } from '../services/auth.service';
               [class.error-border]="form.get('username')?.invalid && form.get('username')?.touched"
             />
              <div *ngIf="form.get('username')?.invalid && form.get('username')?.touched" class="text-xs text-danger mt-1">
-              Username is required
+              Le nom d'utilisateur est requis
             </div>
           </div>
 
           <div class="mb-6">
-            <label for="password" class="label">Password</label>
+            <label for="password" class="label">Mot de passe</label>
             <input
               id="password"
               type="password"
@@ -53,7 +53,7 @@ import { AuthService } from '../services/auth.service';
                [class.error-border]="form.get('password')?.invalid && form.get('password')?.touched"
             />
             <div *ngIf="form.get('password')?.invalid && form.get('password')?.touched" class="text-xs text-danger mt-1">
-              Password is required
+              Le mot de passe est requis
             </div>
           </div>
 
@@ -63,12 +63,12 @@ import { AuthService } from '../services/auth.service';
             [disabled]="form.invalid || isLoading"
           >
             <span *ngIf="isLoading" class="spinner"></span>
-            {{ isLoading ? 'Signing in...' : 'Sign in' }}
+            {{ isLoading ? 'Connexion...' : 'Se connecter' }}
           </button>
         </form>
 
         <div class="footer">
-          Contact your administrator if you need an account.
+          Contactez votre administrateur si vous avez besoin d'un compte.
         </div>
       </div>
     </div>

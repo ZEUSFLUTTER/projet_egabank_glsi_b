@@ -19,8 +19,8 @@ interface PendingUser {
   template: `
     <div class="p-6">
       <div class="mb-6">
-        <h1 class="text-2xl font-bold mb-2">Pending User Activations</h1>
-        <p class="text-gray-500">Review and activate new user accounts waiting for approval.</p>
+        <h1 class="text-2xl font-bold mb-2">Activations Utilisateurs en Attente</h1>
+        <p class="text-gray-500">Examinez et activez les nouveaux comptes utilisateurs en attente d'approbation.</p>
       </div>
 
       <!-- Stats Card -->
@@ -31,7 +31,7 @@ interface PendingUser {
           </div>
           <div>
             <div class="text-2xl font-bold text-orange-900">{{ pendingUsers.length }}</div>
-            <div class="text-sm text-orange-700">Accounts waiting for activation</div>
+            <div class="text-sm text-orange-700">Comptes en attente d'activation</div>
           </div>
         </div>
       </div>
@@ -40,7 +40,7 @@ interface PendingUser {
       <div *ngIf="errorMessage && !isLoading" class="alert alert-danger mb-4">
         <i class="ri-error-warning-line"></i> {{ errorMessage }}
         <button (click)="loadPendingUsers()" class="btn btn-sm btn-secondary ml-2">
-          <i class="ri-refresh-line"></i> Retry
+          <i class="ri-refresh-line"></i> Réessayer
         </button>
       </div>
 
@@ -79,7 +79,7 @@ interface PendingUser {
                   <i class="ri-calendar-line"></i> {{ formatDate(user.createdAt) }}
                 </span>
                 <span *ngIf="user.clientId" class="flex items-center gap-1">
-                  <i class="ri-user-follow-line"></i> Client ID: {{ user.clientId }}
+                  <i class="ri-user-follow-line"></i> ID Client: {{ user.clientId }}
                 </span>
               </div>
             </div>
@@ -88,19 +88,19 @@ interface PendingUser {
                 (click)="viewClient(user.clientId)"
                 *ngIf="user.clientId"
                 class="btn btn-secondary text-sm"
-                title="View client details">
-                <i class="ri-eye-line"></i> View
+                title="Voir détails client">
+                <i class="ri-eye-line"></i> Voir
               </button>
               <button
                 (click)="activateUser(user)"
                 class="btn btn-success text-sm">
-                <i class="ri-check-line"></i> Activate
+                <i class="ri-check-line"></i> Activer
               </button>
               <button
                 (click)="rejectUser(user)"
                 class="btn btn-danger text-sm"
-                title="Reject and delete">
-                <i class="ri-close-line"></i> Reject
+                title="Rejeter et supprimer">
+                <i class="ri-close-line"></i> Rejeter
               </button>
             </div>
           </div>
@@ -112,8 +112,8 @@ interface PendingUser {
         <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
           <i class="ri-checkbox-circle-line text-4xl text-green-600"></i>
         </div>
-        <h3 class="text-xl font-semibold mb-2">All Clear!</h3>
-        <p class="text-gray-500">No pending user activations at the moment.</p>
+        <h3 class="text-xl font-semibold mb-2">Tout est en ordre !</h3>
+        <p class="text-gray-500">Aucune activation d'utilisateur en attente pour le moment.</p>
       </div>
     </div>
   `,

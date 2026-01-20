@@ -36,16 +36,16 @@ export class AppSidebar implements OnInit {
     if (this.isAdmin) {
       // Navigation pour ADMIN
       this.navItems = [
-        { label: 'Dashboard', href: '/admin/dashboard', icon: 'ri-dashboard-line' },
+        { label: 'Tableau de bord', href: '/admin/dashboard', icon: 'ri-dashboard-line' },
         { label: 'Clients', href: '/admin/clients', icon: 'ri-user-line' },
-        { label: 'Accounts', href: '/admin/accounts', icon: 'ri-bank-card-line' },
-        { label: 'Historique Transaction', href: '/admin/transactions', icon: 'ri-exchange-dollar-line' },
+        { label: 'Comptes', href: '/admin/accounts', icon: 'ri-bank-card-line' },
+        { label: 'Historique Transactions', href: '/admin/transactions', icon: 'ri-exchange-dollar-line' },
       ];
     } else {
       // Navigation pour CLIENT
       this.navItems = [
-        { label: 'Dashboard', href: '/client/dashboard', icon: 'ri-dashboard-line' },
-        { label: 'My Accounts', href: '/client/accounts', icon: 'ri-bank-card-line' },
+        { label: 'Tableau de bord', href: '/client/dashboard', icon: 'ri-dashboard-line' },
+        { label: 'Mes Comptes', href: '/client/accounts', icon: 'ri-bank-card-line' },
         { label: 'Transactions', href: '/client/transactions', icon: 'ri-exchange-dollar-line' },
       ];
     }

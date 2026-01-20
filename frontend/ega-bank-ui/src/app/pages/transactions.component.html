@@ -1,18 +1,18 @@
 <div class="p-6">
     <div class="mb-6 flex justify-between items-center">
         <div>
-            <h1 class="text-2xl font-bold mb-2">{{ isAdmin ? 'Historique des Transactions' : 'Transaction History' }}</h1>
+            <h1 class="text-2xl font-bold mb-2">{{ isAdmin ? 'Historique des Transactions' : 'Historique des Transactions' }}</h1>
             <p class="text-gray-500">
-                {{ accountId ? 'Transactions for account ' + accountId : (isAdmin ? 'Toutes les transactions du système' : 'All transactions across all accounts') }}
+                {{ accountId ? 'Transactions du compte ' + accountId : (isAdmin ? 'Toutes les transactions du système' : 'Toutes les transactions de vos comptes') }}
             </p>
         </div>
         <div class="flex gap-2" *ngIf="!isAdmin">
             <a *ngIf="accountId" [routerLink]="transactionsRoute" class="btn btn-secondary">
-                <i class="ri-list-check"></i> View All
+                <i class="ri-list-check"></i> Voir Tout
             </a>
             <a [routerLink]="newTransactionRoute" [queryParams]="accountId ? {accountId: accountId} : {}"
                 class="btn btn-primary">
-                <i class="ri-add-line" style="margin-right: 0.5rem;"></i> New Transaction
+                <i class="ri-add-line" style="margin-right: 0.5rem;"></i> Nouvelle Transaction
             </a>
         </div>
     </div>
@@ -46,7 +46,7 @@
     <div *ngIf="errorMessage && !isLoading" class="alert alert-danger mb-4">
         <i class="ri-error-warning-line"></i> {{ errorMessage }}
         <a *ngIf="!accountId" [routerLink]="accountsRoute" class="btn btn-sm btn-secondary ml-2">
-            <i class="ri-bank-card-line"></i> Select Account
+            <i class="ri-bank-card-line"></i> Sélectionner Compte
         </a>
     </div>
 
@@ -55,7 +55,7 @@
         style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
         <div class="card p-4">
             <div class="flex items-center gap-2 text-xs text-gray-500 uppercase tracking-wide mb-1">
-                <i class="ri-money-dollar-circle-line"></i> Current Balance
+                <i class="ri-money-dollar-circle-line"></i> Solde Actuel
             </div>
             <div class="font-bold text-xl" [class.text-success]="selectedAccount.solde > 0"
                 [class.text-danger]="selectedAccount.solde <= 0">
@@ -64,13 +64,13 @@
         </div>
         <div class="card p-4">
             <div class="flex items-center gap-2 text-xs text-gray-500 uppercase tracking-wide mb-1">
-                <i class="ri-wallet-3-line"></i> Account Type
+                <i class="ri-wallet-3-line"></i> Type de Compte
             </div>
             <div class="font-bold text-xl">{{ getAccountTypeDisplay(selectedAccount.typeCompte) }}</div>
         </div>
         <div class="card p-4">
             <div class="flex items-center gap-2 text-xs text-gray-500 uppercase tracking-wide mb-1">
-                <i class="ri-bank-card-line"></i> Account Number
+                <i class="ri-bank-card-line"></i> Numéro de Compte
             </div>
             <div class="font-bold text-lg font-mono">{{ selectedAccount.numeroCompte }}</div>
         </div>
@@ -110,7 +110,7 @@
                 </div>
                 <div>
                     <h3>
-                        {{ accountId ? 'Transactions du Compte' : (isAdmin ? 'Toutes les Transactions' : 'All Transactions') }}
+                        {{ accountId ? 'Transactions du Compte' : 'Toutes les Transactions' }}
                     </h3>
                     <p>
                         {{ accountId ? 'Compte #' + accountId : 'Vue d\'ensemble du système' }}
@@ -183,10 +183,10 @@
         <div style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.3;">
             <i class="ri-exchange-dollar-line"></i>
         </div>
-        <h3 class="font-bold text-lg mb-2 text-gray-700">{{ isAdmin ? 'Aucune Transaction' : 'No Transactions Yet' }}</h3>
-        <p class="text-gray-500 mb-4">{{ isAdmin ? 'Aucune transaction trouvée pour ce compte.' : 'This account has no transaction history.' }}</p>
+        <h3 class="font-bold text-lg mb-2 text-gray-700">Aucune Transaction</h3>
+        <p class="text-gray-500 mb-4">Aucune transaction trouvée pour ce compte.</p>
         <a *ngIf="!isAdmin" [routerLink]="newTransactionRoute" [queryParams]="{accountId: accountId}" class="btn btn-primary">
-            <i class="ri-add-line" style="margin-right: 0.5rem;"></i> Make First Transaction
+            <i class="ri-add-line" style="margin-right: 0.5rem;"></i> Effectuer Première Transaction
         </a>
     </div>
 
@@ -195,10 +195,10 @@
         <div style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.3;">
             <i class="ri-exchange-dollar-line"></i>
         </div>
-        <h3 class="font-bold text-lg mb-2 text-gray-700">{{ isAdmin ? 'Aucune Transaction' : 'No Transactions Yet' }}</h3>
-        <p class="text-gray-500 mb-4">{{ isAdmin ? 'Aucune transaction enregistrée dans le système.' : 'No transactions have been made in the system yet.' }}</p>
+        <h3 class="font-bold text-lg mb-2 text-gray-700">Aucune Transaction</h3>
+        <p class="text-gray-500 mb-4">Aucune transaction enregistrée dans le système.</p>
         <a *ngIf="!isAdmin" [routerLink]="newTransactionRoute" class="btn btn-primary">
-            <i class="ri-add-line" style="margin-right: 0.5rem;"></i> Make First Transaction
+            <i class="ri-add-line" style="margin-right: 0.5rem;"></i> Effectuer Première Transaction
         </a>
     </div>
 </div>

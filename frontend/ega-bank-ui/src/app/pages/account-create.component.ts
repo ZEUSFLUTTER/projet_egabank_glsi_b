@@ -16,8 +16,8 @@ import { AppStore } from '../stores/app.store';
   template: `
     <div class="p-6">
       <div class="mb-6">
-        <h1 class="text-2xl font-bold mb-2">Open New Account</h1>
-        <p class="text-gray-500">Create a new bank account for an existing client.</p>
+        <h1 class="text-2xl font-bold mb-2">Ouvrir un Nouveau Compte</h1>
+        <p class="text-gray-500">Créer un nouveau compte bancaire pour un client existant.</p>
       </div>
 
       <div class="card p-6" style="max-width: 600px;">
@@ -35,7 +35,7 @@ import { AppStore } from '../stores/app.store';
           <!-- Client Selection with Search -->
           <div class="mb-4">
             <label class="block text-sm font-medium text-gray-700 mb-2">
-              <i class="ri-user-line text-primary"></i> Select Client *
+              <i class="ri-user-line text-primary"></i> Sélectionner Client *
             </label>
 
             <!-- Composant de recherche client amélioré -->
@@ -57,7 +57,7 @@ import { AppStore } from '../stores/app.store';
           <!-- Account Type -->
           <div class="mb-4">
             <label class="block text-sm font-medium text-gray-700 mb-2">
-              <i class="ri-wallet-3-line text-primary"></i> Account Type *
+              <i class="ri-wallet-3-line text-primary"></i> Type de Compte *
             </label>
             <div class="grid gap-3" style="grid-template-columns: repeat(2, 1fr);">
               <label class="cursor-pointer">
@@ -66,8 +66,8 @@ import { AppStore } from '../stores/app.store';
                   <div class="flex items-center gap-2">
                     <i class="ri-safe-2-line text-xl"></i>
                     <div>
-                      <div class="font-medium">Savings</div>
-                      <div class="text-xs opacity-70">Épargne</div>
+                      <div class="font-medium">Épargne</div>
+                      <div class="text-xs opacity-70">Savings</div>
                     </div>
                   </div>
                 </div>
@@ -78,8 +78,8 @@ import { AppStore } from '../stores/app.store';
                   <div class="flex items-center gap-2">
                     <i class="ri-bank-card-line text-xl"></i>
                     <div>
-                      <div class="font-medium">Checking</div>
-                      <div class="text-xs opacity-70">Courant</div>
+                      <div class="font-medium">Courant</div>
+                      <div class="text-xs opacity-70">Checking</div>
                     </div>
                   </div>
                 </div>
@@ -92,8 +92,8 @@ import { AppStore } from '../stores/app.store';
             <div class="flex items-start gap-2">
               <i class="ri-information-line text-lg text-info mt-0.5"></i>
               <div class="text-sm text-gray-600">
-                <p class="font-medium">Account will be created with zero balance.</p>
-                <p class="mt-1">To add funds, use the Deposit feature after the account is created.</p>
+                <p class="font-medium">Le compte sera créé avec un solde à zéro.</p>
+                <p class="mt-1">Pour ajouter des fonds, utilisez la fonction Dépôt après la création du compte.</p>
               </div>
             </div>
           </div>
@@ -101,16 +101,16 @@ import { AppStore } from '../stores/app.store';
           <!-- Actions -->
           <div class="flex gap-4">
             <a routerLink="/admin/accounts" class="btn btn-secondary flex-1">
-              <i class="ri-arrow-left-line"></i> Cancel
+              <i class="ri-arrow-left-line"></i> Annuler
             </a>
             <button type="submit"
                     [disabled]="form.invalid || isSubmitting"
                     class="btn btn-primary flex-1">
               <span *ngIf="isSubmitting">
-                <i class="ri-loader-4-line spinner-icon"></i> Creating...
+                <i class="ri-loader-4-line spinner-icon"></i> Création...
               </span>
               <span *ngIf="!isSubmitting">
-                <i class="ri-add-line"></i> Create Account
+                <i class="ri-add-line"></i> Créer Compte
               </span>
             </button>
           </div>

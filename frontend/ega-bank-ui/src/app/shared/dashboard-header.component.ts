@@ -22,7 +22,7 @@ import { ClientService } from '../services/client.service';
             <input
                 [(ngModel)]="searchQuery"
                 (ngModelChange)="onSearch()"
-                placeholder="Search clients or accounts..."
+                placeholder="Rechercher clients ou comptes..."
                 style="width:100%;padding:10px 16px 10px 40px;border-radius:24px;border:1px solid #e5e7eb;background:#f9fafb;outline:none;transition:all 0.2s;"
                 (focus)="showSearch = true"
                 (blur)="closeAll()"
@@ -33,7 +33,7 @@ import { ClientService } from '../services/client.service';
         <!-- Search Results Dropdown -->
         <div *ngIf="showSearch && searchQuery.length > 1" class="search-results">
             <div *ngIf="isSearching" class="p-4 text-center text-gray-400 text-sm">
-                <i class="ri-loader-4-line spinner-icon"></i> Searching...
+                <i class="ri-loader-4-line spinner-icon"></i> Recherche...
             </div>
 
             <div *ngIf="!isSearching">
@@ -53,7 +53,7 @@ import { ClientService } from '../services/client.service';
 
                 <!-- Accounts -->
                  <div *ngIf="foundAccounts.length > 0">
-                    <div class="px-3 py-2 text-xs font-bold text-gray-500 uppercase bg-gray-50">Accounts</div>
+                    <div class="px-3 py-2 text-xs font-bold text-gray-500 uppercase bg-gray-50">Comptes</div>
                     <div *ngFor="let account of foundAccounts" (click)="goToAccount(account.numeroCompte)" class="search-item flex items-center gap-2">
                         <div class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-500">
                              <i class="ri-bank-card-line"></i>
@@ -66,7 +66,7 @@ import { ClientService } from '../services/client.service';
                 </div>
 
                 <div *ngIf="foundClients.length === 0 && foundAccounts.length === 0" class="p-4 text-center text-gray-500 text-sm">
-                    No results found.
+                    Aucun résultat trouvé.
                 </div>
             </div>
         </div>
@@ -79,7 +79,7 @@ import { ClientService } from '../services/client.service';
           <div style="width:32px;height:32px;border-radius:50%;background:#374151;display:flex;align-items:center;justify-content:center;color:white;font-weight:500;font-size:13px;">
             {{ userInfo?.initial || 'U' }}
           </div>
-          <span style="font-weight:500;color:#374151;font-size:14px;">{{ userInfo?.username || 'User' }}</span>
+          <span style="font-weight:500;color:#374151;font-size:14px;">{{ userInfo?.username || 'Utilisateur' }}</span>
         </div>
       </div>
     </header>

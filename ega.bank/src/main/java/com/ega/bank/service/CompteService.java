@@ -19,27 +19,34 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Transactional
 public class CompteService {
-    
+
     private final CompteRepository compteRepository;
     private final ClientRepository clientRepository;
     private final IbanGeneratorService ibanGeneratorService;
     private final TransactionService transactionService;
-    
+
     /**
      * Crée un nouveau compte pour un client
      */
-    public CompteDTO createCompte(Long clientId, TypeCompte typeCompte, BigDecimal decouvertAutorise, Double tauxInteret) {
+    public CompteDTO createCompte(Long clientId, TypeCompte typeCompte, BigDecimal decouvertAutorise,
+            Double tauxInteret) {
         Client client = clientRepository.findById(clientId)
                 .orElseThrow(() -> new ResourceNotFoundException("Client non trouvé avec l'ID: " + clientId));
-        
+
         // Génération d'un numéro IBAN unique
         String numeroCompte;
-        do {
-            numeroCompte = ibanGeneratorService.generateIban();
-        } while (compteRepository.existsByNumeroCompte(numeroCompte));
-        
+        try {
+            do {
+                numeroCompte = ibanGeneratorService.generateIban(client.getNationalite());
+            } while (compteRepository.existsByNumeroCompte(numeroCompte));
+        } catch (Exception e) {
+            do {
+                numeroCompte = ibanGeneratorService.generateIban();
+            } while (compteRepository.existsByNumeroCompte(numeroCompte));
+        }
+
         Compte compte;
-        
+
         if (typeCompte == TypeCompte.COMPTE_COURANT) {
             CompteCourant compteCourant = new CompteCourant();
             compteCourant.setDecouvertAutorise(decouvertAutorise != null ? decouvertAutorise : BigDecimal.ZERO);
@@ -49,16 +56,16 @@ public class CompteService {
             compteEpargne.setTauxInteret(tauxInteret != null ? tauxInteret : 0.0);
             compte = compteEpargne;
         }
-        
+
         compte.setNumeroCompte(numeroCompte);
         compte.setProprietaire(client);
         compte.setSolde(BigDecimal.ZERO);
         compte.setActif(true);
-        
+
         Compte savedCompte = compteRepository.save(compte);
         return convertToDTO(savedCompte);
     }
-    
+
     /**
      * Récupère un compte par son ID
      */
@@ -67,7 +74,7 @@ public class CompteService {
                 .orElseThrow(() -> new ResourceNotFoundException("Compte non trouvé avec l'ID: " + id));
         return convertToDTO(compte);
     }
-    
+
     /**
      * Récupère un compte par son numéro IBAN
      */
@@ -76,7 +83,7 @@ public class CompteService {
                 .orElseThrow(() -> new ResourceNotFoundException("Compte non trouvé avec le numéro: " + numeroCompte));
         return convertToDTO(compte);
     }
-    
+
     /**
      * Récupère tous les comptes
      */
@@ -86,7 +93,7 @@ public class CompteService {
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
-    
+
     /**
      * Récupère tous les comptes d'un client
      */
@@ -96,7 +103,7 @@ public class CompteService {
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
-    
+
     /**
      * Effectue un versement sur un compte
      */
@@ -104,17 +111,17 @@ public class CompteService {
         if (montant.compareTo(BigDecimal.ZERO) <= 0) {
             throw new InvalidTransactionException("Le montant doit être supérieur à 0");
         }
-        
+
         Compte compte = compteRepository.findById(compteId)
                 .orElseThrow(() -> new ResourceNotFoundException("Compte non trouvé avec l'ID: " + compteId));
-        
+
         if (!compte.getActif()) {
             throw new InvalidTransactionException("Le compte est désactivé");
         }
-        
+
         compte.verser(montant);
         Compte savedCompte = compteRepository.save(compte);
-        
+
         // Enregistrer la transaction
         transactionService.createTransaction(
                 compte,
@@ -122,12 +129,11 @@ public class CompteService {
                 montant,
                 null,
                 description,
-                compte.getSolde()
-        );
-        
+                compte.getSolde());
+
         return convertToDTO(savedCompte);
     }
-    
+
     /**
      * Effectue un retrait sur un compte
      */
@@ -135,22 +141,22 @@ public class CompteService {
         if (montant.compareTo(BigDecimal.ZERO) <= 0) {
             throw new InvalidTransactionException("Le montant doit être supérieur à 0");
         }
-        
+
         Compte compte = compteRepository.findById(compteId)
                 .orElseThrow(() -> new ResourceNotFoundException("Compte non trouvé avec l'ID: " + compteId));
-        
+
         if (!compte.getActif()) {
             throw new InvalidTransactionException("Le compte est désactivé");
         }
-        
+
         try {
             compte.retirer(montant);
         } catch (IllegalArgumentException e) {
             throw new InsufficientBalanceException("Solde insuffisant pour effectuer ce retrait");
         }
-        
+
         Compte savedCompte = compteRepository.save(compte);
-        
+
         // Enregistrer la transaction
         transactionService.createTransaction(
                 compte,
@@ -158,12 +164,11 @@ public class CompteService {
                 montant,
                 null,
                 description,
-                compte.getSolde()
-        );
-        
+                compte.getSolde());
+
         return convertToDTO(savedCompte);
     }
-    
+
     /**
      * Effectue un virement d'un compte à un autre
      */
@@ -171,32 +176,32 @@ public class CompteService {
         if (montant.compareTo(BigDecimal.ZERO) <= 0) {
             throw new InvalidTransactionException("Le montant doit être supérieur à 0");
         }
-        
+
         // Compte source
         Compte compteSource = compteRepository.findById(compteSourceId)
                 .orElseThrow(() -> new ResourceNotFoundException("Compte source non trouvé"));
-        
+
         // Compte bénéficiaire
         Compte compteDest = compteRepository.findByNumeroCompte(compteBeneficiaire)
                 .orElseThrow(() -> new ResourceNotFoundException("Compte bénéficiaire non trouvé"));
-        
+
         if (!compteSource.getActif() || !compteDest.getActif()) {
             throw new InvalidTransactionException("Un des comptes est désactivé");
         }
-        
+
         // Effectuer le débit
         try {
             compteSource.retirer(montant);
         } catch (IllegalArgumentException e) {
             throw new InsufficientBalanceException("Solde insuffisant pour effectuer ce virement");
         }
-        
+
         // Effectuer le crédit
         compteDest.verser(montant);
-        
+
         compteRepository.save(compteSource);
         compteRepository.save(compteDest);
-        
+
         // Enregistrer les transactions
         transactionService.createTransaction(
                 compteSource,
@@ -204,21 +209,19 @@ public class CompteService {
                 montant,
                 compteBeneficiaire,
                 description,
-                compteSource.getSolde()
-        );
-        
+                compteSource.getSolde());
+
         transactionService.createTransaction(
                 compteDest,
                 TypeTransaction.VERSEMENT,
                 montant,
                 compteSource.getNumeroCompte(),
                 "Virement reçu: " + description,
-                compteDest.getSolde()
-        );
-        
+                compteDest.getSolde());
+
         return convertToDTO(compteSource);
     }
-    
+
     /**
      * Désactive un compte
      */
@@ -228,7 +231,7 @@ public class CompteService {
         compte.setActif(false);
         compteRepository.save(compte);
     }
-    
+
     /**
      * Convertit une entité Compte en DTO
      */
@@ -242,13 +245,13 @@ public class CompteService {
                 .clientId(compte.getProprietaire().getId())
                 .nomProprietaire(compte.getProprietaire().getPrenom() + " " + compte.getProprietaire().getNom())
                 .actif(compte.getActif());
-        
+
         if (compte instanceof CompteCourant) {
             builder.decouvertAutorise(((CompteCourant) compte).getDecouvertAutorise());
         } else if (compte instanceof CompteEpargne) {
             builder.tauxInteret(((CompteEpargne) compte).getTauxInteret());
         }
-        
+
         return builder.build();
     }
 }

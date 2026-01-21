@@ -1,0 +1,95 @@
+<div class="space-y-8">
+    <div>
+        <h1 class="text-2xl font-bold text-slate-800">Nouveau Client</h1>
+        <p class="text-slate-500">Enregistrez un nouveau client et créez son compte initial.</p>
+    </div>
+
+    <div class="bg-white rounded-2xl border border-slate-100 shadow-sm p-8">
+
+        <div class="flex items-center gap-3 mb-8 pb-4 border-b border-slate-50">
+            <div class="p-2 bg-blue-50 text-blue-600 rounded-lg">
+                <lucide-icon [name]="UserPlus" class="w-5 h-5"></lucide-icon>
+            </div>
+            <h3 class="font-bold text-slate-800 text-lg">Informations Personnelles</h3>
+        </div>
+
+        <form [formGroup]="form" (ngSubmit)="onSubmit()" class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+
+            <div class="space-y-1.5">
+                <label class="block text-slate-700 text-sm font-semibold">Nom</label>
+                <input type="text" formControlName="nom" placeholder="ex: DUPONT"
+                    class="w-full px-4 py-2.5 border border-slate-200 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 transition-all placeholder:text-slate-300" />
+            </div>
+
+            <div class="space-y-1.5">
+                <label class="block text-slate-700 text-sm font-semibold">Prénom</label>
+                <input type="text" formControlName="prenom" placeholder="ex: Jean"
+                    class="w-full px-4 py-2.5 border border-slate-200 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 transition-all placeholder:text-slate-300" />
+            </div>
+
+            <div class="space-y-1.5">
+                <label class="block text-slate-700 text-sm font-semibold">Date de naissance</label>
+                <input type="date" formControlName="dateNaissance"
+                    class="w-full px-4 py-2.5 border border-slate-200 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 transition-all" />
+            </div>
+
+            <div class="space-y-1.5">
+                <label class="block text-slate-700 text-sm font-semibold">Sexe</label>
+                <select formControlName="sexe"
+                    class="w-full px-4 py-2.5 border border-slate-200 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 transition-all cursor-pointer">
+                    <option value="" disabled>-- Choisir --</option>
+                    <option value="Masculin">Masculin</option>
+                    <option value="Feminin">Féminin</option>
+                </select>
+            </div>
+
+            <div class="space-y-1.5">
+                <label class="block text-slate-700 text-sm font-semibold">Téléphone</label>
+                <input type="text" formControlName="telephone" placeholder="+228..."
+                    class="w-full px-4 py-2.5 border border-slate-200 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 transition-all placeholder:text-slate-300" />
+            </div>
+
+            <div class="space-y-1.5">
+                <label class="block text-slate-700 text-sm font-semibold">Email</label>
+                <input type="email" formControlName="email" placeholder="client@exemple.com"
+                    class="w-full px-4 py-2.5 border border-slate-200 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 transition-all placeholder:text-slate-300" />
+            </div>
+
+            <div class="space-y-1.5">
+                <label class="block text-slate-700 text-sm font-semibold">Nationalité</label>
+                <input type="text" formControlName="nationalite" placeholder="ex: Togolaise"
+                    class="w-full px-4 py-2.5 border border-slate-200 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 transition-all placeholder:text-slate-300" />
+            </div>
+
+            <div class="space-y-1.5">
+                <label class="block text-slate-700 text-sm font-semibold">Type de compte initial</label>
+                <div class="grid grid-cols-2 gap-3 mt-1">
+                    <button type="button" (click)="form.get('typeCompte')?.setValue('Courant')"
+                        [class]="form.get('typeCompte')?.value === 'Courant' ? 'border-blue-600 bg-blue-50 text-blue-700' : 'border-slate-200 text-slate-500 hover:bg-slate-50'"
+                        class="px-4 py-2.5 border rounded-xl text-sm font-bold transition-all">
+                        Courant
+                    </button>
+                    <button type="button" (click)="form.get('typeCompte')?.setValue('Epargne')"
+                        [class]="form.get('typeCompte')?.value === 'Epargne' ? 'border-emerald-600 bg-emerald-50 text-emerald-700' : 'border-slate-200 text-slate-500 hover:bg-slate-50'"
+                        class="px-4 py-2.5 border rounded-xl text-sm font-bold transition-all">
+                        Épargne
+                    </button>   
+                </div>
+            </div>
+
+            <div class="col-span-full flex items-center justify-end gap-4 mt-8 pt-6 border-t border-slate-50">
+                <a [routerLink]="['/client']"
+                    class="px-6 py-2.5 text-slate-500 font-bold hover:text-slate-700 transition-colors">
+                    Annuler
+                </a>
+
+                <button type="submit" [disabled]="form.invalid"
+                    class="px-8 py-2.5 bg-blue-600 text-white rounded-xl font-bold shadow-lg shadow-blue-200 hover:bg-blue-700 disabled:opacity-50 disabled:shadow-none transition-all transform active:scale-95 flex items-center gap-2">
+                    <lucide-icon [name]="Save" class="w-4 h-4"></lucide-icon>
+                    Enregistrer le client
+                </button>
+            </div>
+
+        </form>
+    </div>
+</div>

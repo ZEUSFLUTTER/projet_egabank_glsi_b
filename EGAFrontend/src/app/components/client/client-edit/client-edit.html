@@ -1,0 +1,69 @@
+<div class="space-y-8">
+    <div class="flex justify-between items-end">
+        <div>
+            <h1 class="text-2xl font-bold text-slate-800">Modifier le Client</h1>
+            <p class="text-slate-500">Mise à jour des informations de {{ form.get('prenom')?.value }} {{
+                form.get('nom')?.value }}</p>
+        </div>
+        <span class="text-[10px] font-mono text-slate-400 bg-slate-100 px-3 py-1 rounded-full">ID: #{{ clientId
+            }}</span>
+    </div>
+
+    <div class="bg-white rounded-2xl border border-slate-100 shadow-sm p-8 relative">
+        @if (loadingData) {
+        <div
+            class="absolute inset-0 bg-white/80 backdrop-blur-sm z-10 flex flex-col items-center justify-center rounded-2xl">
+            <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600 mb-2"></div>
+            <p class="text-xs text-slate-500">Récupération du profil...</p>
+        </div>
+        }
+
+        <form [formGroup]="form" (ngSubmit)="onUpdate()" class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+
+            <div class="space-y-1.5">
+                <label class="block text-slate-700 text-sm font-semibold">Nom</label>
+                <input type="text" formControlName="nom"
+                    class="w-full px-4 py-2.5 border border-slate-200 rounded-xl bg-white focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 transition-all" />
+            </div>
+
+            <div class="space-y-1.5">
+                <label class="block text-slate-700 text-sm font-semibold">Prénom</label>
+                <input type="text" formControlName="prenom"
+                    class="w-full px-4 py-2.5 border border-slate-200 rounded-xl bg-white focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 transition-all" />
+            </div>
+
+            <div class="space-y-1.5 md:col-span-1">
+                <label class="block text-slate-700 text-sm font-semibold">Téléphone</label>
+                <input type="text" formControlName="telephone"
+                    class="w-full px-4 py-2.5 border border-slate-200 rounded-xl bg-white focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 transition-all" />
+            </div>
+
+            <div class="space-y-1.5">
+                <label class="block text-slate-700 text-sm font-semibold">Email</label>
+                <input type="email" formControlName="email"
+                    class="w-full px-4 py-2.5 border border-slate-200 rounded-xl bg-white focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 transition-all" />
+            </div>
+
+            <div class="space-y-1.5">
+                <label class="block text-slate-700 text-sm font-semibold">Nationalité</label>
+                <input type="text" formControlName="nationalite"
+                    class="w-full px-4 py-2.5 border border-slate-200 rounded-xl bg-white focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 transition-all" />
+            </div>
+
+            <div class="col-span-full flex items-center justify-end gap-4 mt-8 pt-6 border-t border-slate-50">
+                <a [routerLink]="['/client']"
+                    class="px-6 py-2.5 text-slate-500 font-bold hover:text-slate-700 transition-colors">
+                    Annuler
+                </a>
+
+                <button type="submit" [disabled]="form.invalid || isSubmitting"
+                    class="px-8 py-2.5 bg-blue-600 text-white rounded-xl font-bold shadow-lg shadow-blue-200 hover:bg-blue-700 disabled:opacity-50 flex items-center gap-2 transition-all active:scale-95">
+                    @if (isSubmitting) { <div
+                        class="animate-spin h-4 w-4 border-2 border-white/30 border-t-white rounded-full"></div> }
+                    <lucide-icon [name]="Check" class="w-4 h-4"></lucide-icon>
+                    Mettre à jour
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

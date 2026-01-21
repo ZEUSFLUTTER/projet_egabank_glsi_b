@@ -1,0 +1,143 @@
+<div class="max-w-5xl mx-auto px-4 py-4 space-y-6">
+
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-2">
+        <div class="flex items-center gap-4">
+            <button (click)="goBack()"
+                class="p-2.5 bg-white border border-slate-100 text-slate-400 hover:text-blue-600 rounded-xl shadow-sm transition-all">
+                <lucide-icon [name]="ArrowLeft" class="w-5 h-5"></lucide-icon>
+            </button>
+            <div>
+                <h1 class="text-2xl font-bold text-slate-800">Historique des flux</h1>
+                <p class="text-slate-500 text-sm font-medium">
+                    Compte <span class="font-mono text-blue-600">#{{ compteId }}</span>
+                </p>
+            </div>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-3">
+            <div
+                class="flex items-center gap-2 bg-blue-50 text-blue-700 px-4 py-2.5 rounded-2xl border border-blue-100">
+                <lucide-icon [name]="History" class="w-4 h-4"></lucide-icon>
+                <span class="text-sm font-bold">{{ transactions().length }} Opération(s)</span>
+            </div>
+
+            <button (click)="sendStatement()" [disabled]="sendingEmail() || transactions().length === 0"
+                class="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-2xl shadow-lg shadow-blue-200 transition-all transform active:scale-95 text-sm font-bold disabled:opacity-50 disabled:cursor-not-allowed">
+                @if (sendingEmail()) {
+                <div class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                } @else {
+                <lucide-icon [name]="Mail" class="w-4 h-4"></lucide-icon>
+                Envoyer
+                }
+            </button>
+
+            <button (click)="download()" [disabled]="downloadReleve() || transactions().length === 0"
+                class="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-2xl shadow-lg shadow-emerald-200 transition-all transform active:scale-95 text-sm font-bold disabled:opacity-50 disabled:cursor-not-allowed">
+                @if (downloadReleve()) {
+                <div class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                } @else {
+                <lucide-icon [name]="Download" class="w-4 h-4"></lucide-icon>
+                Télécharger
+                }
+            </button>
+        </div>
+    </div>
+
+    <div class="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm flex flex-wrap items-center gap-6">
+        <div class="flex items-center gap-4">
+            <div class="flex flex-col gap-1">
+                <label class="text-[10px] font-bold text-slate-400 uppercase ml-1">Date de début</label>
+                <input type="date" [ngModel]="startDate()" (ngModelChange)="startDate.set($event)"
+                    class="bg-slate-50 border-none rounded-xl px-3 py-2 text-sm font-bold text-slate-700 focus:ring-2 focus:ring-blue-500 outline-none transition-all">
+            </div>
+            <div class="flex flex-col gap-1">
+                <label class="text-[10px] font-bold text-slate-400 uppercase ml-1">Date de fin</label>
+                <input type="date" [ngModel]="endDate()" (ngModelChange)="endDate.set($event)"
+                    class="bg-slate-50 border-none rounded-xl px-3 py-2 text-sm font-bold text-slate-700 focus:ring-2 focus:ring-blue-500 outline-none transition-all">
+            </div>
+        </div>
+        <div class="hidden md:block h-8 w-px bg-slate-100"></div>
+        <p class="text-xs text-slate-400 italic">
+            Filtrage automatique des transactions locales
+        </p>
+    </div>
+
+    <div class="overflow-hidden bg-white rounded-2xl border border-slate-100 shadow-sm">
+        <table class="w-full text-left border-collapse">
+            <thead class="bg-slate-50/50 border-b border-slate-100">
+                <tr>
+                    <th class="px-6 py-4 text-[11px] font-bold text-slate-400 uppercase tracking-widest">Date & Heure
+                    </th>
+                    <th class="px-6 py-4 text-[11px] font-bold text-slate-400 uppercase tracking-widest">Type</th>
+                    <th class="px-6 py-4 text-[11px] font-bold text-slate-400 uppercase tracking-widest">Tiers / Client
+                    </th>
+                    <th class="px-6 py-4 text-[11px] font-bold text-slate-400 uppercase tracking-widest text-right">
+                        Montant</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-50">
+                @for (t of transactions(); track t.id) {
+                <tr class="hover:bg-slate-50/30 transition-colors group">
+                    <td class="px-6 py-4 text-sm text-slate-600 font-medium">
+                        {{ t.dateTransaction | date:'dd/MM/yyyy, HH:mm' }}
+                    </td>
+
+                    <td class="px-6 py-4">
+                        <span [class]="getTypeStyles(t.type)"
+                            class="px-3 py-1 rounded-lg text-[10px] font-black uppercase border tracking-tighter">
+                            {{ t.type }}
+                        </span>
+                    </td>
+
+                    <td class="px-6 py-4">
+                        @if (t.type === 'Virement') {
+                        <div class="flex flex-col">
+                            <span class="text-sm font-bold text-slate-700">
+                                @if (t.compteSource?.id === compteId) {
+                                {{ t.compteDestination?.client?.prenom }} {{ t.compteDestination?.client?.nom |
+                                uppercase }}
+                                } @else {
+                                {{ t.compteSource?.client?.prenom }} {{ t.compteSource?.client?.nom | uppercase }}
+                                }
+                            </span>
+                            <span class="text-[10px] font-mono text-slate-400 mt-0.5">
+                                {{ t.compteSource?.id === compteId ? 'Vers: ' + t.compteDestination?.id : 'De: ' +
+                                t.compteSource?.id }}
+                            </span>
+                        </div>
+                        } @else {
+                        <div class="flex flex-col">
+                            <span class="text-sm font-bold text-slate-700">
+                                {{ t.type === 'Depot' ? 'Dépôt en espèces' : 'Retrait au guichet' }}
+                            </span>
+                            <span class="text-[10px] font-medium text-slate-400 italic mt-0.5">Opération directe</span>
+                        </div>
+                        }
+                    </td>
+
+                    <td class="px-6 py-4 text-right">
+                        <div class="flex flex-col items-end">
+                            <span class="text-base font-black"
+                                [class]="(t.type === 'Depot' || (t.type === 'Virement' && t.compteDestination?.id === compteId)) ? 'text-emerald-600' : 'text-slate-800'">
+                                {{ (t.type === 'Depot' || (t.type === 'Virement' && t.compteDestination?.id ===
+                                compteId)) ? '+' : '-' }}
+                                {{ t.montant | number }}
+                            </span>
+                            <span class="text-[9px] font-bold text-slate-400 uppercase">FCFA</span>
+                        </div>
+                    </td>
+                </tr>
+                } @empty {
+                <tr>
+                    <td colspan="4" class="px-6 py-12 text-center">
+                        <div class="flex flex-col items-center gap-2 opacity-20">
+                            <lucide-icon [name]="History" class="w-12 h-12"></lucide-icon>
+                            <p class="text-sm font-bold uppercase tracking-widest">Aucune transaction trouvée</p>
+                        </div>
+                    </td>
+                </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

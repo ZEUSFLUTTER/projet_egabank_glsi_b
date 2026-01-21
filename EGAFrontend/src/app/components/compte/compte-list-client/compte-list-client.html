@@ -1,0 +1,347 @@
+<div class="space-y-8">
+    @if (loading()) {
+    <div class="flex flex-col justify-center items-center h-64 space-y-4">
+        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <p class="text-slate-400 text-sm animate-pulse">Récupération du portefeuille...</p>
+    </div>
+    }
+    @else {
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div class="flex items-center gap-4">
+            <button [routerLink]="['/client']"
+                class="p-2.5 bg-white border border-slate-100 text-slate-400 hover:text-blue-600 rounded-xl shadow-sm transition-all">
+                <lucide-icon [name]="ArrowLeft" class="w-5 h-5"></lucide-icon>
+            </button>
+            <div>
+                <h1 class="text-2xl font-bold text-slate-800">Portefeuille Client</h1>
+                <p class="text-slate-500 font-medium">
+                    {{ client?.prenom }} {{ client?.nom | uppercase }}
+                </p>
+            </div>
+        </div>
+
+        <div class="flex items-center gap-2 bg-blue-50 text-blue-700 px-4 py-2 rounded-2xl border border-blue-100">
+            <lucide-icon [name]="CreditCard" class="w-4 h-4"></lucide-icon>
+            <span class="text-sm font-bold">{{ comptes.length }} Compte(s)</span>
+        </div>
+        <button (click)="openAddAccountModal()"
+            class="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-2xl shadow-lg shadow-blue-200 transition-all transform active:scale-95 text-sm font-bold">
+            <lucide-icon [name]="Plus" class="w-4 h-4"></lucide-icon>
+            Nouveau Compte
+        </button>
+    </div>
+
+    <div class="overflow-hidden bg-white rounded-3xl border border-slate-100 shadow-sm">
+        <table class="w-full text-left border-collapse">
+            <thead class="bg-slate-50/50 border-b border-slate-100">
+                <tr>
+                    <th class="px-6 py-4 text-[11px] font-bold text-slate-400 uppercase tracking-wider">Type</th>
+                    <th class="px-6 py-4 text-[11px] font-bold text-slate-400 uppercase tracking-wider">Numéro</th>
+                    <th class="px-6 py-4 text-[11px] font-bold text-slate-400 uppercase tracking-wider">Solde</th>
+                    <th class="px-6 py-4 text-[11px] font-bold text-slate-400 uppercase tracking-wider text-right">
+                        Actions</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-50">
+                @for (compte of comptes; track compte.id) {
+                <tr class="hover:bg-slate-50/50 transition-colors group">
+                    <td class="px-6 py-4">
+                        <div class="flex items-center gap-3">
+                            <div [class]="compte.type === 'Courant' ? 'bg-blue-100 text-blue-600' : 'bg-emerald-100 text-emerald-600'"
+                                class="p-2 rounded-lg">
+                                <lucide-icon [name]="compte.type === 'Courant' ? Wallet : PiggyBank"
+                                    class="w-4 h-4"></lucide-icon>
+                            </div>
+                            <span class="font-bold text-slate-700">{{ compte.type }}</span>
+                        </div>
+                    </td>
+
+                    <td class="px-6 py-4">
+                        <code
+                            class="text-xs font-mono bg-slate-50 px-2 py-1 rounded text-slate-500">#{{ compte.id }}</code>
+                    </td>
+
+                    <td class="px-6 py-4">
+                        <span class="font-black text-slate-800">{{ compte.solde | number }}</span>
+                        <span class="ml-1 text-[10px] font-bold text-slate-400 uppercase">FCFA</span>
+                    </td>
+
+                    <td class="px-6 py-4">
+                        <div class="flex items-center justify-end gap-2">
+                            <button (click)="openDepositModal(compte)" 
+                                class="p-2 bg-emerald-50 text-emerald-600 hover:bg-emerald-600 hover:text-white rounded-xl transition-all shadow-sm"
+                                title="Dépôt">
+                                <lucide-icon [name]="ArrowUp" class="w-4 h-4"></lucide-icon>
+                            </button>
+
+                            <button (click)="openWithdrawModal(compte)"
+                                class="p-2 bg-orange-50 text-orange-600 hover:bg-orange-600 hover:text-white rounded-xl transition-all shadow-sm"
+                                title="Retrait">
+                                <lucide-icon [name]="ArrowDown" class="w-4 h-4"></lucide-icon>
+                            </button>
+
+                            <button (click)="openTransferModal(compte)"
+                                class="p-2 bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white rounded-xl transition-all shadow-sm"
+                                title="Transfert">
+                                <lucide-icon [name]="Send" class="w-4 h-4"></lucide-icon>
+                            </button>
+
+                            <a [routerLink]="['/client', client?.id, 'comptes', compte.id, 'history']"
+                                class="p-2 bg-indigo-50 text-indigo-600 hover:bg-indigo-600 hover:text-white rounded-xl transition-all shadow-sm">
+                                <lucide-icon [name]="History" class="w-4 h-4"></lucide-icon>
+                            </a>
+
+                            <div class="w-px h-4 bg-slate-200 mx-1"></div>
+
+                            <button (click)="openDeleteModal(compte)"
+                                class="p-2 bg-red-50 text-red-600 hover:bg-red-600 hover:text-white rounded-xl transition-all shadow-sm"
+                                title="Supprimer">
+                                <lucide-icon [name]="Trash2" class="w-4 h-4"></lucide-icon>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    }
+</div>
+
+@if (isModalOpen()) {
+<div class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+    <div
+        class="bg-white rounded-4xl shadow-2xl w-full max-w-md overflow-hidden border border-slate-100 animate-in fade-in zoom-in duration-200">
+        <div class="p-8">
+            <div class="flex justify-between items-center mb-6">
+                <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center">
+                    <lucide-icon [name]="Plus" class="w-6 h-6"></lucide-icon>
+                </div>
+                <button (click)="closeAddAccountModal()" class="text-slate-400 hover:text-slate-600 transition">
+                    <lucide-icon [name]="X" class="w-5 h-5"></lucide-icon>
+                </button>
+            </div>
+
+            <h3 class="text-xl font-bold text-slate-800 mb-1">Ouvrir un compte</h3>
+            <p class="text-slate-500 text-sm mb-8">
+                Sélectionnez le type de compte pour <span class="text-blue-600 font-bold">{{ client?.prenom }}</span>.
+            </p>
+
+            <form [formGroup]="accountForm" (ngSubmit)="onSubmitAccount()">
+                <div class="space-y-6">
+                    <div class="grid grid-cols-2 gap-4">
+                        <label class="cursor-pointer group">
+                            <input type="radio" formControlName="typeCompte" value="Courant" class="hidden peer">
+                            <div
+                                class="p-4 border-2 border-slate-100 rounded-2xl group-hover:bg-slate-50 peer-checked:border-blue-600 peer-checked:bg-blue-50 transition-all text-center">
+                                <lucide-icon [name]="Wallet"
+                                    class="w-6 h-6 mx-auto mb-2 text-slate-400 peer-checked:text-blue-600"></lucide-icon>
+                                <span class="text-xs font-bold text-slate-600 block">COURANT</span>
+                            </div>
+                        </label>
+
+                        <label class="cursor-pointer group">
+                            <input type="radio" formControlName="typeCompte" value="Epargne" class="hidden peer">
+                            <div
+                                class="p-4 border-2 border-slate-100 rounded-2xl group-hover:bg-slate-50 peer-checked:border-emerald-600 peer-checked:bg-emerald-50 transition-all text-center">
+                                <lucide-icon [name]="PiggyBank"
+                                    class="w-6 h-6 mx-auto mb-2 text-slate-400 peer-checked:text-emerald-600"></lucide-icon>
+                                <span class="text-xs font-bold text-slate-600 block">ÉPARGNE</span>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="mt-10 flex gap-3">
+                    <button type="button" (click)="closeAddAccountModal()"
+                        class="flex-1 px-4 py-3 rounded-2xl bg-slate-100 text-slate-600 font-bold hover:bg-slate-200 transition">
+                        Annuler
+                    </button>
+                    <button type="submit" [disabled]="accountForm.invalid"
+                        class="flex-1 px-4 py-3 rounded-2xl bg-blue-600 text-white font-bold hover:bg-blue-700 shadow-lg shadow-blue-200 transition disabled:opacity-50">
+                        Confirmer
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+}
+
+@if (isDepositModalOpen()) {
+<div class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+    <div
+        class="bg-white rounded-4xl shadow-2xl w-full max-w-md overflow-hidden border border-slate-100 animate-in fade-in zoom-in duration-200">
+        <div class="p-8">
+            <div class="flex justify-between items-center mb-6">
+                <div class="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center">
+                    <lucide-icon [name]="ArrowUp" class="w-6 h-6"></lucide-icon>
+                </div>
+                <button (click)="closeDepositModal()" class="text-slate-400 hover:text-slate-600">
+                    <lucide-icon [name]="X" class="w-5 h-5"></lucide-icon>
+                </button>
+            </div>
+
+            <h3 class="text-xl font-bold text-slate-800 mb-1">Effectuer un dépôt</h3>
+            <p class="text-slate-500 text-sm mb-6">
+                Créditer le compte <span class="font-mono text-blue-600">#{{ selectedCompte()?.id }}</span>
+            </p>
+
+            <form [formGroup]="depositForm" (ngSubmit)="onConfirmDeposit()">
+                <div class="bg-slate-50 p-4 rounded-2xl mb-6 border border-slate-100">
+                    <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Montant à
+                        déposer</label>
+                    <div class="flex items-center gap-2">
+                        <input type="number" formControlName="montant" autofocus
+                            class="bg-transparent border-none text-2xl font-black text-slate-800 focus:ring-0 w-full p-0"
+                            placeholder="0.00">
+                        <span class="font-bold text-slate-400">FCFA</span>
+                    </div>
+                </div>
+
+                <div class="flex gap-3">
+                    <button type="button" (click)="closeDepositModal()"
+                        class="flex-1 px-4 py-3 rounded-2xl bg-slate-100 text-slate-600 font-bold hover:bg-slate-200 transition">
+                        Annuler
+                    </button>
+                    <button type="submit" [disabled]="depositForm.invalid"
+                        class="flex-1 px-4 py-3 rounded-2xl bg-emerald-600 text-white font-bold hover:bg-emerald-700 shadow-lg shadow-emerald-200 transition disabled:opacity-50">
+                        Confirmer le dépôt
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+}
+
+@if (isWithdrawModalOpen()) {
+<div class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+    <div
+        class="bg-white rounded-4xl shadow-2xl w-full max-w-md overflow-hidden border border-slate-100 animate-in fade-in zoom-in duration-200">
+        <div class="p-8">
+            <div class="flex justify-between items-center mb-6">
+                <div class="w-12 h-12 bg-orange-50 text-orange-600 rounded-2xl flex items-center justify-center">
+                    <lucide-icon [name]="ArrowDown" class="w-6 h-6"></lucide-icon>
+                </div>
+                <button (click)="closeWithdrawModal()" class="text-slate-400 hover:text-slate-600">
+                    <lucide-icon [name]="X" class="w-5 h-5"></lucide-icon>
+                </button>
+            </div>
+
+            <h3 class="text-xl font-bold text-slate-800 mb-1">Effectuer un retrait</h3>
+            <p class="text-slate-500 text-sm mb-6">
+                Débiter le compte <span class="font-mono text-blue-600">#{{ selectedCompte()?.id }}</span>
+            </p>
+
+            <form [formGroup]="withdrawForm" (ngSubmit)="onConfirmWithdraw()">
+                <div class="bg-slate-50 p-4 rounded-2xl mb-6 border border-slate-100">
+                    <div class="flex justify-between mb-1">
+                        <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Montant à
+                            retirer</label>
+                        <span class="text-[10px] font-bold text-slate-400 italic">Max: {{ selectedCompte()?.solde |
+                            number }} FCFA</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <input type="number" formControlName="montant" autofocus
+                            class="bg-transparent border-none text-2xl font-black text-slate-800 focus:ring-0 w-full p-0"
+                            placeholder="0.00">
+                        <span class="font-bold text-slate-400">FCFA</span>
+                    </div>
+                </div>
+
+                <div class="flex gap-3">
+                    <button type="button" (click)="closeWithdrawModal()"
+                        class="flex-1 px-4 py-3 rounded-2xl bg-slate-100 text-slate-600 font-bold hover:bg-slate-200 transition">
+                        Annuler
+                    </button>
+                    <button type="submit" [disabled]="withdrawForm.invalid"
+                        class="flex-1 px-4 py-3 rounded-2xl bg-orange-600 text-white font-bold hover:bg-orange-700 shadow-lg shadow-orange-200 transition disabled:opacity-50">
+                        Confirmer le retrait
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+}
+
+@if (isTransferModalOpen()) {
+<div class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+    <div
+        class="bg-white rounded-4xl shadow-2xl w-full max-w-md overflow-hidden border border-slate-100 animate-in fade-in zoom-in duration-200">
+        <div class="p-8">
+            <div class="flex justify-between items-center mb-6">
+                <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center">
+                    <lucide-icon [name]="Send" class="w-6 h-6"></lucide-icon>
+                </div>
+                <button (click)="closeTransferModal()" class="text-slate-400 hover:text-slate-600">
+                    <lucide-icon [name]="X" class="w-5 h-5"></lucide-icon>
+                </button>
+            </div>
+
+            <h3 class="text-xl font-bold text-slate-800 mb-1">Virement bancaire</h3>
+            <p class="text-slate-500 text-sm mb-6">Depuis : <span class="font-mono font-bold text-blue-600">#{{
+                    selectedCompte()?.id }}</span></p>
+
+            <form [formGroup]="transferForm" (ngSubmit)="onConfirmTransfer()">
+                <div class="bg-slate-50 p-4 rounded-2xl mb-4 border border-slate-100">
+                    <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">IBAN du
+                        bénéficiaire</label>
+                    <input type="text" formControlName="compteDestination"
+                        class="bg-transparent border-none text-sm font-bold text-slate-800 focus:ring-0 w-full p-0"
+                        placeholder="Saisir le numero de compte de destination">
+                </div>
+
+                <div class="bg-slate-50 p-4 rounded-2xl mb-6 border border-slate-100">
+                    <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Montant à
+                        transférer</label>
+                    <div class="flex items-center gap-2">
+                        <input type="number" formControlName="montant"
+                            class="bg-transparent border-none text-2xl font-black text-slate-800 focus:ring-0 w-full p-0"
+                            placeholder="0.00">
+                        <span class="font-bold text-slate-400">FCFA</span>
+                    </div>
+                </div>
+
+                <div class="flex gap-3">
+                    <button type="button" (click)="closeTransferModal()"
+                        class="flex-1 px-4 py-3 rounded-2xl bg-slate-100 font-bold">Annuler</button>
+                    <button type="submit" [disabled]="transferForm.invalid"
+                        class="flex-1 px-4 py-3 rounded-2xl bg-blue-600 text-white font-bold shadow-lg shadow-blue-200">Confirmer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+}
+
+@if (isDeleteModalOpen()) {
+<div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+    <div
+        class="bg-white rounded-4xl shadow-2xl w-full max-w-sm overflow-hidden border border-red-50 animate-in fade-in zoom-in duration-200">
+        <div class="p-8 text-center">
+            <div class="w-20 h-20 bg-red-50 text-red-600 rounded-full flex items-center justify-center mx-auto mb-6">
+                <lucide-icon [name]="Trash2" class="w-10 h-10"></lucide-icon>
+            </div>
+
+            <h3 class="text-xl font-bold text-slate-800 mb-2">Supprimer le compte ?</h3>
+            <p class="text-slate-500 text-sm mb-8 leading-relaxed">
+                Voulez-vous vraiment supprimer le compte <br>
+                <span class="font-mono font-bold text-red-600">#{{ selectedCompte()?.id }}</span> ?
+            </p>
+
+            <div class="flex flex-col gap-3">
+                <button (click)="onConfirmDelete()"
+                    class="w-full py-4 rounded-2xl bg-red-600 text-white font-bold hover:bg-red-700 shadow-lg shadow-red-200 transition-all active:scale-95">
+                    Confirmer la suppression
+                </button>
+                <button (click)="closeDeleteModal()"
+                    class="w-full py-4 rounded-2xl bg-slate-100 text-slate-600 font-bold hover:bg-slate-200 transition-all">
+                    Annuler
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+}

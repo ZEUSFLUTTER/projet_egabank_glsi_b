@@ -1,0 +1,172 @@
+<div class="space-y-8">
+    <div>
+        <h1 class="text-2xl font-bold text-slate-800">Tableau de bord</h1>
+        <p class="text-slate-500">Bienvenue sur le panneau d'administration de la Banque Ega</p>
+    </div>
+    @if (!loading() && dashboard) {
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
+            <div class="flex justify-between items-start mb-4">
+                <div>
+                    <p class="text-slate-500 text-sm font-medium">Total Clients</p>
+                    <h3 class="text-2xl font-bold text-slate-800">{{ dashboard.totalClients | number }}</h3>
+                </div>
+                <div class="p-3 bg-slate-50 rounded-xl text-slate-400">
+                    <lucide-icon [img]="Users" class="w-6 h-6"></lucide-icon>
+                </div>
+            </div>
+            <div class="flex items-center text-xs font-medium">
+                {{dashboard.diffClients | number:'1.0-2'}} %
+                <span class="text-slate-400 ml-1">vs mois dernier</span>
+            </div>
+        </div>
+
+        <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
+            <div class="flex justify-between items-start mb-4">
+                <div>
+                    <p class="text-slate-500 text-sm font-medium">Comptes Actifs</p>
+                    <h3 class="text-2xl font-bold text-slate-800">{{ dashboard.totalComptes | number }}</h3>
+                </div>
+                <div class="p-3 bg-blue-50 rounded-xl text-blue-400">
+                    <lucide-icon [img]="CreditCard" class="w-6 h-6"></lucide-icon>
+                </div>
+            </div>
+            <div class="flex items-center text-xs font-medium">
+                {{dashboard.diffComptes | number:'1.0-2'}} %
+                <span class="text-slate-400 ml-1">vs mois dernier</span>
+            </div>
+        </div>
+
+        <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
+            <div class="flex justify-between items-start mb-4">
+                <div>
+                    <p class="text-slate-500 text-sm font-medium">Transactions (Mois)</p>
+                    <h3 class="text-2xl font-bold text-slate-800">{{ dashboard.totalTransactions | number }}</h3>
+                </div>
+                <div class="p-3 bg-emerald-50 rounded-xl text-emerald-400">
+                    <lucide-icon [img]="ArrowLeftRight" class="w-6 h-6"></lucide-icon>
+                </div>
+            </div>
+            <div class="flex items-center text-xs font-medium">
+                {{dashboard.diffTransactions | number:'1.0-2' }} %
+                <span class="text-slate-400 ml-1">vs mois dernier</span>
+            </div>
+        </div>
+
+        <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
+            <div class="flex justify-between items-start mb-4">
+                <div>
+                    <p class="text-slate-500 text-sm font-medium">Volume Total</p>
+                    <h3 class="text-2xl font-bold text-slate-800">{{ dashboard.volume | number }} FCFA</h3>
+                </div>
+                <div class="p-3 bg-amber-50 rounded-xl text-amber-400">
+                    <lucide-icon [img]="TrendingUp" class="w-6 h-6"></lucide-icon>
+                </div>
+            </div>
+            <div class="flex items-center text-xs font-medium">
+                {{dashboard.diffVolume | number:'1.0-2'}} %
+                <span class="text-slate-400 ml-1">vs mois dernier</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div class="lg:col-span-2 bg-white rounded-2xl border border-slate-100 shadow-sm">
+            <div class="p-6 border-b border-slate-50 flex justify-between items-center">
+                <h3 class="font-bold text-slate-800 text-lg">Transactions récentes</h3>
+                <button [routerLink]="['/transaction']" class="text-sm text-blue-600 font-medium hover:underline">Voir tout</button>
+            </div>
+            <div class="divide-y divide-slate-50">
+                @for (t of dashboard.dernieresTransactions; track t.id) {
+                @let config = typeConfig[t.type];
+                <div class="p-6 flex items-center justify-between hover:bg-slate-50 transition-colors">
+                    <div class="flex items-center gap-4">
+                        <div [class]="'w-10 h-10 rounded-xl flex items-center justify-center ' + config.iconBg">
+                            <lucide-icon [name]="config.icon" [class]="'w-5 h-5 ' + config.iconColor"></lucide-icon>
+                        </div>
+                        <div>
+                            <p class="font-semibold text-slate-800 text-sm">{{ config.label }}</p>
+                        
+                            <p class="text-xs text-slate-600 font-medium">
+                                @if (t.type === 'Virement') {
+                                    <span class="text-blue-600">{{ t.compteSource?.client?.prenom }} {{ t.compteSource?.client?.nom }}</span>
+                                    <span class="mx-1 text-slate-400">➔</span>
+                                    <span class="text-emerald-600">{{ t.compteDestination?.client?.prenom }} {{ t.compteDestination?.client?.nom }}</span>
+                                }
+                                @else if (t.type === 'Depot') {
+                                    {{ t.compteDestination?.client?.prenom }} {{ t.compteDestination?.client?.nom }}
+                                }
+                                @else {
+                                    {{ t.compteSource?.client?.prenom }} {{ t.compteSource?.client?.nom }}
+                                }
+                            </p>
+                            <p class="text-[10px] text-slate-400 font-mono italic">
+                                @if (t.type === 'Virement') {
+                                    #{{ t.compteSource?.id }} ➔ #{{ t.compteDestination?.id }}
+                                } @else {
+                                    #{{ t.type === 'Depot' ? t.compteDestination?.id : t.compteSource?.id }}
+                                }
+                            </p>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <p [class]="'font-bold ' + (t.type === 'Depot' ? 'text-emerald-600' : 'text-red-600')">
+                            {{ t.type === 'Depot' ? '+' : '-' }}{{ t.montant | number }} FCFA
+                        </p>
+                        <p class="text-[10px] text-slate-400">{{ t.dateTransaction | date:'dd/MM/yyyy HH:mm' }}</p>
+                    </div>
+                </div>
+                } @empty {
+                <div class="p-10 text-center text-slate-400">Aucune transaction récente</div>
+                }
+            </div>
+        </div>
+
+        <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm space-y-6">
+            <h3 class="font-bold text-slate-800 text-lg">Aperçu des comptes</h3>
+
+            <div
+                class="p-4 rounded-2xl border border-slate-100 bg-slate-50/30 group hover:border-blue-200 transition-all">
+                <div class="flex items-center gap-4 mb-3">
+                    <div
+                        class="p-3 bg-white rounded-xl shadow-sm group-hover:bg-blue-600 group-hover:text-white transition-colors text-slate-600">
+                        <lucide-icon [name]="Wallet" class="w-5 h-5"></lucide-icon>
+                    </div>
+                    <div>
+                        <p class="text-sm font-bold text-slate-800">Comptes Courants</p>
+                        <p class="text-xs text-slate-400">{{ dashboard.nbCourant }} actifs</p>
+                    </div>
+                </div>
+                <div class="text-right border-t border-slate-100 pt-3 mt-3">
+                    <p class="text-xl font-black text-slate-800">{{ dashboard.soldeCourant | number }} FCFA</p>
+                    <p class="text-[10px] text-slate-400 uppercase font-bold tracking-tighter">Solde total cumulé</p>
+                </div>
+            </div>
+
+            <div
+                class="p-4 rounded-2xl border border-slate-100 bg-slate-50/30 group hover:border-emerald-200 transition-all">
+                <div class="flex items-center gap-4 mb-3">
+                    <div
+                        class="p-3 bg-white rounded-xl shadow-sm group-hover:bg-emerald-600 group-hover:text-white transition-colors text-slate-600">
+                        <lucide-icon [name]="PiggyBank" class="w-5 h-5"></lucide-icon>
+                    </div>
+                    <div>
+                        <p class="text-sm font-bold text-slate-800">Comptes Épargne</p>
+                        <p class="text-xs text-slate-400">{{ dashboard.nbEpargne }} actifs</p>
+                    </div>
+                </div>
+                <div class="text-right border-t border-slate-100 pt-3 mt-3">
+                    <p class="text-xl font-black text-slate-800">{{ dashboard.soldeEpargne | number }} FCFA</p>
+                    <p class="text-[10px] text-slate-400 uppercase font-bold tracking-tighter">Épargne totale</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    }
+    @else {
+    <div class="flex flex-col justify-center items-center h-64 gap-4">
+        <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600"></div>
+        <p class="text-slate-400 text-sm animate-pulse">Chargement des données...</p>
+    </div>
+    }
+</div>

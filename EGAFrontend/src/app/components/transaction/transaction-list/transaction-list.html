@@ -1,0 +1,104 @@
+<div class="max-w-full mx-auto space-y-6">
+
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+            <h1 class="text-2xl font-bold text-slate-800">Flux Financiers Globaux</h1>
+            <p class="text-slate-500 font-medium text-sm">Surveillance en temps réel de toutes les transactions
+                bancaires</p>
+        </div>
+
+        <div class="flex items-center gap-3">
+            <div
+                class="flex items-center gap-2 bg-slate-100 text-slate-600 px-4 py-2.5 rounded-2xl border border-slate-200">
+                <lucide-icon [name]="History" class="w-4 h-4"></lucide-icon>
+                <span class="text-sm font-bold">{{ filteredTransactions().length }} Opération(s)</span>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="overflow-hidden bg-white rounded-3xl border border-slate-100 shadow-sm">
+        <table class="w-full text-left border-collapse">
+            <thead class="bg-slate-50/50 border-b border-slate-100">
+                <tr>
+                    <th class="px-6 py-4 text-[11px] font-bold text-slate-400 uppercase tracking-widest">Date & Heure
+                    </th>
+                    <th class="px-6 py-4 text-[11px] font-bold text-slate-400 uppercase tracking-widest">Type</th>
+                    <th class="px-6 py-4 text-[11px] font-bold text-slate-400 uppercase tracking-widest">Expéditeur</th>
+                    <th class="px-6 py-4 text-[11px] font-bold text-slate-400 uppercase tracking-widest">Bénéficiaire
+                    </th>
+                    <th class="px-6 py-4 text-[11px] font-bold text-slate-400 uppercase tracking-widest text-right">
+                        Montant</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-50">
+                @for (t of filteredTransactions(); track t.id) {
+                <tr class="hover:bg-slate-50/50 transition-colors group">
+                    <td class="px-6 py-4 text-xs text-slate-500 font-medium">
+                        {{ t.dateTransaction | date:'dd/MM/yyyy' }}<br>
+                        <span class="text-slate-400">{{ t.dateTransaction | date:'HH:mm:ss' }}</span>
+                    </td>
+
+                    <td class="px-6 py-4">
+                        <span [class]="getTypeStyles(t.type)"
+                            class="px-3 py-1 rounded-lg text-[10px] font-black uppercase border flex items-center gap-1.5 w-fit">
+                            @if(t.type === 'Depot') { <lucide-icon [name]="ArrowDownLeft" class="w-3 h-3"></lucide-icon>
+                            }
+                            @if(t.type === 'Retrait') { <lucide-icon [name]="ArrowUpRight"
+                                class="w-3 h-3"></lucide-icon> }
+                            @if(t.type === 'Virement') { <lucide-icon [name]="Repeat" class="w-3 h-3"></lucide-icon> }
+                            {{ t.type }}
+                        </span>
+                    </td>
+
+                    <td class="px-6 py-4">
+                        @if (t.compteSource) {
+                        <div class="flex flex-col">
+                            <span class="text-sm font-bold text-slate-700">{{ t.compteSource.client?.prenom }} {{
+                                t.compteSource.client?.nom | uppercase }}</span>
+                            <code
+                                class="text-[10px] text-blue-600 font-mono">#{{ t.compteSource.id | slice:0:12 }}...</code>
+                        </div>
+                        } @else {
+                        <span class="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded">GUICHET /
+                            CASH</span>
+                        }
+                    </td>
+
+                    <td class="px-6 py-4">
+                        @if (t.compteDestination) {
+                        <div class="flex flex-col">
+                            <span class="text-sm font-bold text-slate-700">{{ t.compteDestination.client?.prenom }} {{
+                                t.compteDestination.client?.nom | uppercase }}</span>
+                            <code
+                                class="text-[10px] text-blue-600 font-mono">#{{ t.compteDestination.id | slice:0:12 }}...</code>
+                        </div>
+                        } @else {
+                        <span class="text-xs font-bold text-orange-600 bg-orange-50 px-2 py-1 rounded">RETRAIT
+                            ESPÈCES</span>
+                        }
+                    </td>
+
+                    <td class="px-6 py-4 text-right">
+                        <div class="flex flex-col items-end">
+                            <span class="text-base font-black text-slate-800">
+                                {{ t.montant | number }}
+                            </span>
+                            <span class="text-[9px] font-bold text-slate-400 uppercase">FCFA</span>
+                        </div>
+                    </td>
+                </tr>
+                } @empty {
+                <tr>
+                    <td colspan="5" class="py-20 text-center">
+                        <div class="flex flex-col items-center opacity-20">
+                            <lucide-icon [name]="History" class="w-12 h-12 mb-2"></lucide-icon>
+                            <p class="font-bold uppercase tracking-widest text-sm">Aucun flux trouvé</p>
+                        </div>
+                    </td>
+                </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

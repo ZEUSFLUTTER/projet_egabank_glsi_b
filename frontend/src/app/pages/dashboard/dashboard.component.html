@@ -1,0 +1,212 @@
+<div class="dashboard-container">
+  <!-- Header -->
+  <header class="dashboard-header">
+    <div class="header-content">
+      <div class="header-left">
+        <div class="logo-section">
+          <mat-icon class="bank-icon">account_balance</mat-icon>
+          <h1>EGA BANK</h1>
+        </div>
+        <div class="welcome-message">
+          <p>Bienvenue, <strong>{{ clientName }}</strong></p>
+        </div>
+      </div>
+      <button mat-icon-button (click)="logout()" class="logout-btn" title="Déconnexion">
+        <mat-icon>logout</mat-icon>
+      </button>
+    </div>
+  </header>
+
+  <!-- Résumé des comptes -->
+  <div class="summary-section">
+    <div class="summary-card total">
+      <div class="summary-icon">
+        <mat-icon>account_balance_wallet</mat-icon>
+      </div>
+      <div class="summary-content">
+        <h3>Solde Total</h3>
+        <div class="amount">{{ getTotalBalance() | number:'1.0-0':'fr' }} FCFA</div>
+        <div class="accounts-count">{{ comptes.length }} compte(s)</div>
+      </div>
+    </div>
+
+    <div class="summary-card courant">
+      <div class="summary-icon">
+        <mat-icon>account_balance</mat-icon>
+      </div>
+      <div class="summary-content">
+        <h3>Comptes Courants</h3>
+        <div class="amount">{{ getBalanceByType('COURANT') | number:'1.0-0':'fr' }} FCFA</div>
+        <div class="accounts-count">{{ getCountByType('COURANT') }} compte(s)</div>
+      </div>
+    </div>
+
+    <div class="summary-card epargne">
+      <div class="summary-icon">
+        <mat-icon>savings</mat-icon>
+      </div>
+      <div class="summary-content">
+        <h3>Comptes Épargne</h3>
+        <div class="amount">{{ getBalanceByType('EPARGNE') | number:'1.0-0':'fr' }} FCFA</div>
+        <div class="accounts-count">{{ getCountByType('EPARGNE') }} compte(s)</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Actions rapides -->
+  <div class="quick-actions">
+    <h2>Actions rapides</h2>
+    <div class="actions-grid">
+      <button class="action-card" (click)="openDepositDialog(comptes[0])" [disabled]="comptes.length === 0">
+        <mat-icon>add_circle</mat-icon>
+        <span>Dépôt</span>
+      </button>
+      <button class="action-card" (click)="openTransferDialog(comptes[0])" [disabled]="comptes.length === 0">
+        <mat-icon>swap_horiz</mat-icon>
+        <span>Virement</span>
+      </button>
+      <button class="action-card" (click)="loadRecentTransactions()">
+        <mat-icon>refresh</mat-icon>
+        <span>Actualiser</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mes comptes -->
+  <div class="accounts-section">
+    <h2>Mes Comptes</h2>
+    <div *ngIf="loading" class="loading-container">
+      <mat-spinner diameter="40"></mat-spinner>
+      <p>Chargement des comptes...</p>
+    </div>
+
+    <div *ngIf="!loading && comptes.length > 0" class="accounts-grid">
+      <mat-card *ngFor="let compte of comptes" class="account-card" [class]="'type-' + compte.typeCompte.toLowerCase()">
+        <mat-card-header>
+          <div class="account-header">
+            <div class="account-type-badge" [class]="compte.typeCompte.toLowerCase()">
+              <mat-icon>{{ getCompteIcon(compte.typeCompte) }}</mat-icon>
+              <span>{{ getCompteTypeLabel(compte.typeCompte) }}</span>
+            </div>
+            <button mat-icon-button [matMenuTriggerFor]="accountMenu">
+              <mat-icon>more_vert</mat-icon>
+            </button>
+
+            <mat-menu #accountMenu="matMenu">
+              <button mat-menu-item (click)="viewAccountDetails(compte)">
+                <mat-icon>visibility</mat-icon>
+                Voir détails
+              </button>
+              <button mat-menu-item (click)="openDepositDialog(compte)">
+                <mat-icon>add_circle</mat-icon>
+                Faire un dépôt
+              </button>
+              <button mat-menu-item (click)="openRetraitDialog(compte)">
+                <mat-icon>remove_circle</mat-icon>
+                Retrait
+              </button>
+              <button mat-menu-item (click)="openTransferDialog(compte)">
+                <mat-icon>swap_horiz</mat-icon>
+                Virement
+              </button>
+            </mat-menu>
+          </div>
+        </mat-card-header>
+
+        <mat-card-content>
+          <div class="account-details">
+            <div class="account-number">
+              <span class="label">N° de compte:</span>
+              <span class="value">{{ compte.numeroCompte }}</span>
+            </div>
+
+            <div class="account-balance">
+              <span class="label">Solde:</span>
+              <span class="balance-amount"
+                [class]="compte.solde > 0 ? 'positive' : compte.solde < 0 ? 'negative' : 'neutral'">
+                {{ compte.solde | number:'1.0-0':'fr' }} FCFA
+              </span>
+            </div>
+
+            <div class="account-created">
+              <span class="label">Créé le:</span>
+              <span class="value">{{ compte.dateCreation | date:'dd/MM/yyyy':'fr' }}</span>
+            </div>
+          </div>
+        </mat-card-content>
+
+        <mat-card-actions>
+          <button mat-stroked-button color="primary" (click)="openDepositDialog(compte)">
+            <mat-icon>add</mat-icon>
+            Dépôt
+          </button>
+          <button mat-stroked-button color="warn" (click)="openRetraitDialog(compte)">
+            <mat-icon>remove</mat-icon>
+            Retrait
+          </button>
+          <button mat-stroked-button color="accent" (click)="openTransferDialog(compte)">
+            <mat-icon>send</mat-icon>
+            Virement
+          </button>
+        </mat-card-actions>
+      </mat-card>
+    </div>
+
+    <div *ngIf="!loading && comptes.length === 0" class="empty-state">
+      <mat-icon class="empty-icon">account_balance_wallet</mat-icon>
+      <h3>Aucun compte</h3>
+      <p>Vous n'avez pas encore de compte. Contactez votre conseiller pour en créer un.</p>
+    </div>
+  </div>
+
+  <!-- Dernières transactions -->
+  <div class="transactions-section">
+    <h2>Dernières transactions</h2>
+    <div *ngIf="transactionsLoading" class="loading-container">
+      <mat-spinner diameter="40"></mat-spinner>
+    </div>
+
+    <div *ngIf="!transactionsLoading && transactions.length > 0">
+      <table mat-table [dataSource]="transactions" class="transactions-table">
+        <ng-container matColumnDef="date">
+          <th mat-header-cell *matHeaderCellDef>Date</th>
+          <td mat-cell *matCellDef="let transaction">
+            {{ transaction.dateTransaction | date:'dd/MM/yyyy HH:mm' }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="type">
+          <th mat-header-cell *matHeaderCellDef>Type</th>
+          <td mat-cell *matCellDef="let transaction">
+            <mat-chip [class]="'type-' + transaction.typeTransaction.toLowerCase()">
+              {{ transaction.typeTransaction }}
+            </mat-chip>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="montant">
+          <th mat-header-cell *matHeaderCellDef>Montant</th>
+          <td mat-cell *matCellDef="let transaction"
+            [class]="getTransactionAmount(transaction) > 0 ? 'positive' : 'negative'">
+            {{ getTransactionAmount(transaction) | number:'1.0-0':'fr' }} FCFA
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="description">
+          <th mat-header-cell *matHeaderCellDef>Description</th>
+          <td mat-cell *matCellDef="let transaction">
+            {{ getTransactionDescription(transaction) }}
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+    </div>
+
+    <div *ngIf="!transactionsLoading && transactions.length === 0" class="empty-state">
+      <mat-icon class="empty-icon">history</mat-icon>
+      <p>Aucune transaction récente</p>
+    </div>
+  </div>
+</div>

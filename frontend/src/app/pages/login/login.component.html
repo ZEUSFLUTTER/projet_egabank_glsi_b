@@ -1,0 +1,194 @@
+<div class="login-container">
+  <div class="login-card-wrapper">
+    <mat-card class="login-card">
+      <mat-card-header class="card-header">
+        <div class="logo-section">
+          <mat-icon class="bank-icon">account_balance</mat-icon>
+          <h1 class="bank-title">EGA BANK</h1>
+          <p class="bank-subtitle">Votre banque de confiance</p>
+        </div>
+      </mat-card-header>
+
+      <mat-card-content>
+        <mat-tab-group [(selectedIndex)]="selectedTab" class="auth-tabs">
+          <!-- Tab Connexion -->
+          <mat-tab label="Connexion">
+            <form [formGroup]="loginForm" (ngSubmit)="login()" class="auth-form">
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Nom d'utilisateur ou Email</mat-label>
+                <input matInput formControlName="username" placeholder="admin ou votre email">
+                <mat-icon matPrefix>person</mat-icon>
+                <mat-error *ngIf="loginForm.get('username')?.hasError('required')">
+                  Ce champ est requis
+                </mat-error>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Mot de passe</mat-label>
+                <input 
+                  matInput 
+                  [type]="hidePassword ? 'password' : 'text'" 
+                  formControlName="password"
+                  placeholder="Votre mot de passe">
+                <mat-icon matPrefix>lock</mat-icon>
+                <button 
+                  mat-icon-button 
+                  matSuffix 
+                  (click)="hidePassword = !hidePassword" 
+                  type="button">
+                  <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+                </button>
+                <mat-error *ngIf="loginForm.get('password')?.hasError('required')">
+                  Ce champ est requis
+                </mat-error>
+              </mat-form-field>
+
+              <div *ngIf="error" class="error-message">
+                <mat-icon>error</mat-icon>
+                <span>{{ error }}</span>
+              </div>
+
+              <button 
+                mat-raised-button 
+                color="primary" 
+                type="submit" 
+                class="full-width submit-btn"
+                [disabled]="loading || loginForm.invalid">
+                <mat-spinner *ngIf="loading" diameter="20" class="spinner"></mat-spinner>
+                <span *ngIf="!loading">Se connecter</span>
+                <span *ngIf="loading">Connexion...</span>
+              </button>
+
+              <div class="info-box">
+                <mat-icon>info</mat-icon>
+                <p>Admin : username="admin", password="admin"</p>
+              </div>
+            </form>
+          </mat-tab>
+
+          <!-- Tab Inscription -->
+          <mat-tab label="Inscription">
+            <form [formGroup]="registerForm" (ngSubmit)="register()" class="auth-form">
+              <div class="form-row">
+                <mat-form-field appearance="outline">
+                  <mat-label>Nom *</mat-label>
+                  <input matInput formControlName="nom" placeholder="Votre nom">
+                  <mat-error *ngIf="registerForm.get('nom')?.hasError('required')">
+                    Ce champ est requis
+                  </mat-error>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline">
+                  <mat-label>Prénom *</mat-label>
+                  <input matInput formControlName="prenom" placeholder="Votre prénom">
+                  <mat-error *ngIf="registerForm.get('prenom')?.hasError('required')">
+                    Ce champ est requis
+                  </mat-error>
+                </mat-form-field>
+              </div>
+
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Email *</mat-label>
+                <input matInput type="email" formControlName="email" placeholder="votre@email.com">
+                <mat-icon matPrefix>email</mat-icon>
+                <mat-error *ngIf="registerForm.get('email')?.hasError('required')">
+                  Ce champ est requis
+                </mat-error>
+                <mat-error *ngIf="registerForm.get('email')?.hasError('email')">
+                  Email invalide
+                </mat-error>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Nom d'utilisateur *</mat-label>
+                <input matInput formControlName="username" placeholder="Au moins 3 caractères">
+                <mat-icon matPrefix>badge</mat-icon>
+                <mat-error *ngIf="registerForm.get('username')?.hasError('required')">
+                  Ce champ est requis
+                </mat-error>
+                <mat-error *ngIf="registerForm.get('username')?.hasError('minlength')">
+                  Minimum 3 caractères
+                </mat-error>
+              </mat-form-field>
+
+              <div class="form-row">
+                <mat-form-field appearance="outline">
+                  <mat-label>Mot de passe *</mat-label>
+                  <input 
+                    matInput 
+                    [type]="hidePassword ? 'password' : 'text'" 
+                    formControlName="password"
+                    placeholder="Minimum 6 caractères">
+                  <mat-icon matPrefix>lock</mat-icon>
+                  <button 
+                    mat-icon-button 
+                    matSuffix 
+                    (click)="hidePassword = !hidePassword" 
+                    type="button">
+                    <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+                  </button>
+                  <mat-error *ngIf="registerForm.get('password')?.hasError('required')">
+                    Ce champ est requis
+                  </mat-error>
+                  <mat-error *ngIf="registerForm.get('password')?.hasError('minlength')">
+                    Minimum 6 caractères
+                  </mat-error>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline">
+                  <mat-label>Confirmer le mot de passe *</mat-label>
+                  <input 
+                    matInput 
+                    [type]="hideConfirmPassword ? 'password' : 'text'" 
+                    formControlName="confirmPassword">
+                  <mat-icon matPrefix>lock_outline</mat-icon>
+                  <button 
+                    mat-icon-button 
+                    matSuffix 
+                    (click)="hideConfirmPassword = !hideConfirmPassword" 
+                    type="button">
+                    <mat-icon>{{hideConfirmPassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+                  </button>
+                  <mat-error *ngIf="registerForm.get('confirmPassword')?.hasError('required')">
+                    Ce champ est requis
+                  </mat-error>
+                  <mat-error *ngIf="registerForm.get('confirmPassword')?.hasError('passwordMismatch')">
+                    Les mots de passe ne correspondent pas
+                  </mat-error>
+                </mat-form-field>
+              </div>
+
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Téléphone</mat-label>
+                <input matInput formControlName="telephone" placeholder="Optionnel">
+                <mat-icon matPrefix>phone</mat-icon>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Adresse</mat-label>
+                <input matInput formControlName="adresse" placeholder="Optionnel">
+                <mat-icon matPrefix>home</mat-icon>
+              </mat-form-field>
+
+              <div *ngIf="error" class="error-message">
+                <mat-icon>error</mat-icon>
+                <span>{{ error }}</span>
+              </div>
+
+              <button 
+                mat-raised-button 
+                color="primary" 
+                type="submit" 
+                class="full-width submit-btn"
+                [disabled]="loading || registerForm.invalid">
+                <mat-spinner *ngIf="loading" diameter="20" class="spinner"></mat-spinner>
+                <span *ngIf="!loading">S'inscrire</span>
+                <span *ngIf="loading">Inscription...</span>
+              </button>
+            </form>
+          </mat-tab>
+        </mat-tab-group>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

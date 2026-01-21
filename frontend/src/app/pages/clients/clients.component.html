@@ -1,0 +1,128 @@
+<div class="clients-container">
+  <div class="header">
+    <div class="header-left">
+      <h1>Gestion des clients</h1>
+      <nav class="main-nav">
+        <button class="nav-btn" (click)="navigateToComptes()">
+          <mat-icon>account_balance_wallet</mat-icon>
+          Comptes
+        </button>
+        <button class="nav-btn active">
+          <mat-icon>people</mat-icon>
+          Clients
+        </button>
+      </nav>
+    </div>
+    <div class="header-right">
+      <button mat-raised-button color="primary" (click)="openCreateForm()">
+        <mat-icon>add</mat-icon>
+        Nouveau client
+      </button>
+      <button mat-icon-button (click)="logout()" title="Déconnexion">
+        <mat-icon>logout</mat-icon>
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="showForm" class="form-container">
+    <h2>{{ editingClient ? 'Modifier' : 'Créer' }} un client</h2>
+    <form (ngSubmit)="saveClient()">
+      <div class="form-row">
+        <mat-form-field appearance="outline">
+          <mat-label>Nom *</mat-label>
+          <input matInput [(ngModel)]="clientForm.nom" name="nom" required>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Prénom *</mat-label>
+          <input matInput [(ngModel)]="clientForm.prenom" name="prenom" required>
+        </mat-form-field>
+      </div>
+
+      <div class="form-row">
+        <mat-form-field appearance="outline">
+          <mat-label>Email *</mat-label>
+          <input matInput type="email" [(ngModel)]="clientForm.email" name="email" required>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Téléphone</mat-label>
+          <input matInput [(ngModel)]="clientForm.telephone" name="telephone">
+        </mat-form-field>
+      </div>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Adresse</mat-label>
+        <input matInput [(ngModel)]="clientForm.adresse" name="adresse">
+      </mat-form-field>
+
+      <div class="form-row">
+        <mat-form-field appearance="outline">
+          <mat-label>Date de naissance</mat-label>
+          <input matInput [matDatepicker]="picker" [(ngModel)]="clientForm.dateNaissance" name="dateNaissance">
+          <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-datepicker #picker></mat-datepicker>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Sexe</mat-label>
+          <mat-select [(ngModel)]="clientForm.sexe" name="sexe">
+            <mat-option value="M">Masculin</mat-option>
+            <mat-option value="F">Féminin</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Nationalité</mat-label>
+          <input matInput [(ngModel)]="clientForm.nationalite" name="nationalite">
+        </mat-form-field>
+      </div>
+
+      <div class="form-actions">
+        <button mat-button type="button" (click)="cancelForm()">Annuler</button>
+        <button mat-raised-button color="primary" type="submit">Enregistrer</button>
+      </div>
+    </form>
+  </div>
+
+  <div *ngIf="loading" class="loading">
+    <mat-spinner></mat-spinner>
+  </div>
+
+  <table mat-table [dataSource]="clients" class="clients-table" *ngIf="!loading">
+    <ng-container matColumnDef="nom">
+      <th mat-header-cell *matHeaderCellDef>Nom</th>
+      <td mat-cell *matCellDef="let client">{{ client.nom }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="prenom">
+      <th mat-header-cell *matHeaderCellDef>Prénom</th>
+      <td mat-cell *matCellDef="let client">{{ client.prenom }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="email">
+      <th mat-header-cell *matHeaderCellDef>Email</th>
+      <td mat-cell *matCellDef="let client">{{ client.email }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="telephone">
+      <th mat-header-cell *matHeaderCellDef>Téléphone</th>
+      <td mat-cell *matCellDef="let client">{{ client.telephone }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef>Actions</th>
+      <td mat-cell *matCellDef="let client">
+        <button mat-icon-button color="primary" (click)="openEditForm(client)">
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button mat-icon-button color="warn" (click)="deleteClient(client)">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+</div>

@@ -1,0 +1,380 @@
+.dashboard-container {
+  min-height: 100vh;
+  background: #f5f5f5;
+  padding-bottom: 40px;
+}
+
+.dashboard-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 20px 40px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+}
+
+.logo-section {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.bank-icon {
+  font-size: 40px;
+  width: 40px;
+  height: 40px;
+}
+
+.logo-section h1 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.welcome-message {
+  font-size: 16px;
+}
+
+.welcome-message strong {
+  font-weight: 600;
+}
+
+.logout-btn {
+  color: white;
+}
+
+.summary-section {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  padding: 30px 40px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.summary-card {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s;
+}
+
+.summary-card:hover {
+  transform: translateY(-2px);
+}
+
+.summary-icon {
+  background: rgba(102, 126, 234, 0.1);
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.summary-icon mat-icon {
+  font-size: 32px;
+  width: 32px;
+  height: 32px;
+  color: #667eea;
+}
+
+.summary-card.total .summary-icon {
+  background: rgba(102, 126, 234, 0.2);
+}
+
+.summary-card.courant .summary-icon {
+  background: rgba(33, 150, 243, 0.2);
+}
+
+.summary-card.epargne .summary-icon {
+  background: rgba(76, 175, 80, 0.2);
+}
+
+.summary-content h3 {
+  margin: 0 0 8px 0;
+  font-size: 14px;
+  color: #666;
+  font-weight: 500;
+}
+
+.summary-content .amount {
+  font-size: 24px;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 4px;
+}
+
+.summary-content .accounts-count {
+  font-size: 12px;
+  color: #999;
+}
+
+.quick-actions {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 40px 20px;
+}
+
+.quick-actions h2 {
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.actions-grid {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.action-card {
+  background: white;
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 20px 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+  min-width: 120px;
+}
+
+.action-card:hover:not(:disabled) {
+  border-color: #667eea;
+  background: #f5f7ff;
+  transform: translateY(-2px);
+}
+
+.action-card:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.action-card mat-icon {
+  font-size: 32px;
+  width: 32px;
+  height: 32px;
+  color: #667eea;
+}
+
+.accounts-section,
+.transactions-section {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 30px 40px;
+}
+
+.accounts-section h2,
+.transactions-section h2 {
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.accounts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 20px;
+}
+
+.account-card {
+  border-radius: 12px;
+  transition: transform 0.2s;
+}
+
+.account-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.account-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.account-type-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.account-type-badge.courant {
+  background: #e3f2fd;
+  color: #1976d2;
+}
+
+.account-type-badge.epargne {
+  background: #e8f5e9;
+  color: #388e3c;
+}
+
+.account-type-badge mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+}
+
+.account-details {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.account-number,
+.account-balance,
+.account-created {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.account-number .label,
+.account-balance .label,
+.account-created .label {
+  font-size: 14px;
+  color: #666;
+}
+
+.account-number .value,
+.account-created .value {
+  font-size: 14px;
+  color: #333;
+  font-weight: 500;
+}
+
+.balance-amount {
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.balance-amount.positive {
+  color: #388e3c;
+}
+
+.balance-amount.negative {
+  color: #d32f2f;
+}
+
+.balance-amount.neutral {
+  color: #666;
+}
+
+.account-card mat-card-actions {
+  display: flex;
+  gap: 8px;
+  padding: 16px;
+}
+
+.account-card mat-card-actions button {
+  flex: 1;
+}
+
+.transactions-table {
+  width: 100%;
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.transactions-table th {
+  background: #f5f5f5;
+  font-weight: 600;
+  color: #333;
+}
+
+.transactions-table td.positive {
+  color: #388e3c;
+  font-weight: 600;
+}
+
+.transactions-table td.negative {
+  color: #d32f2f;
+  font-weight: 600;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  background: white;
+  border-radius: 12px;
+}
+
+.empty-icon {
+  font-size: 64px;
+  width: 64px;
+  height: 64px;
+  color: #ccc;
+  margin-bottom: 16px;
+}
+
+.empty-state h3 {
+  margin: 0 0 8px 0;
+  color: #666;
+}
+
+.empty-state p {
+  margin: 0;
+  color: #999;
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  gap: 16px;
+}
+
+.loading-container p {
+  color: #666;
+  margin: 0;
+}
+
+@media (max-width: 768px) {
+  .summary-section {
+    grid-template-columns: 1fr;
+    padding: 20px;
+  }
+
+  .accounts-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .accounts-section,
+  .transactions-section,
+  .quick-actions {
+    padding: 20px;
+  }
+
+  .header-content {
+    flex-direction: column;
+    gap: 15px;
+    align-items: flex-start;
+  }
+}

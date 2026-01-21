@@ -1,0 +1,153 @@
+.login-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 20px;
+}
+
+.login-card-wrapper {
+  width: 100%;
+  max-width: 500px;
+}
+
+.login-card {
+  border-radius: 16px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+}
+
+.card-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 40px 20px;
+  text-align: center;
+}
+
+.logo-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.bank-icon {
+  font-size: 64px;
+  width: 64px;
+  height: 64px;
+  margin-bottom: 10px;
+}
+
+.bank-title {
+  margin: 0;
+  font-size: 32px;
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+
+.bank-subtitle {
+  margin: 0;
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+.auth-tabs {
+  margin-top: 20px;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px 0;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+mat-form-field {
+  width: 100%;
+}
+
+.submit-btn {
+  height: 48px;
+  font-size: 16px;
+  margin-top: 10px;
+  position: relative;
+}
+
+.spinner {
+  margin-right: 8px;
+}
+
+.error-message {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px;
+  background-color: #fee;
+  border: 1px solid #fcc;
+  border-radius: 4px;
+  color: #c33;
+  font-size: 14px;
+}
+
+.error-message mat-icon {
+  color: #c33;
+}
+
+.info-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px;
+  background-color: #e3f2fd;
+  border-radius: 4px;
+  margin-top: 10px;
+}
+
+.info-box mat-icon {
+  color: #1976d2;
+}
+
+.info-box p {
+  margin: 0;
+  font-size: 12px;
+  color: #1976d2;
+}
+
+::ng-deep .mat-mdc-tab-header {
+  border-bottom: 2px solid #e0e0e0;
+}
+
+::ng-deep .mat-mdc-tab-label-active {
+  color: #667eea;
+}
+
+::ng-deep .mat-mdc-tab-group.mat-primary .mat-mdc-tab-label-active .mdc-tab__text-label {
+  color: #667eea;
+}
+
+@media (max-width: 600px) {
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .bank-title {
+    font-size: 24px;
+  }
+
+  .bank-icon {
+    font-size: 48px;
+    width: 48px;
+    height: 48px;
+  }
+}

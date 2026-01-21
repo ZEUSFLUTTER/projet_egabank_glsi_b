@@ -1,0 +1,31 @@
+<h2 mat-dialog-title>Effectuer un virement</h2>
+<mat-dialog-content>
+  <p>Solde disponible: <strong>{{ soldeActuel | number:'1.0-0' }} FCFA</strong></p>
+
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Compte destination</mat-label>
+    <mat-select [(ngModel)]="compteDestinationId" required>
+      <mat-option *ngFor="let compte of comptes" [value]="compte.id">
+        {{ compte.numeroCompte }} - {{ compte.typeCompte }} ({{ compte.solde | number:'1.0-0' }} FCFA)
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Montant</mat-label>
+    <input matInput type="number" [(ngModel)]="montant" min="0" step="0.01" [max]="soldeActuel" required>
+    <span matSuffix>FCFA</span>
+  </mat-form-field>
+
+  <div *ngIf="error" class="error-message">
+    {{ error }}
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()" [disabled]="loading">Annuler</button>
+  <button mat-raised-button color="primary" (click)="onConfirm()"
+    [disabled]="loading || montant <= 0 || montant > soldeActuel || !compteDestinationId">
+    <span *ngIf="loading">En cours...</span>
+    <span *ngIf="!loading">Confirmer</span>
+  </button>
+</mat-dialog-actions>

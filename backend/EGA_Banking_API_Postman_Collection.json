@@ -1,0 +1,1405 @@
+{
+	"info": {
+		"_postman_id": "ega-banking-api-collection",
+		"name": "EGA Banking API - Complete Test Suite",
+		"description": "Comprehensive Postman collection for testing all EGA Banking API endpoints including Authentication, Clients, Accounts, Transactions, and Admin operations.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Register Client",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    var jsonData = pm.response.json();",
+									"    pm.environment.set(\"client_token\", jsonData.token);",
+									"    pm.environment.set(\"client_id\", jsonData.userId);",
+									"    pm.environment.set(\"client_email\", jsonData.email);",
+									"    pm.test(\"Client registered successfully\", function () {",
+									"        pm.expect(jsonData.token).to.exist;",
+									"        pm.expect(jsonData.userType).to.eql(\"CLIENT\");",
+									"    });",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"john.doe@example.com\",\n  \"password\": \"password123\",\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\",\n  \"userType\": \"CLIENT\",\n  \"phoneNumber\": \"+1234567890\",\n  \"address\": \"123 Main Street, New York, NY 10001\",\n  \"gender\": \"Male\",\n  \"birthDate\": \"1990-05-15\",\n  \"nationality\": \"American\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/auth/register",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"register"
+							]
+						},
+						"description": "Register a new client with all required fields"
+					},
+					"response": []
+				},
+				{
+					"name": "Register Admin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    var jsonData = pm.response.json();",
+									"    pm.environment.set(\"admin_token\", jsonData.token);",
+									"    pm.environment.set(\"admin_id\", jsonData.userId);",
+									"    pm.test(\"Admin registered successfully\", function () {",
+									"        pm.expect(jsonData.token).to.exist;",
+									"        pm.expect(jsonData.userType).to.eql(\"ADMIN\");",
+									"    });",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"admin@ega.com\",\n  \"password\": \"adminPass123\",\n  \"firstName\": \"Admin\",\n  \"lastName\": \"User\",\n  \"userType\": \"ADMIN\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/auth/register",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"register"
+							]
+						},
+						"description": "Register a new admin user (no client-specific fields required)"
+					},
+					"response": []
+				},
+				{
+					"name": "Login Client",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    var jsonData = pm.response.json();",
+									"    pm.environment.set(\"client_token\", jsonData.token);",
+									"    pm.environment.set(\"client_id\", jsonData.userId);",
+									"    pm.test(\"Login successful\", function () {",
+									"        pm.expect(jsonData.token).to.exist;",
+									"        pm.expect(jsonData.tokenType).to.eql(\"Bearer\");",
+									"    });",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"john.doe@example.com\",\n  \"password\": \"password123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/auth/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"login"
+							]
+						},
+						"description": "Authenticate a client and receive JWT token"
+					},
+					"response": []
+				},
+				{
+					"name": "Login Admin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    var jsonData = pm.response.json();",
+									"    pm.environment.set(\"admin_token\", jsonData.token);",
+									"    pm.environment.set(\"admin_id\", jsonData.userId);",
+									"    pm.test(\"Admin login successful\", function () {",
+									"        pm.expect(jsonData.userType).to.eql(\"ADMIN\");",
+									"    });",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"admin@ega.com\",\n  \"password\": \"adminPass123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/auth/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"login"
+							]
+						},
+						"description": "Authenticate an admin user"
+					},
+					"response": []
+				},
+				{
+					"name": "Refresh Token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    var jsonData = pm.response.json();",
+									"    pm.environment.set(\"client_token\", jsonData.token);",
+									"    pm.test(\"Token refreshed successfully\", function () {",
+									"        pm.expect(jsonData.token).to.exist;",
+									"    });",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{client_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/auth/refresh",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"refresh"
+							]
+						},
+						"description": "Refresh an existing JWT token"
+					},
+					"response": []
+				}
+			],
+			"description": "Authentication endpoints for login, registration, and token management"
+		},
+		{
+			"name": "Clients Management",
+			"item": [
+				{
+					"name": "Get All Clients",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"if (pm.response.code === 200) {",
+									"    var jsonData = pm.response.json();",
+									"    if (jsonData.length > 0) {",
+									"        pm.environment.set(\"test_client_id\", jsonData[0].id);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{admin_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/clients",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"clients"
+							]
+						},
+						"description": "Retrieve all registered clients"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Client by ID",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{client_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/clients/{{client_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"clients",
+								"{{client_id}}"
+							]
+						},
+						"description": "Get details of a specific client"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Client",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{admin_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"firstName\": \"Alice\",\n  \"lastName\": \"Smith\",\n  \"email\": \"alice.smith@example.com\",\n  \"password\": \"securePass123\",\n  \"phoneNumber\": \"+9876543210\",\n  \"address\": \"456 Oak Avenue, Los Angeles, CA 90001\",\n  \"gender\": \"Female\",\n  \"birthDate\": \"1985-08-20\",\n  \"nationality\": \"Canadian\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/clients",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"clients"
+							]
+						},
+						"description": "Create a new client (Admin action)"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Client",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{client_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"phoneNumber\": \"+1111222333\",\n  \"address\": \"789 New Address Street, Updated City\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/clients/{{client_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"clients",
+								"{{client_id}}"
+							]
+						},
+						"description": "Update client information"
+					},
+					"response": []
+				},
+				{
+					"name": "Change Password",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{client_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"newPassword\": \"newSecurePassword123\",\n  \"confirmPassword\": \"newSecurePassword123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/clients/{{client_id}}/password",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"clients",
+								"{{client_id}}",
+								"password"
+							]
+						},
+						"description": "Change client password"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Client",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{admin_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/clients/{{test_client_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"clients",
+								"{{test_client_id}}"
+							]
+						},
+						"description": "Delete a client (must have zero balance)"
+					},
+					"response": []
+				}
+			],
+			"description": "Client management endpoints"
+		},
+		{
+			"name": "Accounts Management",
+			"item": [
+				{
+					"name": "Get All Accounts",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    var jsonData = pm.response.json();",
+									"    if (jsonData.length > 0) {",
+									"        pm.environment.set(\"source_account_id\", jsonData[0].id);",
+									"        if (jsonData.length > 1) {",
+									"            pm.environment.set(\"destination_account_id\", jsonData[1].id);",
+									"        }",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{admin_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/accounts",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"accounts"
+							]
+						},
+						"description": "Retrieve all bank accounts"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Account by ID",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{client_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/accounts/{{source_account_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"accounts",
+								"{{source_account_id}}"
+							]
+						},
+						"description": "Get details of a specific account"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Savings Account",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201 || pm.response.code === 200) {",
+									"    var jsonData = pm.response.json();",
+									"    pm.environment.set(\"savings_account_id\", jsonData.id);",
+									"    pm.test(\"Account created successfully\", function () {",
+									"        pm.expect(jsonData.accountType).to.eql(\"SAVINGS\");",
+									"    });",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{admin_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"accountNumber\": \"FR0000001\",\n  \"accountType\": \"SAVINGS\",\n  \"balance\": 1000.0,\n  \"owner\": {\n    \"id\": {{client_id}}\n  }\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/accounts",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"accounts"
+							]
+						},
+						"description": "Create a new savings account"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Current Account",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201 || pm.response.code === 200) {",
+									"    var jsonData = pm.response.json();",
+									"    pm.environment.set(\"current_account_id\", jsonData.id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{admin_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"accountNumber\": \"FR0000002\",\n  \"accountType\": \"CURRENT\",\n  \"balance\": 500.0,\n  \"owner\": {\n    \"id\": {{client_id}}\n  }\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/accounts",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"accounts"
+							]
+						},
+						"description": "Create a new current account"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Account",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{admin_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"accountType\": \"SAVINGS\",\n  \"balance\": 1500.0\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/accounts/{{savings_account_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"accounts",
+								"{{savings_account_id}}"
+							]
+						},
+						"description": "Update account details"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Account",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{admin_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/accounts/{{current_account_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"accounts",
+								"{{current_account_id}}"
+							]
+						},
+						"description": "Delete an account"
+					},
+					"response": []
+				}
+			],
+			"description": "Account management endpoints"
+		},
+		{
+			"name": "Transactions",
+			"item": [
+				{
+					"name": "Get All Transactions",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"if (pm.response.code === 200) {",
+									"    var jsonData = pm.response.json();",
+									"    if (jsonData.length > 0) {",
+									"        pm.environment.set(\"transaction_id\", jsonData[0].id);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{admin_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/transactions",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"transactions"
+							]
+						},
+						"description": "Retrieve all transactions"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Transaction by ID",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{client_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/transactions/{{transaction_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"transactions",
+								"{{transaction_id}}"
+							]
+						},
+						"description": "Get details of a specific transaction"
+					},
+					"response": []
+				},
+				{
+					"name": "Deposit",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200 || pm.response.code === 201) {",
+									"    pm.test(\"Deposit successful\", function () {",
+									"        var jsonData = pm.response.json();",
+									"        pm.expect(jsonData.transactionType).to.eql(\"DEPOSIT\");",
+									"    });",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{client_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"amount\": 500.0,\n  \"transactionType\": \"DEPOSIT\",\n  \"description\": \"Salary deposit\",\n  \"sourceAccount\": {\n    \"id\": {{savings_account_id}}\n  }\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/transactions",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"transactions"
+							]
+						},
+						"description": "Make a deposit to an account"
+					},
+					"response": []
+				},
+				{
+					"name": "Withdrawal",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200 || pm.response.code === 201) {",
+									"    pm.test(\"Withdrawal successful\", function () {",
+									"        var jsonData = pm.response.json();",
+									"        pm.expect(jsonData.transactionType).to.eql(\"WITHDRAWAL\");",
+									"    });",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{client_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"amount\": 200.0,\n  \"transactionType\": \"WITHDRAWAL\",\n  \"description\": \"ATM withdrawal\",\n  \"sourceAccount\": {\n    \"id\": {{savings_account_id}}\n  }\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/transactions",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"transactions"
+							]
+						},
+						"description": "Withdraw money from an account"
+					},
+					"response": []
+				},
+				{
+					"name": "Transfer",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200 || pm.response.code === 201) {",
+									"    pm.test(\"Transfer successful\", function () {",
+									"        var jsonData = pm.response.json();",
+									"        pm.expect(jsonData.transactionType).to.eql(\"TRANSFER\");",
+									"    });",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{client_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"amount\": 150.0,\n  \"transactionType\": \"TRANSFER\",\n  \"description\": \"Transfer between accounts\",\n  \"sourceAccount\": {\n    \"id\": {{savings_account_id}}\n  },\n  \"destinationAccount\": {\n    \"id\": {{current_account_id}}\n  }\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/transactions",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"transactions"
+							]
+						},
+						"description": "Transfer money between accounts"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Transactions by Account",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{client_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/transactions/account/{{savings_account_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"transactions",
+								"account",
+								"{{savings_account_id}}"
+							]
+						},
+						"description": "Get transaction history for a specific account"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Transactions by Account & Period",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{client_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/transactions/account/{{savings_account_id}}/period?startDate=2024-01-01T00:00:00&endDate=2026-12-31T23:59:59",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"transactions",
+								"account",
+								"{{savings_account_id}}",
+								"period"
+							],
+							"query": [
+								{
+									"key": "startDate",
+									"value": "2024-01-01T00:00:00"
+								},
+								{
+									"key": "endDate",
+									"value": "2026-12-31T23:59:59"
+								}
+							]
+						},
+						"description": "Get transactions for an account within a date range"
+					},
+					"response": []
+				}
+			],
+			"description": "Transaction endpoints for deposits, withdrawals, and transfers"
+		},
+		{
+			"name": "Admin Operations",
+			"item": [
+				{
+					"name": "Get Client Transactions",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{admin_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/admin/clients/{{client_id}}/transactions",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"clients",
+								"{{client_id}}",
+								"transactions"
+							]
+						},
+						"description": "Admin: Get all transactions for a specific client across all their accounts"
+					},
+					"response": []
+				}
+			],
+			"description": "Administrative operations endpoints"
+		},
+		{
+			"name": "Error Scenarios",
+			"item": [
+				{
+					"name": "Login with Invalid Credentials",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 401\", function () {",
+									"    pm.response.to.have.status(401);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"wrong@example.com\",\n  \"password\": \"wrongpassword\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/auth/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"login"
+							]
+						},
+						"description": "Test login with invalid credentials (should return 401)"
+					},
+					"response": []
+				},
+				{
+					"name": "Register with Duplicate Email",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"john.doe@example.com\",\n  \"password\": \"password123\",\n  \"firstName\": \"Duplicate\",\n  \"lastName\": \"User\",\n  \"userType\": \"CLIENT\",\n  \"phoneNumber\": \"+1234567890\",\n  \"address\": \"123 Main St\",\n  \"gender\": \"Male\",\n  \"birthDate\": \"1990-05-15\",\n  \"nationality\": \"American\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/auth/register",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"register"
+							]
+						},
+						"description": "Test registration with existing email (should return 400)"
+					},
+					"response": []
+				},
+				{
+					"name": "Password Mismatch",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{client_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"newPassword\": \"password123\",\n  \"confirmPassword\": \"differentPassword\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/clients/{{client_id}}/password",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"clients",
+								"{{client_id}}",
+								"password"
+							]
+						},
+						"description": "Test password change with mismatched passwords (should return 400)"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Client with Balance",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 409\", function () {",
+									"    pm.response.to.have.status(409);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{admin_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/clients/{{client_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"clients",
+								"{{client_id}}"
+							]
+						},
+						"description": "Test deleting client with non-zero balance (should return 409)"
+					},
+					"response": []
+				},
+				{
+					"name": "Unauthorized Access",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 401 or 403\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([401, 403]);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/clients",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"clients"
+							]
+						},
+						"description": "Test accessing protected endpoint without token (should return 401/403)"
+					},
+					"response": []
+				}
+			],
+			"description": "Test error scenarios and validation"
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8080",
+			"type": "string"
+		},
+		{
+			"key": "client_token",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "admin_token",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "client_id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "admin_id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "test_client_id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "source_account_id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "destination_account_id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "savings_account_id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "current_account_id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "transaction_id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "client_email",
+			"value": "",
+			"type": "string"
+		}
+	]
+}

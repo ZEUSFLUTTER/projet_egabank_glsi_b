@@ -2,7 +2,7 @@
 # Make sure the backend is running on http://localhost:8080
 
 $BaseUrl = "http://localhost:8080/api"
-$Username = "testuser1@example.com"  # Change this to an existing user
+$Username = "vysegy@mailinator.com"  # Change this to an existing user
 $Password = "jojo2000"
 
 Write-Host "======================================================================" -ForegroundColor Cyan

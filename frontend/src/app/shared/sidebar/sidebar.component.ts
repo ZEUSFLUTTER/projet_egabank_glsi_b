@@ -98,6 +98,12 @@ export class SidebarComponent {
     return this.authService.getUserType() === 'ADMIN' ? 'Administrateur' : 'Client Premium';
   }
 
+  getUserProfileImage() {
+    return this.authService.getUserType() === 'ADMIN'
+      ? 'https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80'
+      : 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80';
+  }
+
   logout() {
     this.authService.logout();
   }

@@ -82,4 +82,9 @@ export class AdminService {
   searchClientByCompte(numeroCompte: string): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/compte/search?compte=${numeroCompte}`);
   }
+  cloturerCompte(numeroCompte: string): Observable<void> {
+  return this.http.delete<void>(`${this.apiUrl}/comptes/${numeroCompte}`);
+}
+
+
 }

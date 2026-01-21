@@ -3,6 +3,7 @@ package banque.service;
 import banque.dto.AuthResponseDto;
 import banque.dto.LoginDto;
 import banque.dto.RegisterDto;
+import banque.dto.UserUpdateDto;
 import banque.entity.Client;
 import banque.entity.Utilisateur;
 import banque.enums.Role;
@@ -97,15 +98,39 @@ public class AuthService {
                 .orElseThrow(() -> new BanqueException("Utilisateur introuvable"));
 
         Long id;
+        String password = request.getPassword();
         // Si l'utilisateur est lié à un client (Cas normal pour ROLE_CLIENT)
         if (user.getClient() != null) {
             id = user.getClient().getId();
+            password = user.getPassword();
         } else {
             // Cas Admin (ou utilisateur sans fiche client)
             id = user.getId();
+            password = user.getPassword();
         }
 
         // 5. Retourne le DTO complet (correspondant à l'interface Angular)
-        return new AuthResponseDto(token, role, userDetails.getUsername(), id);
+        return new AuthResponseDto(token, role, userDetails.getUsername(),password,id);
+    }
+    @Transactional
+    public Utilisateur updateUserCredentials(Long id, UserUpdateDto dto) {
+        // 1. Récupérer l'utilisateur
+        Utilisateur user = utilisateurRepository.findById(id)
+                .orElseThrow(() -> new BanqueException("Utilisateur introuvable"));
+        if (dto.getEmail() != null && !dto.getEmail().isBlank()) {
+            boolean emailExists = utilisateurRepository.findByUsername(dto.getEmail())
+                    .filter(u -> !u.getId().equals(id))
+                    .isPresent();
+
+            if (emailExists) {
+                throw new BanqueException("Cet email est déjà utilisé par un autre compte.");
+            }
+            user.setUsername(dto.getEmail());
+        }
+        if (dto.getPassword() != null && !dto.getPassword().isBlank()) {
+            user.setPassword(passwordEncoder.encode(dto.getPassword()));
+        }
+
+        return utilisateurRepository.save(user);
     }
 }

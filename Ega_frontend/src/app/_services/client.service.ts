@@ -6,7 +6,7 @@ import { Client } from '../_models/models';
 @Injectable({ providedIn: 'root' })
 export class ClientService {
   private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:8080/api/clients'; // Ajuster le port selon config
+  private apiUrl = 'http://localhost:8082/api/clients';
 
   // 1. Liste de tous les clients (Admin)
   getAllClients(): Observable<Client[]> {
@@ -45,5 +45,10 @@ export class ClientService {
   searchClients(query: string): Observable<Client[]> {
     const params = new HttpParams().set('q', query);
     return this.http.get<Client[]>(`${this.apiUrl}/search`, { params });
+  }
+
+  updateUserCredentials(userId: number, email: string, password?: string): Observable<any> {
+    const payload = { email, password };
+    return this.http.put(`http://localhost:8082/api/utilisateurs/${userId}`, payload);
   }
 }

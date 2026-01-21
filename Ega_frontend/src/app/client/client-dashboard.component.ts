@@ -6,6 +6,8 @@ import { AccountService } from '../_services/account.service';
 import { User, Compte, Transaction, Client } from '../_models/models';
 import { forkJoin, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
+import Swal from 'sweetalert2';
+import { ClientService } from 'app/_services/client.service';
 
 @Component({
   selector: 'app-client-dashboard',
@@ -21,6 +23,7 @@ import { catchError } from 'rxjs/operators';
 export class ClientDashboardComponent implements OnInit {
   authService = inject(AuthService);
   accountService = inject(AccountService);
+  clientService = inject(ClientService);
   router = inject(Router);
   route = inject(ActivatedRoute); // <-- Ajouter cette ligne
 
@@ -34,13 +37,27 @@ export class ClientDashboardComponent implements OnInit {
   epargneTotal = 0;
   comptePrincipal: Compte | null = null;
 
+  showForcePasswordModal = false;
+  isSavingPassword = false;
+  passwordData = { newPassword: '', confirmPassword: '' };
+
   isLoading = true;
 
   ngOnInit() {
     console.log('Dashboard - Initialisation...');
     this.user = this.authService.currentUserValue;
     console.log('Utilisateur connecté:', this.user);
+    if (this.user?.email) {
+        this.clientService.searchClients(this.user.email).subscribe(clients => {
+            if (clients && clients.length > 0) {
+                this.client = clients[0];
 
+                if (this.user?.password == 'Ega2026' || this.user?.password == 'Ega@2026') {
+                    this.showForcePasswordModal = true;
+                }
+            }
+        });
+    }
     if (this.user && this.user.id) {
       this.loadAllData(this.user.id);
     } else {
@@ -54,7 +71,6 @@ export class ClientDashboardComponent implements OnInit {
     console.log('Chargement des données pour client ID:', clientId);
     this.isLoading = true;
 
-    // MODIFICATION: Utiliser le resolver comme dans accounts.component
     this.route.data.subscribe(data => {
       const resolvedData = data['donnees'];
       console.log('Données résolues par le resolver:', resolvedData);
@@ -198,6 +214,7 @@ export class ClientDashboardComponent implements OnInit {
   toggleSidebar() {
     this.isSidebarOpen = !this.isSidebarOpen;
   }
+
 
   logout() {
     this.authService.logout();

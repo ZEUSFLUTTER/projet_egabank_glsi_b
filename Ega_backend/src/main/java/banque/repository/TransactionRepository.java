@@ -9,9 +9,6 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 public interface TransactionRepository extends JpaRepository<Transaction, Long> {
-    List<Transaction> findByCompteSourceOrCompteDestinationOrderByDateTransactionDesc(Compte source, Compte destination);
-    List<Transaction> findByCompteSourceOrCompteDestinationAndDateTransactionBetweenOrderByDateTransactionDesc(
-            Compte source,Compte destination,LocalDateTime debut,LocalDateTime fin );
     Optional<Transaction> findByRefTransaction(String refTransaction);
 //    @Query("SELECT t FROM Transaction t WHERE t.compteSource.numeroCompte = :numero OR t.compteDestination.numeroCompte = :numero ORDER BY t.dateTransaction DESC")
 @Query("SELECT t FROM Transaction t " +
@@ -20,4 +17,7 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
         "WHERE cs.numeroCompte = :numero OR cd.numeroCompte = :numero " +
         "ORDER BY t.dateTransaction DESC")
     List<Transaction> findHistoriqueByCompte(@Param("numero") String numeroCompte);
+
+
+    List<Transaction> findByCompteSourceOrCompteDestinationAndDateTransactionBetweenOrderByDateTransactionDesc(Compte compte, Compte compte1, LocalDateTime dateDebut, LocalDateTime dateFin);
 }

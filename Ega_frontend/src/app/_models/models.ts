@@ -2,6 +2,7 @@ export interface User {
   token: string;
   role: string;
   email?: string;
+  password? : string
   id?: number;
 }
 

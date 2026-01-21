@@ -14,9 +14,11 @@ import org.springframework.stereotype.Service;
 
 import java.awt.Color;
 import java.io.ByteArrayOutputStream;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -52,7 +54,6 @@ public class ReportService {
         Compte compte = compteService.getCompteByNumero(numeroCompte);
         Client client = compte.getClient();
         Iban ibanInfo = Iban.valueOf(compte.getNumeroCompte());
-
         try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             Document document = new Document(PageSize.A4);
             PdfWriter writer = PdfWriter.getInstance(document, out);
@@ -122,11 +123,117 @@ public class ReportService {
     /**
      * 2. GÉNÉRER UN RELEVÉ DE COMPTE
      */
+//    public byte[] genererRelevePdf(String numeroCompte, LocalDateTime dateDebut, LocalDateTime dateFin) {
+//        Compte compte = compteService.getCompteByNumero(numeroCompte);
+//        List<Transaction> transactions = transactionRepository.findReleveByCompteAndDate(
+//                compte.getNumeroCompte(), dateDebut, dateFin
+//        );
+//
+//        try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+//            Document document = new Document(PageSize.A4.rotate()); // Format Paysage
+//            PdfWriter.getInstance(document, out);
+//            document.open();
+//
+//            // 1. Logo & En-tête
+//            ajouterLogoEtEntete(document);
+//
+//            // 2. Titre et Période
+//            ajouterTitre(document, "RELEVÉ DE COMPTE");
+//
+//            DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+//            Paragraph pPeriode = new Paragraph("Période du " + dateDebut.format(fmt) + " au " + dateFin.format(fmt), FONT_SOUS_TITRE);
+//            pPeriode.setAlignment(Element.ALIGN_CENTER);
+//            pPeriode.setSpacingAfter(10);
+//            document.add(pPeriode);
+//
+//            // Info Solde
+//            PdfPTable soldeTable = new PdfPTable(1);
+//            soldeTable.setWidthPercentage(40);
+//            soldeTable.setHorizontalAlignment(Element.ALIGN_RIGHT);
+//            PdfPCell cellSolde = new PdfPCell(new Phrase("Solde au " + LocalDateTime.now().format(fmt) + " : " + compte.getSolde() + " FCFA", FONT_BOLD));
+//            cellSolde.setBackgroundColor(COLOR_BACKGROUND_LIGHT);
+//            cellSolde.setBorderColor(COLOR_PRIMARY);
+//            cellSolde.setPadding(8);
+//            cellSolde.setHorizontalAlignment(Element.ALIGN_CENTER);
+//            soldeTable.addCell(cellSolde);
+//            document.add(soldeTable);
+//            document.add(new Paragraph(" "));
+//
+//            // 3. Tableau Transactions
+//            PdfPTable table = new PdfPTable(5);
+//            table.setWidthPercentage(100);
+//            table.setWidths(new float[]{2, 3, 6, 2.5f, 2.5f});
+//            table.setHeaderRows(1); // Répète l'en-tête si changement de page
+//
+//            ajouterHeaderCell(table, "Date");
+//            ajouterHeaderCell(table, "Référence");
+//            ajouterHeaderCell(table, "Description");
+//            ajouterHeaderCell(table, "Débit");
+//            ajouterHeaderCell(table, "Crédit");
+//
+//            DateTimeFormatter fmtHeure = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+//
+//            // Boucle avec alternance de couleurs
+//            for (int i = 0; i < transactions.size(); i++) {
+//                Transaction t = transactions.get(i);
+//                boolean isAlt = (i % 2 != 0); // Une ligne sur deux colorée
+//
+//                ajouterCelluleDonnee(table, t.getDateTransaction().format(fmtHeure), isAlt);
+//                ajouterCelluleDonnee(table, t.getRefTransaction(), isAlt);
+//                ajouterCelluleDonnee(table, t.getDescription(), isAlt);
+//
+//                boolean isCredit = isTransactionCredit(t, compte);
+//
+//                if (isCredit) {
+//                    ajouterCelluleDonnee(table, "", isAlt); // Colonne Débit vide
+//                    // Colonne Crédit
+//                    PdfPCell cell = new PdfPCell(new Phrase("+ " + t.getMontant(), FONT_BOLD));
+//                    styleCellDonnee(cell, isAlt);
+//                    cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+//                    // On garde le vert pour l'argent qui rentre (conventionnel) mais doux
+//                    cell.setBorderColor(COLOR_SECONDARY);
+//                    table.addCell(cell);
+//                } else {
+//                    // Colonne Débit
+//                    PdfPCell cell = new PdfPCell(new Phrase("" + t.getMontant(), FONT_NORMAL));
+//                    styleCellDonnee(cell, isAlt);
+//                    cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+//                    table.addCell(cell);
+//                    ajouterCelluleDonnee(table, "", isAlt); // Colonne Crédit vide
+//                }
+//            }
+//
+//            document.add(table);
+//            ajouterPiedDePage(document);
+//
+//            document.close();
+//            return out.toByteArray();
+//        } catch (Exception e) {
+//            throw new RuntimeException("Erreur Relevé PDF", e);
+//        }
+//    }
+
     public byte[] genererRelevePdf(String numeroCompte, LocalDateTime dateDebut, LocalDateTime dateFin) {
         Compte compte = compteService.getCompteByNumero(numeroCompte);
-        List<Transaction> transactions = transactionRepository.findByCompteSourceOrCompteDestinationAndDateTransactionBetweenOrderByDateTransactionDesc(
+
+        // 1. Récupération des données brutes (qui contiennent potentiellement le doublon)
+        List<Transaction> transactionsBrutes = transactionRepository.findByCompteSourceOrCompteDestinationAndDateTransactionBetweenOrderByDateTransactionDesc(
                 compte, compte, dateDebut, dateFin
         );
+        List<Transaction> transactionsFiltrees = transactionsBrutes.stream()
+                .filter(t -> {
+                    boolean estSource = t.getCompteSource().getNumeroCompte().equals(numeroCompte);
+                    String type = t.getType().toString();
+                    if ("RETRAIT".equals(type) || "VERSEMENT".equals(type)) {
+                        return true;
+                    }
+                    if ("VIREMENT".equals(type) && estSource && t.getMontant().compareTo(BigDecimal.ZERO) > 0) {
+                        return false;
+                    }
+
+                    return true;
+                })
+                .collect(Collectors.toList());
 
         try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             Document document = new Document(PageSize.A4.rotate()); // Format Paysage
@@ -142,27 +249,38 @@ public class ReportService {
             DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd/MM/yyyy");
             Paragraph pPeriode = new Paragraph("Période du " + dateDebut.format(fmt) + " au " + dateFin.format(fmt), FONT_SOUS_TITRE);
             pPeriode.setAlignment(Element.ALIGN_CENTER);
-            pPeriode.setSpacingAfter(10);
+            pPeriode.setSpacingAfter(20);
             document.add(pPeriode);
 
-            // Info Solde
-            PdfPTable soldeTable = new PdfPTable(1);
-            soldeTable.setWidthPercentage(40);
-            soldeTable.setHorizontalAlignment(Element.ALIGN_RIGHT);
+            // Création d'une table conteneur de 3 colonnes pour gérer l'alignement
+            PdfPTable headerTable = new PdfPTable(3);
+            headerTable.setWidthPercentage(100);
+            headerTable.setWidths(new float[]{40f, 20f, 40f});
+            PdfPCell cellNum = new PdfPCell(new Phrase("Compte " + compte.getTypeCompte().toString() + " : " + compte.getNumeroCompte(), FONT_BOLD));
+            cellNum.setBackgroundColor(COLOR_BACKGROUND_LIGHT);
+            cellNum.setBorderColor(COLOR_PRIMARY);
+            cellNum.setPadding(8);
+            cellNum.setHorizontalAlignment(Element.ALIGN_CENTER);
+            cellNum.setVerticalAlignment(Element.ALIGN_MIDDLE);
+            headerTable.addCell(cellNum);
+            PdfPCell cellSpace = new PdfPCell(new Phrase(" "));
+            cellSpace.setBorder(Rectangle.NO_BORDER); // Pas de bordure
+            headerTable.addCell(cellSpace);
             PdfPCell cellSolde = new PdfPCell(new Phrase("Solde au " + LocalDateTime.now().format(fmt) + " : " + compte.getSolde() + " FCFA", FONT_BOLD));
             cellSolde.setBackgroundColor(COLOR_BACKGROUND_LIGHT);
             cellSolde.setBorderColor(COLOR_PRIMARY);
             cellSolde.setPadding(8);
             cellSolde.setHorizontalAlignment(Element.ALIGN_CENTER);
-            soldeTable.addCell(cellSolde);
-            document.add(soldeTable);
-            document.add(new Paragraph(" "));
+            cellSolde.setVerticalAlignment(Element.ALIGN_MIDDLE);
+            headerTable.addCell(cellSolde);
+            document.add(headerTable);
+            document.add(new Paragraph(" ")); // Espace après le bloc
 
             // 3. Tableau Transactions
             PdfPTable table = new PdfPTable(5);
             table.setWidthPercentage(100);
             table.setWidths(new float[]{2, 3, 6, 2.5f, 2.5f});
-            table.setHeaderRows(1); // Répète l'en-tête si changement de page
+            table.setHeaderRows(1);
 
             ajouterHeaderCell(table, "Date");
             ajouterHeaderCell(table, "Référence");
@@ -172,10 +290,9 @@ public class ReportService {
 
             DateTimeFormatter fmtHeure = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
-            // Boucle avec alternance de couleurs
-            for (int i = 0; i < transactions.size(); i++) {
-                Transaction t = transactions.get(i);
-                boolean isAlt = (i % 2 != 0); // Une ligne sur deux colorée
+            for (int i = 0; i < transactionsFiltrees.size(); i++) {
+                Transaction t = transactionsFiltrees.get(i);
+                boolean isAlt = (i % 2 != 0);
 
                 ajouterCelluleDonnee(table, t.getDateTransaction().format(fmtHeure), isAlt);
                 ajouterCelluleDonnee(table, t.getRefTransaction(), isAlt);
@@ -189,12 +306,11 @@ public class ReportService {
                     PdfPCell cell = new PdfPCell(new Phrase("+ " + t.getMontant(), FONT_BOLD));
                     styleCellDonnee(cell, isAlt);
                     cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-                    // On garde le vert pour l'argent qui rentre (conventionnel) mais doux
                     cell.setBorderColor(COLOR_SECONDARY);
                     table.addCell(cell);
                 } else {
                     // Colonne Débit
-                    PdfPCell cell = new PdfPCell(new Phrase("- " + t.getMontant(), FONT_NORMAL));
+                    PdfPCell cell = new PdfPCell(new Phrase("" + t.getMontant(), FONT_NORMAL));
                     styleCellDonnee(cell, isAlt);
                     cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
                     table.addCell(cell);
@@ -211,7 +327,6 @@ public class ReportService {
             throw new RuntimeException("Erreur Relevé PDF", e);
         }
     }
-
     // --- HELPERS DE STYLISATION ---
 
     private void ajouterLogoEtEntete(Document document) throws DocumentException {
@@ -223,18 +338,11 @@ public class ReportService {
         PdfPCell cellLogo = new PdfPCell();
         cellLogo.setBorder(Rectangle.NO_BORDER);
         try {
-            //
 
-            // Assurez-vous que le fichier existe dans src/main/resources/static/images/logo.png
             ClassPathResource imageFile = new ClassPathResource("static/images/logo.png");
-            if (imageFile.exists()) {
-                Image img = Image.getInstance(imageFile.getURL());
-                img.scaleToFit(50, 50); // Ajuster la taille
-                cellLogo.addElement(img);
-            } else {
-                // Fallback si pas d'image
-                cellLogo.addElement(new Phrase("EB", FONT_TITRE));
-            }
+            Image img = Image.getInstance(imageFile.getURL());
+            img.scaleToFit(50, 50); // Ajuster la taille
+            cellLogo.addElement(img);
         } catch (Exception e) {
             cellLogo.addElement(new Phrase("EB", FONT_TITRE));
         }

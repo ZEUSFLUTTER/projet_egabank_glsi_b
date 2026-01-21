@@ -2,6 +2,7 @@ package banque.service;
 
 import banque.entity.Compte;
 import banque.entity.Transaction;
+import banque.enums.StatutCompte;
 import banque.enums.TypeTransaction;
 import banque.repository.CompteRepository;
 import banque.repository.TransactionRepository;
@@ -21,16 +22,25 @@ public class OperationService {
     private final TransactionRepository transactionRepository;
     private final CompteService compteService;
 
+
+    private void verifierStatutCompte(Compte compte) {
+        if (compte.getStatut() == StatutCompte.CLOTURE) {
+            throw new BanqueException("Opération impossible : Le compte " + compte.getNumeroCompte() + " est CLÔTURÉ.");
+        }
+        if (compte.getStatut() == StatutCompte.SUSPENDU) {
+            throw new BanqueException("Opération impossible : Le compte " + compte.getNumeroCompte() + " est SUSPENDU.");
+        }
+    }
+
     // --- VERSEMENT (Dépôt d'espèces) ---
     @Transactional
     public void effectuerVersement(String numeroCompte, BigDecimal montant) {
+        Compte compte = compteService.getCompteByNumero(numeroCompte);
+        verifierStatutCompte(compte);
         // Validation basique
         if (montant.compareTo(BigDecimal.ZERO) <= 0) {
             throw new BanqueException("Le montant du versement doit être positif.");
         }
-
-        // Récupération sécurisée (vérifie existence + clôture + client actif)
-        Compte compte = compteService.getCompteByNumero(numeroCompte);
 
         // 2. Mise à jour du solde
         compte.setSolde(compte.getSolde().add(montant));
@@ -52,11 +62,13 @@ public class OperationService {
     // --- 2. RETRAIT (Retrait d'espèces) ---
     @Transactional
     public void effectuerRetrait(String numeroCompte, BigDecimal montant) {
+
+        Compte compte = compteService.getCompteByNumero(numeroCompte);
+
+        verifierStatutCompte(compte);
         if (montant.compareTo(BigDecimal.ZERO) <= 0) {
             throw new BanqueException("Le montant du retrait doit être positif.");
         }
-
-        Compte compte = compteService.getCompteByNumero(numeroCompte);
 
         // Vérification Solvabilité (Solde - Montant >= 0 ?)
         if (compte.getSolde().compareTo(montant) < 0) {
@@ -83,6 +95,13 @@ public class OperationService {
     // --- 3. VIREMENT (Compte A vers Compte B) ---
     @Transactional
     public void effectuerVirement(String numeroCompteEmetteur, String numeroCompteBeneficiaire, BigDecimal montant) {
+        // 1. Récupération des deux comptes
+        Compte emetteur = compteService.getCompteByNumero(numeroCompteEmetteur);
+        Compte beneficiaire = compteService.getCompteByNumero(numeroCompteBeneficiaire);
+
+        verifierStatutCompte(emetteur);
+        verifierStatutCompte(beneficiaire);
+
         // Validations initiales
         if (numeroCompteEmetteur.equals(numeroCompteBeneficiaire)) {
             throw new BanqueException("Impossible d'effectuer un virement vers le même compte.");
@@ -91,9 +110,6 @@ public class OperationService {
             throw new BanqueException("Le montant du virement doit être positif.");
         }
 
-        // 1. Récupération des deux comptes
-        Compte emetteur = compteService.getCompteByNumero(numeroCompteEmetteur);
-        Compte beneficiaire = compteService.getCompteByNumero(numeroCompteBeneficiaire);
 
         // 2. Vérification solde émetteur
         if (emetteur.getSolde().compareTo(montant) < 0) {
@@ -134,7 +150,21 @@ public class OperationService {
         transactionRepository.save(transactionDebit);
         transactionRepository.save(transactionCredit);
     }
+
     public List<Transaction> getHistorique(String numeroCompte) {
-        return transactionRepository.findHistoriqueByCompte(numeroCompte);
+        List<Transaction> transactionsBrutes = transactionRepository.findHistoriqueByCompte(numeroCompte);
+        return transactionsBrutes.stream()
+                .filter(t -> {
+                    boolean estSource = t.getCompteSource().getNumeroCompte().equals(numeroCompte);
+                    String type = t.getType().toString();
+                    if ("RETRAIT".equals(type) || "VERSEMENT".equals(type)) {
+                        return true;
+                    }
+                    if ("VIREMENT".equals(type) && estSource && t.getMontant().compareTo(java.math.BigDecimal.ZERO) > 0) {
+                        return false;
+                    }
+                    return true;
+                })
+                .collect(java.util.stream.Collectors.toList());
     }
 }

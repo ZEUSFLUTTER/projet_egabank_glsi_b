@@ -78,9 +78,6 @@ export class AdminAccountsComponent implements OnInit {
         .subscribe({
           next: (compteCree) => {
               this.showCreateModal = false;
-
-              // ✅ ASTUCE EXPERT : On recrée le lien manuellement pour l'affichage immédiat
-              // car le backend renvoie parfois un objet client partiel après création.
               const clientAssocie = this.clients.find(c => c.id == this.newAccountData.clientId);
               if (clientAssocie) {
                   compteCree.client = clientAssocie;
@@ -109,6 +106,43 @@ export class AdminAccountsComponent implements OnInit {
     );
   }
 
+  cloturerCompte(compte: Compte) {
+  let messageAvertissement = '';
+
+  // Vérification visuelle pour l'admin
+  if (compte.solde > 0) {
+    messageAvertissement = `ATTENTION : Ce compte possède encore un solde de ${compte.solde} FCFA !`;
+  }
+
+  Swal.fire({
+    title: 'Clôture définitive ?',
+    html: `Voulez-vous vraiment clôturer le compte <b>${compte.numeroCompte}</b> ?<br><br><span style="color:red; font-weight:bold">${messageAvertissement}</span>`,
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#d33', // Rouge pour le danger
+    cancelButtonColor: '#3085d6',
+    confirmButtonText: 'Oui, clôturer définitivement'
+  }).then((res) => {
+    if (res.isConfirmed) {
+      this.adminService.cloturerCompte(compte.numeroCompte).subscribe({
+        next: () => {
+          // Mise à jour locale
+          const idx = this.comptes.findIndex(c => c.id === compte.id);
+          if (idx !== -1) {
+            this.comptes[idx].statut = StatutCompte.CLOTURE;
+            // On peut aussi mettre à jour la date de clôture si on l'a dans le modèle
+          }
+          this.filterComptes(); // Rafraîchir la vue filtrée
+          Swal.fire('Clôturé', 'Le compte a été clôturé avec succès.', 'success');
+        },
+        error: (err) => {
+          Swal.fire('Erreur', err.error?.message || 'Impossible de clôturer ce compte', 'error');
+        }
+      });
+    }
+  });
+}
+
   changerStatut(compte: Compte, nouveauStatut: StatutCompte) {
     const action = nouveauStatut === StatutCompte.SUSPENDU ? 'suspendre' : 'activer';
     Swal.fire({
@@ -122,7 +156,6 @@ export class AdminAccountsComponent implements OnInit {
         if(res.isConfirmed) {
             this.adminService.changerStatutCompte(compte.numeroCompte, nouveauStatut).subscribe({
                 next: (updated) => {
-                    // Mise à jour locale sécurisée (on garde le client existant)
                     const idx = this.comptes.findIndex(c => c.id === updated.id);
                     if(idx !== -1) {
                         updated.client = this.comptes[idx].client;

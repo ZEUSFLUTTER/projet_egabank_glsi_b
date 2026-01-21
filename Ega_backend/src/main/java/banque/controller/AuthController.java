@@ -3,10 +3,13 @@ package banque.controller;
 import banque.dto.AuthResponseDto;
 import banque.dto.LoginDto;
 import banque.dto.RegisterDto;
+import banque.dto.UserUpdateDto;
+import banque.entity.Utilisateur;
 import banque.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -34,4 +37,5 @@ public class AuthController {
     public ResponseEntity<AuthResponseDto> login(@Valid @RequestBody LoginDto request) {
         return ResponseEntity.ok(authService.login(request));
     }
+
 }

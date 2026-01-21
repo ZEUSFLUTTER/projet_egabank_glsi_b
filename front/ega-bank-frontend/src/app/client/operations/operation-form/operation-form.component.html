@@ -1,0 +1,30 @@
+<form (ngSubmit)="onSubmit()" #operationForm="ngForm" class="space-y-4">
+  <div>
+    <label for="amount" class="block text-sm font-medium text-gray-700">Montant</label>
+    <input type="number" id="amount" name="amount" [(ngModel)]="operation.amount" required
+           class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring focus:ring-opacity-50" />
+  </div>
+
+  <div>
+    <label for="type" class="block text-sm font-medium text-gray-700">Type d'opération</label>
+    <select id="type" name="type" [(ngModel)]="operation.type" required
+            class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring focus:ring-opacity-50">
+      <option value="" disabled selected>Choisissez un type</option>
+      <option value="DEPOSIT">Dépôt</option>
+      <option value="WITHDRAWAL">Retrait</option>
+      <option value="TRANSFER">Virement</option>
+    </select>
+  </div>
+
+  <div>
+    <label for="date" class="block text-sm font-medium text-gray-700">Date</label>
+    <input type="date" id="date" name="date" [(ngModel)]="operation.date" required
+           class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring focus:ring-opacity-50" />
+  </div>
+
+  <div>
+    <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+      Soumettre
+    </button>
+  </div>
+</form>

@@ -1,4 +1,24 @@
 {
     "java.configuration.updateBuildConfiguration": "automatic",
-    "java.compile.nullAnalysis.mode": "automatic"
+    "java.compile.nullAnalysis.mode": "automatic",
+    "java.compile.nullAnalysis.nonNullByDefault": true,
+    "java.configuration.maven.userSettings": "",
+    "java.configuration.runtimes": [
+        {
+            "name": "JavaSE-17",
+            "path": "C:\\Users\\novot\\.jdk\\jdk-17.0.16" 
+        }
+    ],
+    "java.format.settings.url": "",
+    "java.format.settings.profile": "",
+    "java.import.maven.enabled": true,
+    "java.import.gradle.enabled": false,
+    "java.import.generatesMetadataFilesAtProjectRoot": false,
+    // "java.configuration.checkProjectSettingsExclusions": false,
+    "files.exclude": {
+        "**/.project": true,
+        "**/.classpath": true,
+        "**/.settings": true,
+        "**/target": true
+    }
 }

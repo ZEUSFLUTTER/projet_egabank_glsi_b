@@ -1,12 +1,26 @@
 package com.iai.ega_bank.services;
 
-import com.iai.ega_bank.dto.CompteDto;
-import com.iai.ega_bank.entities.*;
-import com.iai.ega_bank.repositories.ClientRepository;
-import com.iai.ega_bank.repositories.CompteBancaireRepository;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
+import java.util.Random;
+
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import com.iai.ega_bank.dto.CompteDto;
+import com.iai.ega_bank.entities.AccountStatus;
+import com.iai.ega_bank.entities.Client;
+import com.iai.ega_bank.entities.CompteBancaire;
+import com.iai.ega_bank.entities.CompteCourant;
+import com.iai.ega_bank.entities.CompteEpargne;
+import com.iai.ega_bank.repositories.ClientRepository;
+import com.iai.ega_bank.repositories.CompteBancaireRepository;
+
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
 
 @Service
 public class CompteServiceImpl implements CompteService {
@@ -14,8 +28,7 @@ public class CompteServiceImpl implements CompteService {
     private final CompteBancaireRepository compteBancaireRepository;
     private final ClientRepository clientRepository;
 
-    public CompteServiceImpl(CompteBancaireRepository compteBancaireRepository,
-                             ClientRepository clientRepository) {
+    public CompteServiceImpl(CompteBancaireRepository compteBancaireRepository, ClientRepository clientRepository) {
         this.compteBancaireRepository = compteBancaireRepository;
         this.clientRepository = clientRepository;
     }
@@ -42,7 +55,6 @@ public class CompteServiceImpl implements CompteService {
 
             compteBancaireRepository.save(compteCourant);
         }
-
         // COMPTE EPARGNE
         if (compteDto.getDecouvert() == 0 && compteDto.getInterestRate() > 0) {
             CompteEpargne compteEpargne = new CompteEpargne();
@@ -95,15 +107,15 @@ public class CompteServiceImpl implements CompteService {
     }
 
     @Override
-    public CompteBancaire finfOne(String numCompte) {
+    public CompteBancaire findOne(String numCompte) {
         return compteBancaireRepository
                 .findByNumCompte(numCompte)
                 .orElseThrow(() -> new RuntimeException("Compte introuvable"));
     }
 
     @Override
-    public CompteBancaire findOne(String numCompte) {
-        return null;
+    public List<CompteBancaire> findAll() {
+        return compteBancaireRepository.findAll();
     }
 
     @Override

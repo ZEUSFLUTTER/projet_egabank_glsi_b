@@ -3,6 +3,7 @@ package com.iai.ega_bank.web;
 import com.iai.ega_bank.entities.User;
 import com.iai.ega_bank.repositories.UserRepository;
 import com.iai.ega_bank.dto.UserResponse;
+import com.iai.ega_bank.configuration.JwtUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -14,46 +15,29 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @RestController
 @RequestMapping("api/v1")
 public class RegistrationLoginController {
-    private  final UserRepository userRepository;
-    private  final PasswordEncoder passwordEncoder;
+
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
+    private final JwtUtils jwtUtils;
 
     public RegistrationLoginController(
             UserRepository userRepository,
             PasswordEncoder passwordEncoder,
-            AuthenticationManager authenticationManager
+            AuthenticationManager authenticationManager,
+            JwtUtils jwtUtils
     ) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
+        this.jwtUtils = jwtUtils;
     }
-
-
-//    @PostMapping("/register")
-//    public ResponseEntity<?> registerUser(@RequestBody User user) {
-//        if (userRepository.findByUsername(user.getUsername()) != null) {
-//            return ResponseEntity.badRequest().body("Username already exist");
-//        }
-//        user.setPassword(passwordEncoder.encode(user.getPassword()));
-//        return  ResponseEntity.ok(userRepository.save(user));
-//    }
-
-//    @PostMapping("/register")
-//    public ResponseEntity<?> registerUser(@RequestBody User user) {
-//        // Vérifier si username ou email existe déjà
-//        if (userRepository.findByUsername(user.getUsername()) != null ||
-//                userRepository.findByEmail(user.getEmail()) != null) {
-//            return ResponseEntity.badRequest().body("Username or email already exists");
-//        }
-//        user.setPassword(passwordEncoder.encode(user.getPassword()));
-//        user.setRole("ROLE_CLIENT");
-//        User savedUser = userRepository.save(user);
-//        // Retourner seulement le username et email
-//        return ResponseEntity.ok(new UserResponse(savedUser.getUsername(), savedUser.getEmail()));
-//    }
 
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody User user) {
@@ -73,17 +57,6 @@ public class RegistrationLoginController {
         return ResponseEntity.ok(new UserResponse(savedUser.getUsername(), savedUser.getEmail()));
     }
 
-
-//    @PostMapping("/login")
-//    public ResponseEntity<?> loginUser(@RequestBody User user) {
-//        try {
-//            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword()));
-//        return  ResponseEntity.ok("login successly");
-//        } catch (AuthenticationException ex) {
-//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("username or password invalid");
-//        }
-//    }
-
     @PostMapping("/login")
     public ResponseEntity<?> loginUser(@RequestBody User user) {
         try {
@@ -97,20 +70,27 @@ public class RegistrationLoginController {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Username or email not found");
             }
 
+            // Authentifier
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
-                            existingUser.getUsername(), // toujours le username pour Spring Security
+                            existingUser.getUsername(),
                             user.getPassword()
                     )
             );
 
-            return ResponseEntity.ok(new UserResponse(existingUser.getUsername(), existingUser.getEmail()));
+            // Générer JWT
+            String token = jwtUtils.generateToken(existingUser.getUsername());
+
+            // Préparer la réponse
+            Map<String, String> response = new HashMap<>();
+            response.put("username", existingUser.getUsername());
+            response.put("email", existingUser.getEmail());
+            response.put("token", token);
+
+            return ResponseEntity.ok(response);
+
         } catch (AuthenticationException ex) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid password");
         }
     }
-
-
 }
-
-

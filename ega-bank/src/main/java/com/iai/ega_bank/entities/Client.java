@@ -4,11 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -31,7 +27,12 @@ public class Client implements Serializable{
     private String sex;
     private String nationality;
 
+    @OneToOne
+    private User user; // <- ici c’est l’utilisateur lié au client
     @OneToMany(mappedBy="client")
     private Collection<CompteBancaire> comptes = new ArrayList<>();
 
+//    public User getUser() {
+//        return this.user;
+//    }
 }

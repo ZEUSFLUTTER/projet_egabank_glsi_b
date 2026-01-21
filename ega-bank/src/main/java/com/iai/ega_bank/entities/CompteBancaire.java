@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.persistence.Column;
@@ -42,7 +43,8 @@ public abstract  class CompteBancaire implements Serializable {
     @Column(nullable= false)
     @Enumerated(EnumType.STRING)
     private AccountStatus status;
-   @ManyToOne
+    @JsonIgnore
+    @ManyToOne
     private Client client;
     @JsonBackReference
     @OneToMany(mappedBy="compte")

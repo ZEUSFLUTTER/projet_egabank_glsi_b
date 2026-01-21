@@ -1,0 +1,16 @@
+<form (ngSubmit)="onSubmit()" #compteForm="ngForm" class="space-y-4">
+  <div>
+    <label for="clientId" class="block text-sm font-medium text-gray-700">Client ID</label>
+    <input type="text" id="clientId" [(ngModel)]="compte.clientId" name="clientId" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring focus:ring-opacity-50" />
+  </div>
+  
+  <div>
+    <label for="balance" class="block text-sm font-medium text-gray-700">Balance</label>
+    <input type="number" id="balance" [(ngModel)]="compte.balance" name="balance" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring focus:ring-opacity-50" />
+  </div>
+
+  <div class="flex justify-between">
+    <button type="button" (click)="onCancel()" class="inline-flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-gray-500 hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">Cancel</button>
+    <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">Save</button>
+  </div>
+</form>

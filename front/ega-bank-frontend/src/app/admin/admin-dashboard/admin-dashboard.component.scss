@@ -1,0 +1,27 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.admin-dashboard {
+  @apply p-6 bg-gray-100 rounded-lg shadow-md;
+}
+
+.admin-dashboard h1 {
+  @apply text-2xl font-bold mb-4;
+}
+
+.admin-dashboard .stats {
+  @apply grid grid-cols-1 md:grid-cols-3 gap-4;
+}
+
+.admin-dashboard .stat {
+  @apply bg-white p-4 rounded-lg shadow;
+}
+
+.admin-dashboard .stat h2 {
+  @apply text-xl font-semibold;
+}
+
+.admin-dashboard .stat p {
+  @apply text-gray-600;
+}

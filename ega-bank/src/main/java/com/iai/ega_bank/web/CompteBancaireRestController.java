@@ -1,71 +1,111 @@
 package com.iai.ega_bank.web;
 
-
 import com.iai.ega_bank.dto.CompteDto;
 import com.iai.ega_bank.entities.CompteBancaire;
 import com.iai.ega_bank.entities.CompteCourant;
 import com.iai.ega_bank.entities.CompteEpargne;
 import com.iai.ega_bank.services.CompteService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/comptes")
 public class CompteBancaireRestController {
+
     private final CompteService compteService;
+
     public CompteBancaireRestController(CompteService compteService) {
         this.compteService = compteService;
     }
 
-    // CREATE
+    // ================= CREATE =================
     @PostMapping
     public void createAccount(@RequestBody CompteDto compteDto) {
         compteService.createAccount(compteDto);
     }
 
+    // ================= LIST ALL (ADMIN) =================
+    @GetMapping
+    public List<?> findAllComptes() {
+        return compteService.findAll()
+                .stream()
+                .map(c -> Map.of(
+                        "clientId", c.getClient().getId(),
+                        "numCompte", c.getNumCompte(),
+                        "balance", c.getBalance()
+                ))
+                .toList();
+    }
+
+    // ================= LIST BY TYPE (ADMIN) =================
     @GetMapping("/type/{type}")
-    List<?> findAll(@PathVariable("type")String type){
-        if (type.equals("CC")){
-            this.compteService.findComptesCourant();
+    public List<?> findAllByType(@PathVariable String type){
+        if (type.equalsIgnoreCase("CC")) {
+            return compteService.findComptesCourant()
+                    .stream()
+                    .map(c -> Map.of(
+                            "clientId", c.getClient().getId(),
+                            "numCompte", c.getNumCompte(),
+                            "balance", c.getBalance()
+                    ))
+                    .toList();
         }
-        if (type.equals("CE")){
-            this.compteService.findComptesEpargne();
+        if (type.equalsIgnoreCase("CE")) {
+            return compteService.findComptesEpargne()
+                    .stream()
+                    .map(c -> Map.of(
+                            "clientId", c.getClient().getId(),
+                            "numCompte", c.getNumCompte(),
+                            "balance", c.getBalance()
+                    ))
+                    .toList();
         }
         return List.of();
     }
 
-    @GetMapping("/{numCompte}/{type}")
-    public ResponseEntity<?> findCompte(
-            @PathVariable("numCompte") String numCompte,
-            @PathVariable("type") String type) {
+    // ================= GET ONE ACCOUNT =================
+    @GetMapping("/{numCompte}")
+    public ResponseEntity<?> getCompte(
+            @PathVariable String numCompte,
+            Authentication authentication
+    ) {
+        CompteBancaire compte = compteService.findOne(numCompte);
 
-        // Vérifier que le numéro de compte est fourni
-        if (numCompte == null || numCompte.isEmpty()) {
-            return ResponseEntity.badRequest().body("Numéro de compte manquant");
-        }
-        // Récupérer le compte depuis le service
-        CompteBancaire compteBancaire = this.compteService.findOne(numCompte);
-
-        // Vérifier que le compte existe
-        if (compteBancaire == null) {
+        if (compte == null) {
             return ResponseEntity.badRequest().body("Compte introuvable");
         }
-        // TYPE = COMPTE COURANT
-        if (type.equalsIgnoreCase("CC") && compteBancaire instanceof CompteCourant) {
-            return ResponseEntity.ok((CompteCourant) compteBancaire);
+
+        // ADMIN → accès libre
+        boolean isAdmin = authentication.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+        if (isAdmin) {
+            return ResponseEntity.ok(Map.of(
+                    "clientId", compte.getClient().getId(),
+                    "numCompte", compte.getNumCompte(),
+                    "balance", compte.getBalance()
+            ));
         }
-        // TYPE = COMPTE EPARGNE
-        if (type.equalsIgnoreCase("CE") && compteBancaire instanceof CompteEpargne) {
-            return ResponseEntity.ok((CompteEpargne) compteBancaire);
+
+        // CLIENT → vérifier qu'il est propriétaire
+        String username = authentication.getName(); // username = email ou login
+        if (!compte.getClient().getUser().getUsername().equals(username)) {
+            return ResponseEntity.status(403).body("Accès interdit à ce compte");
         }
-        // Si le type ne correspond pas au compte
-        return ResponseEntity.badRequest().body("Type de compte invalide (CC ou CE attendu)");
+
+        return ResponseEntity.ok(Map.of(
+                "clientId", compte.getClient().getId(),
+                "numCompte", compte.getNumCompte(),
+                "balance", compte.getBalance()
+        ));
     }
 
+    // ================= ACTIVER / SUSPENDRE =================
     @GetMapping("/{numCompte}/active")
-    public boolean activeCompte(@PathVariable("numCompte") String numCompte){
+    public boolean activeCompte(@PathVariable String numCompte){
         return this.compteService.activateCompte(numCompte);
     }
 

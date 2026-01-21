@@ -1,0 +1,27 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.clients-list {
+  @apply p-4 bg-white rounded-lg shadow-md;
+}
+
+.clients-list table {
+  @apply w-full text-left border-collapse;
+}
+
+.clients-list th, .clients-list td {
+  @apply border-b border-gray-200 p-2;
+}
+
+.clients-list th {
+  @apply bg-gray-100 font-semibold;
+}
+
+.clients-list tr:hover {
+  @apply bg-gray-50;
+}
+
+.clients-list .actions {
+  @apply flex space-x-2;
+}

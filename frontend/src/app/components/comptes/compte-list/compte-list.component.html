@@ -1,0 +1,47 @@
+<div class="container">
+
+  <div class="header">
+    <h2>Gestion des comptes</h2>
+    <a *ngIf="authService.isAdmin()" routerLink="/comptes/new" class="btn primary">+ Nouveau compte</a>
+  </div>
+
+  <div *ngIf="loading" class="loading">Chargement…</div>
+  <div *ngIf="error" class="alert">{{ error }}</div>
+
+  <table *ngIf="!loading && comptes.length">
+    <thead>
+      <tr>
+        <th>Numéro</th>
+        <th>Client</th>
+        <th>Type</th>
+        <th>Solde</th>
+        <th>Statut</th>
+        <th *ngIf="authService.isAdmin()">Actions</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr *ngFor="let c of comptes">
+        <td>{{ c.numeroCompte }}</td>
+        <td>{{ c.clientNom }} {{ c.clientPrenom }}</td>
+        <td>{{ c.typeCompte }}</td>
+        <td>{{ c.solde | number:'1.2-2' }} FCFA</td>
+        <td>
+          <span [class.active]="c.actif" [class.inactive]="!c.actif">
+            {{ c.actif ? 'ACTIF' : 'INACTIF' }}
+          </span>
+        </td>
+        <td *ngIf="authService.isAdmin()">
+          <button class="btn warn" (click)="toggle(c)">
+            {{ c.actif ? 'Désactiver' : 'Activer' }}
+          </button>
+          <button class="btn danger" (click)="supprimer(c.id!)">Supprimer</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div *ngIf="!loading && !comptes.length" class="empty">
+    Aucun compte enregistré.
+  </div>
+</div>

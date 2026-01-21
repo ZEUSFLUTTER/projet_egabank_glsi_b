@@ -1,0 +1,21 @@
+<div class="card">
+  <h2>Créer un compte</h2>
+  <div *ngIf="error" class="alert">{{ error }}</div>
+
+  <form [formGroup]="form" (ngSubmit)="submit()">
+    <label>Client</label>
+    <select formControlName="clientId">
+      <option value="">Sélectionner</option>
+      <option *ngFor="let c of clients" [value]="c.id">{{ c.nom }} {{ c.prenom }}</option>
+    </select>
+
+    <label>Type de compte</label>
+    <select formControlName="typeCompte">
+      <option value="">Sélectionner</option>
+      <option [value]="TypeCompte.COURANT">Courant</option>
+      <option [value]="TypeCompte.EPARGNE">Épargne</option>
+    </select>
+
+    <button type="submit" [disabled]="form.invalid">Créer</button>
+  </form>
+</div>

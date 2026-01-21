@@ -1,0 +1,80 @@
+<div class="login-container">
+
+  <!-- PANEL GAUCHE : BIENVENUE -->
+  <div class="welcome-panel">
+    <div class="welcome-content">
+      <h1>Bienvenue à Banque EGA</h1>
+      <p class="subtitle">
+        Une plateforme sécurisée pour gérer vos comptes, vos transactions
+        et votre avenir financier en toute confiance.
+      </p>
+
+      <ul class="features">
+        <li>✔ Accès sécurisé</li>
+        <li>✔ Gestion des comptes en temps réel</li>
+        <li>✔ Transactions fiables et traçables</li>
+      </ul>
+
+      <p class="footer-text">
+        Espace réservé aux clients et administrateurs autorisés.
+      </p>
+    </div>
+  </div>
+
+  <!-- PANEL DROIT : FORMULAIRE -->
+  <div class="form-panel">
+    <div class="login-card">
+
+      <h2>Connexion</h2>
+      <p class="login-hint">
+        Veuillez vous connecter pour accéder à votre espace personnel
+      </p>
+
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+
+        <div *ngIf="errorMessage" class="alert alert-danger">
+          {{ errorMessage }}
+        </div>
+
+        <div class="form-group">
+          <label for="courriel">Adresse email</label>
+          <input
+            type="email"
+            id="courriel"
+            formControlName="courriel"
+            class="form-control"
+            placeholder="ex: utilisateur@ega.com"
+            [class.is-invalid]="loginForm.get('courriel')?.invalid && loginForm.get('courriel')?.touched"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="motDePasse">Mot de passe</label>
+          <input
+            type="password"
+            id="motDePasse"
+            formControlName="motDePasse"
+            class="form-control"
+            placeholder="••••••••"
+            [class.is-invalid]="loginForm.get('motDePasse')?.invalid && loginForm.get('motDePasse')?.touched"
+          />
+        </div>
+
+        <button
+          type="submit"
+          class="btn btn-primary btn-block"
+          [disabled]="loginForm.invalid"
+        >
+          Se connecter
+        </button>
+      </form>
+
+      <div class="extra-links">
+        <span>Pas encore de compte ?</span>
+        <a routerLink="/register">Créer un compte</a>
+      </div>
+
+    </div>
+  </div>
+
+</div>

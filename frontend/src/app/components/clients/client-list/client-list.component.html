@@ -1,0 +1,51 @@
+<div class="page-container">
+
+  <div class="page-header">
+    <h2>Clients</h2>
+    <button
+      *ngIf="authService.isAdmin()"
+      routerLink="/clients/new"
+      class="btn btn-primary">
+      + Nouveau client
+    </button>
+  </div>
+
+  <div *ngIf="errorMessage" class="alert alert-danger">
+    {{ errorMessage }}
+  </div>
+
+  <div *ngIf="loading" class="loading">Chargement...</div>
+
+  <div class="card" *ngIf="!loading && clients.length > 0">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Nom complet</th>
+          <th>Email</th>
+          <th>Téléphone</th>
+          <th>Nationalité</th>
+          <th *ngIf="authService.isAdmin()">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let client of clients">
+          <td>{{ client.id }}</td>
+          <td><strong>{{ client.nom }}</strong> {{ client.prenom }}</td>
+          <td>{{ client.courriel }}</td>
+          <td>{{ client.telephone }}</td>
+          <td>{{ client.nationalite }}</td>
+          <td *ngIf="authService.isAdmin()" class="actions">
+            <a [routerLink]="['/clients', client.id, 'edit']" class="btn btn-secondary">Modifier</a>
+            <button class="btn btn-danger" (click)="deleteClient(client.id!)">Supprimer</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div *ngIf="!loading && clients.length === 0" class="empty-state">
+    Aucun client enregistré
+  </div>
+
+</div>

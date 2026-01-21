@@ -1,0 +1,74 @@
+<div class="page-container">
+
+  <div class="page-header">
+    <h2>Transactions</h2>
+    <button routerLink="/transactions/new" class="btn btn-primary">+ Nouvelle transaction</button>
+  </div>
+
+  <!-- FILTRES -->
+  <div class="card filters">
+    <h3>Filtres</h3>
+    <div class="filters-grid">
+      <div class="form-group">
+        <label>Compte</label>
+        <select [(ngModel)]="selectedCompteId" (change)="onFilterChange()" class="form-control">
+          <option [value]="null">Tous les comptes</option>
+          <option *ngFor="let c of comptes" [value]="c.id">
+            {{ c.numeroCompte }} - {{ c.typeCompte }}
+          </option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Date début</label>
+        <input type="date" [(ngModel)]="dateDebut" (change)="onFilterChange()" class="form-control" />
+      </div>
+
+      <div class="form-group">
+        <label>Date fin</label>
+        <input type="date" [(ngModel)]="dateFin" (change)="onFilterChange()" class="form-control" />
+      </div>
+
+      <div class="form-group actions">
+        <button *ngIf="selectedCompteId && dateDebut && dateFin" class="btn btn-success" (click)="downloadReleve()">Télécharger PDF</button>
+        <button *ngIf="selectedCompteId && dateDebut && dateFin" class="btn btn-secondary" (click)="printReleve()">Imprimer</button>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
+  <div *ngIf="loading" class="loading">Chargement...</div>
+
+  <div class="card" *ngIf="!loading && transactions.length > 0">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Type</th>
+          <th>Montant</th>
+          <th>Compte</th>
+          <th>Destination</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let t of transactions">
+          <td>{{ t.dateTransaction | date:'short' }}</td>
+          <td><span class="badge" [ngClass]="t.typeTransaction">{{ t.typeTransaction }}</span></td>
+          <td [class.credit]="t.typeTransaction === TypeTransaction.DEPOT || t.typeTransaction === TypeTransaction.VIREMENT_ENTRANT"
+              [class.debit]="t.typeTransaction !== TypeTransaction.DEPOT && t.typeTransaction !== TypeTransaction.VIREMENT_ENTRANT">
+            {{ t.montant | number:'1.2-2' }} FCFA
+          </td>
+          <td>{{ t.compteNumero }}</td>
+          <td>{{ t.compteDestinationNumero || '-' }}</td>
+          <td>{{ t.description || '-' }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div *ngIf="!loading && transactions.length === 0" class="empty-state">
+    Aucune transaction trouvée
+  </div>
+
+</div>

@@ -1,0 +1,101 @@
+.dashboard {
+  width: 90%;
+  margin: auto;
+  margin-top: 2rem;
+}
+
+h2 {
+  margin-bottom: 1.5rem;
+}
+
+.admin-label {
+  color: #ffc107;
+  font-size: 0.9rem;
+  margin-left: 0.5rem;
+}
+
+.loading {
+  text-align: center;
+  font-style: italic;
+}
+
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.kpi-card {
+  background: white;
+  border-radius: 10px;
+  padding: 1.2rem;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+  text-align: center;
+}
+
+.kpi-card h4 {
+  margin-bottom: 0.5rem;
+}
+
+.kpi-card p {
+  font-size: 2rem;
+  font-weight: bold;
+  margin: 0.5rem 0;
+}
+
+.kpi-card a {
+  text-decoration: none;
+  color: #0d6efd;
+  font-weight: bold;
+}
+
+.card {
+  background: white;
+  padding: 1.2rem;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+
+th, td {
+  padding: 0.7rem;
+  border-bottom: 1px solid #ddd;
+}
+
+th {
+  text-align: left;
+}
+
+.type {
+  padding: 0.2rem 0.6rem;
+  border-radius: 5px;
+  font-size: 0.8rem;
+  font-weight: bold;
+}
+
+.type.DEPOT {
+  background: #198754;
+  color: white;
+}
+
+.type.RETRAIT {
+  background: #dc3545;
+  color: white;
+}
+
+.type.VIREMENT {
+  background: #0d6efd;
+  color: white;
+}
+
+.empty {
+  text-align: center;
+  font-style: italic;
+  margin-top: 1rem;
+}

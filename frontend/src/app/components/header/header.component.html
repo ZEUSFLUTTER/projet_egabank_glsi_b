@@ -1,0 +1,22 @@
+<header class="app-header">
+  <div class="header-container">
+    <div class="logo">
+      Banque <span>EGA</span>
+    </div>
+
+    <nav *ngIf="authService.isAuthenticated()">
+      <a routerLink="/dashboard" routerLinkActive="active">Dashboard</a>
+      <a routerLink="/clients" routerLinkActive="active">Clients</a>
+      <a routerLink="/comptes" routerLinkActive="active">Comptes</a>
+      <a routerLink="/transactions" routerLinkActive="active">Transactions</a>
+
+      <span *ngIf="authService.isAdmin()" class="badge-admin">
+        ADMIN
+      </span>
+
+      <button class="btn-logout" (click)="logout()">
+        Déconnexion
+      </button>
+    </nav>
+  </div>
+</header>

@@ -1,0 +1,64 @@
+<div class="card" style="max-width: 800px; margin: 2rem auto;">
+  <div class="card-header">{{ isEditMode ? 'Modifier le client' : 'Nouveau client' }}</div>
+
+  <div *ngIf="errorMessage" class="alert alert-danger">
+    {{ errorMessage }}
+  </div>
+
+  <form [formGroup]="clientForm" (ngSubmit)="onSubmit()">
+    <div class="d-flex gap-2">
+      <div class="form-group" style="flex: 1;">
+        <label for="nom">Nom *</label>
+        <input type="text" id="nom" formControlName="nom" class="form-control" />
+      </div>
+
+      <div class="form-group" style="flex: 1;">
+        <label for="prenom">Prénom *</label>
+        <input type="text" id="prenom" formControlName="prenom" class="form-control" />
+      </div>
+    </div>
+
+    <div class="d-flex gap-2">
+      <div class="form-group" style="flex: 1;">
+        <label for="dateNaissance">Date de naissance *</label>
+        <input type="date" id="dateNaissance" formControlName="dateNaissance" class="form-control" />
+      </div>
+
+      <div class="form-group" style="flex: 1;">
+        <label for="sexe">Sexe *</label>
+        <select id="sexe" formControlName="sexe" class="form-control">
+          <option value="">Sélectionner</option>
+          <option value="M">Masculin</option>
+          <option value="F">Féminin</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="adresse">Adresse *</label>
+      <textarea id="adresse" formControlName="adresse" class="form-control" rows="2"></textarea>
+    </div>
+
+    <div class="form-group">
+      <label for="telephone">Téléphone *</label>
+      <input type="text" id="telephone" formControlName="telephone" class="form-control" />
+    </div>
+
+    <div class="form-group">
+      <label for="courriel">Courriel *</label>
+      <input type="email" id="courriel" formControlName="courriel" class="form-control" />
+    </div>
+
+    <div class="form-group">
+      <label for="nationalite">Nationalité *</label>
+      <input type="text" id="nationalite" formControlName="nationalite" class="form-control" />
+    </div>
+
+    <div class="d-flex gap-2">
+      <button type="submit" class="btn btn-primary" [disabled]="clientForm.invalid">
+        {{ isEditMode ? 'Modifier' : 'Créer' }}
+      </button>
+      <a routerLink="/clients" class="btn btn-secondary">Annuler</a>
+    </div>
+  </form>
+</div>

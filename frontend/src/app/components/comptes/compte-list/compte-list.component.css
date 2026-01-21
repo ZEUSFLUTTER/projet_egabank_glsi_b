@@ -1,0 +1,12 @@
+.container { padding: 20px; }
+.header { display: flex; justify-content: space-between; align-items: center; }
+table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+th, td { padding: 10px; border-bottom: 1px solid #ddd; }
+.active { color: green; font-weight: bold; }
+.inactive { color: red; font-weight: bold; }
+.btn { margin-right: 5px; padding: 6px 10px; }
+.primary { background: #2563eb; color: white; }
+.warn { background: #f59e0b; color: white; }
+.danger { background: #dc2626; color: white; }
+.loading, .empty { text-align: center; margin-top: 30px; }
+.alert { background: #fee2e2; padding: 10px; }

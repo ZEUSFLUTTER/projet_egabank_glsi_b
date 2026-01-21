@@ -1,0 +1,19 @@
+{
+  "properties": [
+    {
+      "name": "jwt.secret",
+      "type": "java.lang.String",
+      "description": "Secret key for JWT token generation and validation"
+    },
+    {
+      "name": "jwt.access-token.expiration",
+      "type": "java.lang.Long",
+      "description": "Access token expiration time in milliseconds (180000 = 3 minutes for inactivity timeout)"
+    },
+    {
+      "name": "jwt.refresh-token.expiration",
+      "type": "java.lang.Long",
+      "description": "Refresh token expiration time in milliseconds (604800000 = 7 days to renew session)"
+    }
+  ]
+}

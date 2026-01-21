@@ -1,0 +1,27 @@
+# Data folder (local database)
+data/
+*.db
+*.mv.db
+
+# Maven
+target/
+.m2/
+
+# IDE
+.idea/
+.vscode/
+*.iml
+*.class
+*.jar
+
+# Node
+node_modules/
+npm-debug.log
+
+# Environment
+.env
+.env.local
+
+# OS
+.DS_Store
+Thumbs.db

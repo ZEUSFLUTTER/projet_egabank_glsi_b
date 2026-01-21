@@ -1,0 +1,52 @@
+<div class="dashboard">
+  <h2>Tableau de bord <span *ngIf="authService.isAdmin()" class="admin-label">(Administrateur)</span></h2>
+
+  <div *ngIf="loading" class="loading">Chargement des données...</div>
+
+  <div *ngIf="!loading">
+
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <h4>{{ authService.isAdmin() ? 'Clients' : 'Mon profil' }}</h4>
+        <p>{{ clients.length }}</p>
+        <a routerLink="/clients">Voir</a>
+      </div>
+
+      <div class="kpi-card">
+        <h4>{{ authService.isAdmin() ? 'Comptes' : 'Mes comptes' }}</h4>
+        <p>{{ comptes.length }}</p>
+        <a routerLink="/comptes">Voir</a>
+      </div>
+
+      <div class="kpi-card">
+        <h4>{{ authService.isAdmin() ? 'Transactions' : 'Mes transactions' }}</h4>
+        <p>{{ transactions.length }}</p>
+        <a routerLink="/transactions">Voir</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Transactions récentes</h3>
+      <table *ngIf="transactions.length > 0">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Type</th>
+            <th>Montant</th>
+            <th>Compte</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let t of transactions">
+            <td>{{ t.dateTransaction | date:'short' }}</td>
+            <td><span class="type" [ngClass]="t.typeTransaction">{{ t.typeTransaction }}</span></td>
+            <td>{{ t.montant | number:'1.2-2' }} FCFA</td>
+            <td>{{ t.compteNumero }}</td>
+          </tr>
+        </tbody>
+      </table>
+      <p *ngIf="transactions.length === 0" class="empty">Aucune transaction disponible</p>
+    </div>
+
+  </div>
+</div>

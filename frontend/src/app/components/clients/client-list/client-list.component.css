@@ -1,0 +1,76 @@
+.page-container {
+  width: 90%;
+  margin: 2rem auto;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.card {
+  background: white;
+  border-radius: 10px;
+  padding: 1.2rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th, .table td {
+  padding: 0.8rem;
+  border-bottom: 1px solid #ddd;
+}
+
+.actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.badge {
+  padding: 0.3rem 0.6rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: bold;
+}
+
+.badge-info {
+  background: #0d6efd;
+  color: white;
+}
+
+.credit {
+  color: #198754;
+  font-weight: bold;
+}
+
+.debit {
+  color: #dc3545;
+  font-weight: bold;
+}
+
+.filters {
+  margin-bottom: 1.5rem;
+}
+
+.filters-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.empty-state {
+  text-align: center;
+  font-style: italic;
+  margin-top: 1.5rem;
+}
+
+.loading {
+  text-align: center;
+  font-style: italic;
+}

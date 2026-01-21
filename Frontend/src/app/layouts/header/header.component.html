@@ -1,0 +1,18 @@
+<div class="main-header">
+  <nav class="navbar navbar-expand-lg navbar-header navbar-header-transparent border-bottom">
+    <div class="container-fluid px-3">
+      <div class="d-flex align-items-center gap-2">
+        <i class="fa-solid fa-circle-user fa-2x"></i>
+        <span class="fw-bold">
+          {{ nomUtilisateur || 'Utilisateur' }}
+        </span>
+      </div>
+      <div class="ms-auto">
+        <button class="btn btn-danger d-flex align-items-center me-3" type="button" (click)="seDeconnecter()" aria-label="Se déconnecter">
+          <i class="fa-solid fa-right-from-bracket me-1"></i>
+          Déconnexion
+        </button>
+      </div>
+    </div>
+  </nav>
+</div>

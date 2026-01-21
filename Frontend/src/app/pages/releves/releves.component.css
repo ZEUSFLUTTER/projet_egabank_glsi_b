@@ -1,0 +1,51 @@
+.table-releves {
+  font-family: 'Cambria', 'Times New Roman', Times, serif;
+}
+
+.table-releves th {
+  background-color: #f8f9fa;
+  border-bottom: 2px solid #dee2e6;
+  font-weight: 600;
+  font-size: 15px;
+  color: #495057;
+  padding: 14px 10px;
+}
+
+.table-releves td {
+  padding: 12px 10px;
+  vertical-align: middle;
+  font-size: 16px;
+  color: #212529;
+}
+
+.table-releves .btn-sm {
+  font-size: 13px;
+  padding: 6px 10px;
+  font-weight: 500;
+}
+
+.table-releves .badge {
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+}
+
+.table-releves tbody tr {
+  border-bottom: 1px solid #f1f3f4;
+}
+
+.table-releves tbody tr:hover {
+  background-color: #f8f9fa;
+  transition: background-color 0.15s ease-in-out;
+}
+
+.table-releves .date {
+  font-family: 'Cambria', 'Times New Roman', Times, serif;
+  font-size: 15px;
+}
+
+.table-releves .numero-compte {
+  font-family: 'Cambria', 'Times New Roman', Times, serif;
+  font-weight: 500;
+  font-size: 16px;
+}

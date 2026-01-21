@@ -1,0 +1,37 @@
+<div class="position-relative overflow-hidden text-bg-light min-vh-100 d-flex align-items-center justify-content-center">
+  <div class="d-flex align-items-center justify-content-center w-100">
+    <div class="row justify-content-center w-100">
+      <div class="col-md-8 col-lg-6 col-xxl-3">
+        <div class="card mb-0 shadow-sm">
+          <div class="card-body p-4">
+            <h1 class="text-center fw-bold mb-1">EGABANK</h1>
+            <p class="text-center text-muted mb-4">Accès administrateur</p>
+            <div class="alert alert-danger py-2" *ngIf="messageErreur">
+              {{ messageErreur }}
+            </div>
+            <form (ngSubmit)="seConnecter()" #form="ngForm" novalidate>
+              <div class="mb-3">
+                <label for="nomUtilisateur" class="form-label">Nom d'utilisateur</label>
+                <input id="nomUtilisateur" class="form-control" [(ngModel)]="nomUtilisateur" name="nomUtilisateur" required autocomplete="username"/>
+              </div>
+              <div class="mb-4">
+                <label for="motDePasse" class="form-label">Mot de passe</label>
+                <input id="motDePasse" type="password" class="form-control" [(ngModel)]="motDePasse" name="motDePasse" required autocomplete="current-password"/>
+              </div>
+              <br>
+              <button class="btn btn-primary w-100 py-2 fs-5 rounded-2" type="submit" [disabled]="chargement || form.invalid">
+                <span *ngIf="chargement" class="spinner-border spinner-border-sm me-2"></span>
+                {{ chargement ? 'Connexion...' : 'Se connecter' }}
+              </button>
+            </form>
+            <div class="d-flex align-items-center justify-content-center mt-4">
+              <small class="text-muted">
+                © 2025–2026 Ega Banque
+              </small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

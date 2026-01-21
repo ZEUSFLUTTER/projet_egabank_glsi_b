@@ -1,0 +1,204 @@
+<div class="d-flex align-items-start align-items-md-center flex-column flex-md-row pt-2 pb-4">
+  <div class="ms-md-auto py-2 py-md-0 d-flex gap-2 flex-wrap">
+    <button type="button" class="btn btn-primary btn-round" data-bs-toggle="modal" data-bs-target="#modalCompte">
+      <i class="fa fa-plus me-1"></i>
+      Ajouter un compte
+    </button>
+
+    <div class="input-group" style="max-width: 360px;">
+      <input
+        class="form-control"
+        [(ngModel)]="ibanRecherche"
+        placeholder="Rechercher par Numero de compte"
+        aria-label="Rechercher par IBAN"
+      />
+      <button
+        type="button"
+        class="btn btn-outline-primary"
+        (click)="consulterCompte()"
+        [disabled]="consultationEnCours"
+      >
+        <span *ngIf="consultationEnCours" class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+        <i *ngIf="!consultationEnCours" class="fa fa-search"></i>
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="alert alert-success py-2" *ngIf="messageSucces">{{ messageSucces }}</div>
+<div class="alert alert-danger py-2" *ngIf="messageErreur">{{ messageErreur }}</div>
+
+<div class="row" *ngIf="compteTrouve as ct">
+  <div class="col-md-12">
+    <div class="card card-round">
+      <div class="card-body">
+        <div class="mb-3" *ngIf="compteTrouve.proprietaire">
+          <div class="text-muted">Client</div>
+          <h5 class="mb-0 fw-bold text-primary">
+            {{ compteTrouve.proprietaire.prenom }} {{ compteTrouve.proprietaire.nom }}
+          </h5>
+        </div>
+
+
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+          <div>
+            <div class="text-muted">Compte</div>
+            <h5 class="mb-0">{{ ct.numeroCompte }}</h5>
+          </div>
+          <span class="badge" [ngClass]="ct.typeCompte === 'COURANT' ? 'bg-info' : 'bg-success'">
+            {{ ct.typeCompte }}
+          </span>
+        </div>
+
+        <hr />
+
+        <div class="row g-3">
+          <div class="col-md-4">
+            <div class="text-muted">Solde</div>
+            <h4 class="mb-0">{{ ct.solde | number:'1.0-0' }}</h4>
+          </div>
+
+          <div class="col-md-4" *ngIf="ct.typeCompte === 'COURANT'">
+            <div class="text-muted">Découvert</div>
+            <h6 class="mb-0">{{ ct.decouvertAutorise ?? 0 }}</h6>
+          </div>
+
+          <div class="col-md-4" *ngIf="ct.typeCompte === 'EPARGNE'">
+            <div class="text-muted">Taux</div>
+            <h6 class="mb-0">{{ ct.tauxInteret ?? 0 }}</h6>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-12">
+    <div class="card">
+      <div class="card-header d-flex align-items-center justify-content-between flex-wrap gap-2">
+        <h4 class="card-title mb-0">Liste des comptes</h4>
+        <span class="text-muted" *ngIf="!chargementListe">{{ listeComptes.length }} compte(s)</span>
+      </div>
+
+      <div class="card-body">
+        <div *ngIf="chargementListe" class="text-muted">Chargement...</div>
+
+        <div class="table-responsive" *ngIf="!chargementListe">
+          <table class="table table-striped table-hover align-middle">
+            <thead>
+              <tr>
+                <th>Numero de compte</th>
+                <th>Type</th>
+                <th>Solde</th>
+                <th>Client</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr *ngFor="let c of listeComptes">
+                <td class="fw-semibold">{{ c.numeroCompte }}</td>
+                <td>
+                  <span class="badge" [ngClass]="c.typeCompte === 'COURANT' ? 'bg-info' : 'bg-success'">
+                    {{ c.typeCompte }}
+                  </span>
+                </td>
+                <td>{{ c.solde | number:'1.0-0' }}</td>
+                <td>{{ c.proprietaire?.nom }} {{ c.proprietaire?.prenom }}</td>
+              </tr>
+
+              <tr *ngIf="listeComptes.length === 0">
+                <td colspan="4" class="text-center text-muted">Aucun compte</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="modalCompte" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">
+          <i class="fa fa-plus me-2"></i> Ajouter un compte
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+      </div>
+
+      <div class="modal-body">
+        <div class="alert alert-danger py-2" *ngIf="erreurCreation">
+          {{ erreurCreation }}
+        </div>
+
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label class="form-label" for="client">Client</label>
+            <select id="client" class="form-control" [(ngModel)]="idClientSelectionne" name="client" required>
+              <option [ngValue]="null">-- Sélectionner --</option>
+              <option *ngFor="let cl of listeClients" [ngValue]="cl.id">
+                {{ cl.nom }} {{ cl.prenom }}
+              </option>
+            </select>
+            <small class="text-muted" *ngIf="chargementClients">Chargement des clients...</small>
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <label class="form-label" for="typeCompte">Type de compte</label>
+            <select id="typeCompte" class="form-control" [(ngModel)]="typeCompte" name="typeCompte" required>
+              <option value="COURANT">Courant</option>
+              <option value="EPARGNE">Épargne</option>
+            </select>
+          </div>
+
+          <div class="col-md-6 mb-3" *ngIf="typeCompte === 'COURANT'">
+            <label class="form-label" for="decouvertAutorise">Découvert autorisé</label>
+            <input
+              id="decouvertAutorise"
+              class="form-control"
+              type="number"
+              [(ngModel)]="decouvertAutorise"
+              name="decouvertAutorise"
+              min="0"
+            />
+          </div>
+
+          <div class="col-md-6 mb-3" *ngIf="typeCompte === 'EPARGNE'">
+            <label class="form-label" for="tauxInteret">Taux d’intérêt</label>
+            <input
+              id="tauxInteret"
+              class="form-control"
+              type="number"
+              [(ngModel)]="tauxInteret"
+              name="tauxInteret"
+              min="0"
+            />
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          data-bs-dismiss="modal"
+          (click)="reinitialiserFormulaire()"
+        >
+          Fermer
+        </button>
+        <button
+          type="button"
+          class="btn btn-primary"
+          (click)="creerCompte()"
+          [disabled]="creationEnCours"
+        >
+          <span *ngIf="creationEnCours" class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>
+          <i *ngIf="!creationEnCours" class="fa fa-save me-1"></i>
+          Enregistrer
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,104 @@
+<div class="d-flex align-items-start align-items-md-center flex-column flex-md-row pt-2 pb-4">
+  <div class="ms-md-auto py-2 py-md-0 d-flex gap-2 flex-wrap">
+    <button
+      type="button"
+      class="btn btn-danger btn-round"
+      data-bs-toggle="modal"
+      data-bs-target="#modalReleve"
+    >
+      <i class="fa fa-file-pdf me-1"></i> Générer un relevé
+    </button>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-12">
+    <div class="card">
+      <div class="card-header">
+        <h4 class="card-title mb-0">Relevés PDF</h4>
+      </div>
+
+      <div class="card-body">
+        <div class="alert alert-success py-2" *ngIf="messageSucces">
+          {{ messageSucces }}
+        </div>
+
+        <div class="alert alert-danger py-2" *ngIf="messageErreur">
+          {{ messageErreur }}
+        </div>
+
+        <div class="alert alert-info mb-0">
+          <i class="fa fa-circle-info me-1"></i>
+          Cliquez sur <strong>Générer un relevé</strong> pour télécharger un PDF sur une période.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="modalReleve" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">
+          <i class="fa fa-file-pdf me-2"></i> Relevé PDF
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+      </div>
+
+      <div class="modal-body">
+        <div class="alert alert-danger py-2" *ngIf="erreurModal">
+          {{ erreurModal }}
+        </div>
+
+        <div class="row">
+          <div class="col-md-12 mb-3">
+            <label class="form-label" for="iban">Numero de compte</label>
+            <input
+              id="iban"
+              class="form-control"
+              [(ngModel)]="numeroCompte"
+              name="iban"
+              placeholder="FR..."
+              autocomplete="off"
+            />
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <label class="form-label" for="dateDebut">Date début</label>
+            <input
+              id="dateDebut"
+              class="form-control"
+              type="date"
+              [(ngModel)]="dateDebut"
+              name="dateDebut"
+            />
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <label class="form-label" for="dateFin">Date fin</label>
+            <input
+              id="dateFin"
+              class="form-control"
+              type="date"
+              [(ngModel)]="dateFin"
+              name="dateFin"
+            />
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" [disabled]="telechargementEnCours">
+          Fermer
+        </button>
+
+        <button type="button" class="btn btn-danger" (click)="telecharger()" [disabled]="telechargementEnCours">
+          <span *ngIf="telechargementEnCours" class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>
+          <i *ngIf="!telechargementEnCours" class="fa fa-download me-1"></i>
+          Télécharger
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

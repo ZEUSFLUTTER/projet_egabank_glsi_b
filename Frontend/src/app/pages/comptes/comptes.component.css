@@ -1,0 +1,46 @@
+.table-comptes {
+  font-family: 'Cambria', 'Times New Roman', Times, serif;
+}
+
+.table-comptes th {
+  background-color: #f8f9fa;
+  border-bottom: 2px solid #dee2e6;
+  font-weight: 600;
+  font-size: 15px;
+  color: #495057;
+  padding: 14px 10px;
+}
+
+.table-comptes td {
+  padding: 12px 10px;
+  vertical-align: middle;
+  font-size: 16px;
+  color: #212529;
+}
+
+.table-comptes .btn-sm {
+  font-size: 13px;
+  padding: 6px 10px;
+  font-weight: 500;
+}
+
+.table-comptes .badge {
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+}
+
+.table-comptes tbody tr {
+  border-bottom: 1px solid #f1f3f4;
+}
+
+.table-comptes tbody tr:hover {
+  background-color: #f8f9fa;
+  transition: background-color 0.15s ease-in-out;
+}
+
+.table-comptes .montant {
+  font-weight: 600;
+  font-family: 'Cambria', 'Times New Roman', Times, serif;
+  font-size: 17px;
+}

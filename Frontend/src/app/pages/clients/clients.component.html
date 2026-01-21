@@ -1,0 +1,280 @@
+<div class="d-flex align-items-start align-items-md-center flex-column flex-md-row pt-2 pb-4">
+  <div class="ms-md-auto py-2 py-md-0 d-flex gap-2 flex-wrap">
+    <button type="button" class="btn btn-primary btn-round" data-bs-toggle="modal" data-bs-target="#modalClient">
+      <i class="fa fa-plus me-1"></i> Ajouter un client
+    </button>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-12">
+    <div class="card">
+      <div class="card-header d-flex align-items-center justify-content-between flex-wrap gap-2">
+        <h4 class="card-title mb-0">Liste des clients</h4>
+        <span class="text-muted" *ngIf="!chargement">{{ listeClients.length }} client(s)</span>
+      </div>
+
+      <div class="card-body">
+        <div class="alert alert-success py-2" *ngIf="messageSucces">
+          {{ messageSucces }}
+        </div>
+
+        <div class="alert alert-danger py-2" *ngIf="messageErreur">
+          {{ messageErreur }}
+        </div>
+
+        <div *ngIf="chargement" class="text-muted">Chargement...</div>
+
+        <div class="table-responsive" *ngIf="!chargement">
+          <table class="table table-striped table-hover align-middle table-clients">
+            <thead>
+              <tr>
+                <th>Nom</th>
+                <th>Prénom</th>
+                <th>Téléphone</th>
+                <th>Courriel</th>
+                <th>Nationalité</th>
+                <th class="text-end">Actions</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr *ngFor="let c of listeClients">
+                <td class="fw-semibold">{{ c.nom }}</td>
+                <td>{{ c.prenom }}</td>
+                <td>{{ c.numeroTelephone }}</td>
+                <td>{{ c.courriel }}</td>
+                <td>{{ c.nationalite }}</td>
+
+                <td class="text-end">
+                  <div class="btn-group" role="group" aria-label="Actions client">
+                    <button
+                      type="button"
+                      class="btn btn-warning btn-sm"
+                      (click)="ouvrirEdition(c)"
+                      aria-label="Modifier le client"
+                    >
+                      <i class="fa fa-pen"></i>
+                    </button>
+
+                    <button
+                      type="button"
+                      class="btn btn-danger btn-sm"
+                      (click)="supprimer(c.id)"
+                      [disabled]="suppressionEnCoursId === c.id"
+                      aria-label="Supprimer le client"
+                    >
+                      <span
+                        *ngIf="suppressionEnCoursId === c.id"
+                        class="spinner-border spinner-border-sm"
+                        aria-hidden="true"
+                      ></span>
+                      <i *ngIf="suppressionEnCoursId !== c.id" class="fa fa-trash"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+
+              <tr *ngIf="listeClients.length === 0">
+                <td colspan="6" class="text-center text-muted">Aucun client</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="modalClient" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">
+          <i class="fa fa-user-plus me-2"></i> Ajouter un client
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+      </div>
+
+      <div class="modal-body">
+        <div class="alert alert-danger py-2" *ngIf="erreurCreation">
+          {{ erreurCreation }}
+        </div>
+
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label class="form-label" for="nom">Nom</label>
+            <input id="nom" class="form-control" [(ngModel)]="nouveauClient.nom" name="nom" required />
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <label class="form-label" for="prenom">Prénom</label>
+            <input id="prenom" class="form-control" [(ngModel)]="nouveauClient.prenom" name="prenom" required />
+          </div>
+
+          <div class="col-md-4 mb-3">
+            <label class="form-label" for="dateNaissance">Date naissance</label>
+            <input
+              id="dateNaissance"
+              class="form-control"
+              type="date"
+              [(ngModel)]="nouveauClient.dateNaissance"
+              name="dateNaissance"
+              required
+            />
+          </div>
+
+          <div class="col-md-4 mb-3">
+            <label class="form-label" for="sexe">Sexe</label>
+            <select id="sexe" class="form-control" [(ngModel)]="nouveauClient.sexe" name="sexe" required>
+              <option value="MASCULIN">Masculin</option>
+              <option value="FEMININ">Féminin</option>
+            </select>
+          </div>
+
+          <div class="col-md-4 mb-3">
+            <label class="form-label" for="nationalite">Nationalité</label>
+            <input id="nationalite" class="form-control" [(ngModel)]="nouveauClient.nationalite" name="nationalite" />
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <label class="form-label" for="telephone">Téléphone</label>
+            <input 
+              id="telephone" 
+              class="form-control" 
+              [(ngModel)]="nouveauClient.numeroTelephone" 
+              name="telephone"
+              pattern="[\d\s\-\+\(\)]+"
+              title="Le numéro de téléphone ne peut contenir que des chiffres, espaces, tirets, parenthèses et le signe +"
+              minlength="8"
+            />
+            <div class="form-text">Format accepté : chiffres, espaces, tirets, parenthèses et signe + (minimum 8 chiffres)</div>
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <label class="form-label" for="courriel">Courriel</label>
+            <input id="courriel" class="form-control" [(ngModel)]="nouveauClient.courriel" name="courriel" type="email" />
+          </div>
+
+          <div class="col-md-12 mb-3">
+            <label class="form-label" for="adresse">Adresse</label>
+            <input id="adresse" class="form-control" [(ngModel)]="nouveauClient.adresse" name="adresse" />
+          </div>
+
+          <div class="col-md-12 mb-3">
+            <label class="form-label" for="motDePasse">Mot de passe</label>
+            <input id="motDePasse" class="form-control" type="password" [(ngModel)]="nouveauClient.motDePasse" name="motDePasse" required />
+            <div class="form-text">Le client utilisera ce mot de passe pour se connecter à son espace client</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+        <button type="button" class="btn btn-primary" (click)="creer()" [disabled]="creationEnCours">
+          <span *ngIf="creationEnCours" class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>
+          <i *ngIf="!creationEnCours" class="fa fa-save me-1"></i>
+          Enregistrer
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="modalClientModifier" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">
+          <i class="fa fa-pen me-2"></i> Modifier le client
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+      </div>
+
+      <div class="modal-body">
+        <div class="alert alert-danger py-2" *ngIf="erreurEdition">
+          {{ erreurEdition }}
+        </div>
+
+        <div class="row" *ngIf="clientEdition as ce">
+          <div class="col-md-6 mb-3">
+            <label class="form-label" for="nomEdit">Nom</label>
+            <input id="nomEdit" class="form-control" [(ngModel)]="ce.nom" name="nomEdit" required />
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <label class="form-label" for="prenomEdit">Prénom</label>
+            <input id="prenomEdit" class="form-control" [(ngModel)]="ce.prenom" name="prenomEdit" required />
+          </div>
+
+          <div class="col-md-4 mb-3">
+            <label class="form-label" for="dateNaissanceEdit">Date naissance</label>
+            <input
+              id="dateNaissanceEdit"
+              class="form-control"
+              type="date"
+              [(ngModel)]="ce.dateNaissance"
+              name="dateNaissanceEdit"
+              required
+            />
+          </div>
+
+          <div class="col-md-4 mb-3">
+            <label class="form-label" for="sexeEdit">Sexe</label>
+            <select id="sexeEdit" class="form-control" [(ngModel)]="ce.sexe" name="sexeEdit" required>
+              <option value="MASCULIN">Masculin</option>
+              <option value="FEMININ">Féminin</option>
+            </select>
+          </div>
+
+          <div class="col-md-4 mb-3">
+            <label class="form-label" for="nationaliteEdit">Nationalité</label>
+            <input id="nationaliteEdit" class="form-control" [(ngModel)]="ce.nationalite" name="nationaliteEdit" />
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <label class="form-label" for="telephoneEdit">Téléphone</label>
+            <input 
+              id="telephoneEdit" 
+              class="form-control" 
+              [(ngModel)]="ce.numeroTelephone" 
+              name="telephoneEdit"
+              pattern="[\d\s\-\+\(\)]+"
+              title="Le numéro de téléphone ne peut contenir que des chiffres, espaces, tirets, parenthèses et le signe +"
+              minlength="8"
+            />
+            <div class="form-text">Format accepté : chiffres, espaces, tirets, parenthèses et signe + (minimum 8 chiffres)</div>
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <label class="form-label" for="courrielEdit">Courriel</label>
+            <input id="courrielEdit" class="form-control" [(ngModel)]="ce.courriel" name="courrielEdit" type="email" />
+          </div>
+
+          <div class="col-md-12 mb-3">
+            <label class="form-label" for="adresseEdit">Adresse</label>
+            <input id="adresseEdit" class="form-control" [(ngModel)]="ce.adresse" name="adresseEdit" />
+          </div>
+
+          <div class="col-md-12 mb-3">
+            <label class="form-label" for="motDePasseEdit">Nouveau mot de passe</label>
+            <input id="motDePasseEdit" class="form-control" type="password" [(ngModel)]="ce.motDePasse" name="motDePasseEdit" />
+            <div class="form-text">Laissez vide pour conserver le mot de passe actuel</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" [disabled]="editionEnCours">
+          Fermer
+        </button>
+
+        <button type="button" class="btn btn-warning" (click)="modifier()" [disabled]="editionEnCours">
+          <span *ngIf="editionEnCours" class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>
+          <i *ngIf="!editionEnCours" class="fa fa-save me-1"></i>
+          Enregistrer les modifications
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,43 @@
+/* You can add global styles to this file, and also import other style files */
+.table {
+  font-family: 'Cambria', 'Times New Roman', Times, serif;
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+.table th {
+  font-family: 'Cambria', 'Times New Roman', Times, serif;
+  font-weight: 600;
+  font-size: 15px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: #495057;
+}
+
+.table td {
+  font-family: 'Cambria', 'Times New Roman', Times, serif;
+  font-weight: 400;
+  font-size: 16px;
+  color: #212529;
+}
+
+.table tbody tr:hover {
+  background-color: #f8f9fa;
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+  background-color: rgba(0, 0, 0, 0.02);
+}
+
+.table .badge {
+  font-family: 'Cambria', 'Times New Roman', Times, serif;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+}
+
+.table .btn {
+  font-family: 'Cambria', 'Times New Roman', Times, serif;
+  font-size: 14px;
+  font-weight: 500;
+}

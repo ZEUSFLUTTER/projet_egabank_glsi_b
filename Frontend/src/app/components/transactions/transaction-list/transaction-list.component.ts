@@ -99,10 +99,10 @@ import { CompteService, Compte } from '../../../services/compte.service';
             </thead>
             <tbody>
               <tr *ngFor="let transaction of paginatedTransactions" 
-                  [class]="'transaction-' + transaction.typeTransaction?.toLowerCase()">
+                  [class]="'transaction-' + (transaction.typeTransaction || '').toLowerCase()">
                 <td>{{ transaction.dateOperation | date:'dd/MM/yyyy HH:mm' }}</td>
                 <td>
-                  <span class="transaction-badge" [class]="'badge-' + transaction.typeTransaction?.toLowerCase()">
+                  <span class="transaction-badge" [class]="'badge-' + (transaction.typeTransaction || '').toLowerCase()">
                     {{ getTransactionTypeLabel(transaction.typeTransaction) }}
                   </span>
                 </td>
@@ -111,7 +111,7 @@ import { CompteService, Compte } from '../../../services/compte.service';
                   {{ transaction.typeTransaction === 'DEPOT' ? '+' : '-' }}{{ transaction.montant | number:'1.2-2' }} €
                 </td>
                 <td>{{ transaction.libelle }}</td>
-                <td class="account-number">{{ transaction.numeroCompte }}</td>
+                <td class="account-number">{{ transaction.compteSource?.numeroCompte || 'N/A' }}</td>
               </tr>
             </tbody>
           </table>

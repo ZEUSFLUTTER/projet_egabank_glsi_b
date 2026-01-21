@@ -1,0 +1,342 @@
+{
+  "info": {
+    "name": "Banque Ega - API Tests",
+    "_postman_id": "b978c6d2-0000-4000-8000-000000000000",
+    "description": "Collection pour tester les APIs du backend Banque Ega",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8080" },
+    { "key": "admin_user", "value": "admin" },
+    { "key": "admin_pass", "value": "password" },
+    { "key": "client_email", "value": "client@example.com" },
+    { "key": "client_pass", "value": "password" },
+    { "key": "token", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register (user)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"{{admin_user}}\",\n  \"password\": \"{{admin_pass}}\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/auth/register" }
+          }
+        },
+        {
+          "name": "Login (user) -> set token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var json = pm.response.json();",
+                  "if (json && json.token) { pm.environment.set('token', json.token); }",
+                  "pm.test('status is 200', function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"{{admin_user}}\",\n  \"password\": \"{{admin_pass}}\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/auth/login" }
+          }
+        },
+        {
+          "name": "Client Login (client) -> set token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var json = pm.response.json();",
+                  "if (json && json.token) { pm.environment.set('token', json.token); }"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"courriel\": \"{{client_email}}\",\n  \"password\": \"{{client_pass}}\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/auth/client/login" }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Clients",
+      "item": [
+        {
+          "name": "GET all clients",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/api/clients" }
+          }
+        },
+        {
+          "name": "GET client by id",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/api/clients/1" }
+          }
+        },
+        {
+          "name": "Create client",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nom\": \"Dupont\",\n  \"prenom\": \"Jean\",\n  \"dateNaissance\": \"1990-01-01\",\n  \"sexe\": \"M\",\n  \"courriel\": \"{{client_email}}\",\n  \"adresse\": \"1 rue Exemple\",\n  \"numTelephone\": \"0600000000\",\n  \"nationalite\": \"France\",\n  \"password\": \"{{client_pass}}\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/clients" }
+          }
+        },
+        {
+          "name": "Update client",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nom\": \"Dupont\",\n  \"prenom\": \"Jean-Paul\",\n  \"dateNaissance\": \"1990-01-01\",\n  \"sexe\": \"M\",\n  \"courriel\": \"{{client_email}}\",\n  \"adresse\": \"2 avenue Test\",\n  \"numTelephone\": \"0600111222\",\n  \"nationalite\": \"France\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/clients/1" }
+          }
+        },
+        {
+          "name": "Delete client",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/api/clients/1" }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Comptes",
+      "item": [
+        {
+          "name": "GET all comptes",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/api/comptes" }
+          }
+        },
+        {
+          "name": "GET compte by id",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/api/comptes/1" }
+          }
+        },
+        {
+          "name": "GET comptes by client",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/api/comptes/client/1" }
+          }
+        },
+        {
+          "name": "Create compte",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"typeCompte\": \"COURANT\",\n  \"solde\": 0,\n  \"clientId\": 1\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/comptes" }
+          }
+        },
+        {
+          "name": "Update compte",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"typeCompte\": \"EPARGNE\",\n  \"solde\": 100.00,\n  \"clientId\": 1\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/comptes/1" }
+          }
+        },
+        {
+          "name": "Delete compte",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/api/comptes/1" }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Transactions",
+      "item": [
+        {
+          "name": "Depot",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/api/transactions/depot?compteId=1&montant=100.00&description=Versement"
+            }
+          }
+        },
+        {
+          "name": "Retrait",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/api/transactions/retrait?compteId=1&montant=50.00&description=Retrait"
+            }
+          }
+        },
+        {
+          "name": "Transfert",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/api/transactions/transfert?compteSourceId=1&compteDestinationId=2&montant=25.00&description=Virement"
+            }
+          }
+        },
+        {
+          "name": "GET transactions by compte",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/api/transactions/compte/1" }
+          }
+        },
+        {
+          "name": "GET all transactions",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/api/transactions" }
+          }
+        },
+        {
+          "name": "GET transaction by id",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/api/transactions/1" }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Releves",
+      "item": [
+        {
+          "name": "Generate releve PDF",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/api/releves/compte/1" }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Client (authenticated)",
+      "item": [
+        {
+          "name": "GET dashboard",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/api/client/dashboard" }
+          }
+        },
+        {
+          "name": "GET client comptes",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/api/client/comptes" }
+          }
+        },
+        {
+          "name": "GET client transactions",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/api/client/transactions" }
+          }
+        },
+        {
+          "name": "GET client notifications",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/api/client/notifications" }
+          }
+        },
+        {
+          "name": "Mark notification read",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/api/client/notifications/1/lu" }
+          }
+        },
+        {
+          "name": "Client retrait (as client)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/api/client/transactions/retrait?compteId=1&montant=10.00&description=RetraitClient"
+            }
+          }
+        },
+        {
+          "name": "Client virement (as client)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/api/client/transactions/virement?compteSourceId=1&compteDestinationId=2&montant=5.00&description=VirementClient"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

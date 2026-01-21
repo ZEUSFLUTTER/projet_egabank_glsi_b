@@ -1,0 +1,113 @@
+<div class="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-gray-50 flex items-center justify-center px-4 py-12">
+  <div class="w-full max-w-md">
+    <!-- Card -->
+    <div class="card shadow-lg border-gray-200">
+      <!-- Header -->
+      <div class="text-center mb-8">
+        <div class="mx-auto w-16 h-16 bg-gradient-to-r from-blue-600 to-blue-700 rounded-2xl flex items-center justify-center mb-4 shadow-md">
+          <svg class="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+          </svg>
+        </div>
+        <h1 class="text-3xl font-bold text-gray-900 mb-2">Banque EGA</h1>
+        <p class="text-gray-600 text-sm">Accès sécurisé à votre compte bancaire</p>
+      </div>
+
+      <!-- Error Alert -->
+      <div *ngIf="errorMessage" class="alert alert-danger mb-6">
+        <div class="flex items-start gap-3">
+          <svg class="w-5 h-5 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+          </svg>
+          <span>{{ errorMessage }}</span>
+        </div>
+      </div>
+
+      <!-- Form -->
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="space-y-6">
+        <!-- Email Field -->
+        <div class="form-group">
+          <label for="courriel" class="form-label flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+            </svg>
+            Adresse email
+          </label>
+          <input
+            type="email"
+            id="courriel"
+            formControlName="courriel"
+            class="form-control"
+            placeholder="votre.email@banque-ega.com"
+            [class.border-red-500]="loginForm.get('courriel')?.invalid && loginForm.get('courriel')?.touched"
+          />
+          <div *ngIf="loginForm.get('courriel')?.invalid && loginForm.get('courriel')?.touched" class="mt-2 text-sm text-red-600">
+            <p *ngIf="loginForm.get('courriel')?.errors?.['required']">L'adresse email est obligatoire</p>
+            <p *ngIf="loginForm.get('courriel')?.errors?.['email']">Veuillez entrer une adresse email valide</p>
+          </div>
+        </div>
+
+        <!-- Password Field -->
+        <div class="form-group">
+          <label for="motDePasse" class="form-label flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+            </svg>
+            Mot de passe
+          </label>
+          <input
+            type="password"
+            id="motDePasse"
+            formControlName="motDePasse"
+            class="form-control"
+            placeholder="••••••••••••"
+            [class.border-red-500]="loginForm.get('motDePasse')?.invalid && loginForm.get('motDePasse')?.touched"
+          />
+          <div *ngIf="loginForm.get('motDePasse')?.invalid && loginForm.get('motDePasse')?.touched" class="mt-2 text-sm text-red-600">
+            <p *ngIf="loginForm.get('motDePasse')?.errors?.['required']">Le mot de passe est obligatoire</p>
+            <p *ngIf="loginForm.get('motDePasse')?.errors?.['minlength']">Le mot de passe doit contenir au moins 6 caractères</p>
+          </div>
+        </div>
+
+        <!-- Submit Button -->
+        <button
+          type="submit"
+          class="w-full btn btn-primary mt-8 py-3.5 text-base font-semibold shadow-md"
+          [disabled]="loginForm.invalid"
+        >
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+          </svg>
+          Se connecter
+        </button>
+      </form>
+
+      <!-- Footer -->
+      <div class="mt-8 pt-6 border-t border-gray-200 text-center">
+        <p class="text-gray-600 text-sm">
+          Pas encore de compte ?
+          <a routerLink="/register" class="text-blue-600 font-semibold hover:text-blue-700 transition-colors hover:underline">Créer un compte</a>
+        </p>
+      </div>
+    </div>
+
+    <!-- Security Info -->
+    <div class="mt-8 text-center text-gray-500 text-xs">
+      <div class="flex items-center justify-center gap-6">
+        <div class="flex items-center gap-1.5">
+          <svg class="w-4 h-4 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+          </svg>
+          <span>SSL Chiffré</span>
+        </div>
+        <div class="flex items-center gap-1.5">
+          <svg class="w-4 h-4 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+          </svg>
+          <span>RGPD Compliant</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+

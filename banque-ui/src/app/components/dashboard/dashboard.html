@@ -1,0 +1,145 @@
+<style>
+  .welcome-banner {
+    background: #ffffff;
+    border-left: 6px solid #0d6efd !important;
+  }
+  .hover-card {
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    cursor: pointer;
+  }
+  .hover-card:hover {
+    transform: translateY(-7px);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.1) !important;
+  }
+  .icon-box {
+    width: 55px;
+    height: 55px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+  }
+  .bg-blue-light { background-color: #e7f1ff; }
+  .bg-green-light { background-color: #e6f9f0; }
+  .bg-orange-light { background-color: #fff4e6; }
+  .text-xs { font-size: 0.75rem; }
+</style>
+
+<div class="container-fluid mt-4 px-4">
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="welcome-banner p-4 rounded-4 shadow-sm">
+        <h2 class="fw-bold text-dark mb-1">Espace Administration EGA BANQUE 👋</h2>
+        <p class="text-muted mb-0">Ravi de vous revoir. Voici l'état actuel de votre parc financier en temps réel.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-xl-4 col-md-6 mb-4">
+      <div class="card border-0 shadow-sm rounded-4 hover-card">
+        <div class="card-body p-4">
+          <div class="d-flex justify-content-between">
+            <div>
+              <p class="text-uppercase fw-bold text-muted small mb-2">Volume des Dépôts</p>
+              <h3 class="fw-bold mb-0">{{ soldeTotal | number:'1.0-0' }} <small class="fs-6">FCFA</small></h3>
+            </div>
+            <div class="icon-box bg-blue-light">
+              <i class="bi bi-cash-coin text-primary fs-3"></i>
+            </div>
+          </div>
+          <div class="mt-3">
+            <span class="text-success fw-bold"><i class="bi bi-graph-up"></i> +5.2%</span>
+            <span class="text-muted ms-2 small">Calculé sur la base des comptes</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-xl-4 col-md-6 mb-4">
+      <div class="card border-0 shadow-sm rounded-4 hover-card">
+        <div class="card-body p-4">
+          <div class="d-flex justify-content-between">
+            <div>
+              <p class="text-uppercase fw-bold text-muted small mb-2">Clients Actifs</p>
+              <h3 class="fw-bold mb-0">{{ totalClients }}</h3>
+            </div>
+            <div class="icon-box bg-green-light">
+              <i class="bi bi-person-check text-success fs-3"></i>
+            </div>
+          </div>
+          <div class="mt-3">
+            <span class="text-success fw-bold"><i class="bi bi-arrow-up-right"></i> +12%</span>
+            <span class="text-muted ms-2 small">Inscrits en base de données</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-xl-4 col-md-6 mb-4">
+      <div class="card border-0 shadow-sm rounded-4 hover-card">
+        <div class="card-body p-4">
+          <div class="d-flex justify-content-between">
+            <div>
+              <p class="text-uppercase fw-bold text-muted small mb-2">Prêts en cours</p>
+              <h3 class="fw-bold mb-0">8.200.000 <small class="fs-6">FCFA</small></h3>
+            </div>
+            <div class="icon-box bg-orange-light">
+              <i class="bi bi-bank text-warning fs-3"></i>
+            </div>
+          </div>
+          <div class="mt-3">
+            <span class="text-danger fw-bold"><i class="bi bi-graph-down"></i> -2.1%</span>
+            <span class="text-muted ms-2 small">Remboursements</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-lg-8 mb-4">
+      <div class="card border-0 shadow-sm rounded-4 h-100">
+        <div class="card-header bg-transparent border-0 pt-4 px-4 d-flex justify-content-between align-items-center">
+          <h5 class="fw-bold mb-0">Flux de Trésorerie Mensuel</h5>
+          <i class="bi bi-three-dots text-muted"></i>
+        </div>
+        <div class="card-body px-4 pb-4">
+          <div style="height: 300px; position: relative;">
+            <canvas id="myChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-4 mb-4">
+      <div class="card border-0 shadow-sm rounded-4 h-100">
+        <div class="card-header bg-transparent border-0 pt-4 px-4">
+          <h5 class="fw-bold">Actions Requises</h5>
+        </div>
+        <div class="card-body px-4">
+          <div class="list-group list-group-flush">
+            <div class="list-group-item border-0 bg-light rounded-3 mb-2 d-flex align-items-center">
+              <div class="p-2 bg-white rounded-circle me-3 shadow-sm">
+                <i class="bi bi-shield-exclamation text-danger"></i>
+              </div>
+              <div>
+                <p class="mb-0 fw-bold small">Sécurité</p>
+                <small class="text-muted">3 comptes suspects détectés</small>
+              </div>
+            </div>
+            <div class="list-group-item border-0 bg-light rounded-3 mb-2 d-flex align-items-center">
+              <div class="p-2 bg-white rounded-circle me-3 shadow-sm">
+                <i class="bi bi-envelope-paper text-primary"></i>
+              </div>
+              <div>
+                <p class="mb-0 fw-bold small">Demandes</p>
+                <small class="text-muted">{{ totalClients }} dossiers en attente</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

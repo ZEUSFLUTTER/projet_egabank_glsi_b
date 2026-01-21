@@ -1,0 +1,137 @@
+<style>
+  /* Structure globale */
+  #wrapper {
+    overflow-x: hidden;
+    background-color: #f8f9fa;
+  }
+
+  /* Sidebar personnalisée */
+  .sidebar-bg {
+    background-color: #1a1d20; /* Un gris très foncé presque noir */
+    min-height: 100vh;
+    width: 260px;
+    transition: all 0.3s;
+  }
+
+  /* Titre de l'application */
+  .brand-section {
+    padding: 1.5rem;
+    font-size: 1.5rem;
+    font-weight: 800;
+    text-align: center;
+    background-color: #0d6efd;
+    color: white;
+    letter-spacing: 1px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  }
+
+  /* Liens de la sidebar */
+  .nav-menu .list-group-item {
+    background-color: transparent !important;
+    color: #adb5bd !important;
+    border: none;
+    padding: 12px 20px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    transition: all 0.2s;
+  }
+
+  .nav-menu .list-group-item i {
+    font-size: 1.2rem;
+    width: 30px;
+  }
+
+  .nav-menu .list-group-item:hover {
+    color: white !important;
+    background-color: #2c3136 !important;
+    padding-left: 25px;
+  }
+
+  /* Style pour le lien ACTIF */
+  .active-link {
+    background-color: #0d6efd21 !important; /* Bleu transparent */
+    color: #0d6efd !important;
+    border-left: 4px solid #0d6efd !important;
+    font-weight: bold !important;
+  }
+
+  /* Bouton déconnexion */
+  .logout-btn {
+    margin-top: auto;
+    color: #dc3545 !important;
+    border-top: 1px solid #2c3136 !important;
+  }
+
+  .logout-btn:hover {
+    background-color: #dc354515 !important;
+  }
+
+  /* Navbar du haut */
+  .top-navbar {
+    background-color: white;
+    border-bottom: 1px solid #dee2e6;
+  }
+
+  .page-title {
+    font-weight: 700;
+    color: #495057;
+  }
+</style>
+
+<div *ngIf="router.url === '/login'">
+  <router-outlet></router-outlet>
+</div>
+
+<div class="d-flex" id="wrapper" *ngIf="router.url !== '/login'">
+
+  <div class="sidebar-bg shadow shadow-lg">
+    <div class="brand-section">
+      <i class="bi bi-bank2 me-2"></i>EGA BANK
+    </div>
+
+    <div class="list-group list-group-flush nav-menu mt-3">
+      <a routerLink="/dashboard" routerLinkActive="active-link" class="list-group-item list-group-item-action">
+        <i class="bi bi-grid-1x2-fill"></i> Tableau de Bord
+      </a>
+
+      <a routerLink="/gestion" routerLinkActive="active-link" class="list-group-item list-group-item-action">
+        <i class="bi bi-arrow-left-right"></i> Opérations
+      </a>
+
+      <a routerLink="/clients" routerLinkActive="active-link" class="list-group-item list-group-item-action">
+        <i class="bi bi-people-fill"></i> Gestion Clients
+      </a>
+
+      <a routerLink="/login" class="list-group-item list-group-item-action logout-btn mt-5">
+        <i class="bi bi-power"></i> Déconnexion
+      </a>
+    </div>
+  </div>
+
+  <div class="w-100">
+    <nav class="navbar top-navbar p-3 shadow-sm">
+      <div class="container-fluid">
+        <span class="navbar-brand page-title">
+           <span *ngIf="router.url === '/dashboard'"><i class="bi bi-speedometer2 text-primary me-2"></i>Dashboard</span>
+           <span *ngIf="router.url === '/clients'"><i class="bi bi-people text-primary me-2"></i>Annuaire Clients</span>
+           <span *ngIf="router.url === '/gestion'"><i class="bi bi-cash-stack text-primary me-2"></i>Transactions</span>
+        </span>
+
+        <div class="d-flex align-items-center">
+           <div class="me-3 text-end d-none d-md-block">
+             <small class="text-muted d-block">Connecté en tant que</small>
+             <span class="fw-bold text-dark">Administrateur</span>
+           </div>
+           <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 40px; height: 40px;">
+             <i class="bi bi-person-fill fs-5"></i>
+           </div>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container-fluid p-4">
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,42 @@
+<div class="container mt-4">
+  <div class="card shadow border-0 p-4">
+    <h3 class="text-primary fw-bold mb-4">Ouverture de Compte</h3>
+
+    <div class="mb-3">
+      <label class="form-label">Nom du Client</label>
+      <input type="text" class="form-control" [(ngModel)]="nouveauCompte.proprietaire.nom" name="nom" placeholder="Ex: SEWAVI">
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Prénom du Client</label>
+      <input type="text" class="form-control" [(ngModel)]="nouveauCompte.proprietaire.prenom" name="prenom" placeholder="Ex: Jean">
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Adresse Email</label>
+      <input type="email" class="form-control" [(ngModel)]="nouveauCompte.proprietaire.email" name="email" placeholder="jean@mail.com">
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Type de Compte</label>
+      <select class="form-select" [(ngModel)]="nouveauCompte.typeCompte" name="type">
+        <option value="COURANT">Compte Courant</option>
+        <option value="EPARGNE">Compte Épargne</option>
+      </select>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Solde Initial (FCFA)</label>
+      <input type="number" class="form-control" [(ngModel)]="nouveauCompte.solde" name="solde" placeholder="0">
+    </div>
+
+    <div class="d-flex gap-2">
+      <button class="btn btn-success w-100" (click)="enregistrer()">
+        Créer le Compte
+      </button>
+      <button class="btn btn-secondary w-100" routerLink="/clients">
+        Annuler
+      </button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,31 @@
+<div class="container mt-4">
+  <div class="card shadow border-0 p-4" *ngIf="client">
+    <h3 class="fw-bold text-warning mb-4">Modifier Client</h3>
+    <form (ngSubmit)="enregistrerModif()">
+      <div class="mb-3">
+        <label class="form-label">Nom</label>
+        <input type="text" class="form-control" [(ngModel)]="client.nom" name="nom">
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Prénom</label>
+        <input type="text" class="form-control" [(ngModel)]="client.prenom" name="prenom">
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Email</label>
+        <input type="email" class="form-control" [(ngModel)]="client.email" name="email">
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Solde</label>
+        <input type="number" class="form-control" [(ngModel)]="client.solde" name="solde">
+      </div>
+      <button type="submit" class="btn btn-warning w-100">Enregistrer</button>
+      <button type="button" class="btn btn-light w-100 mt-2" routerLink="/clients">Annuler</button>
+    </form>
+  </div>
+
+  <div class="text-center mt-5" *ngIf="!client">
+    <div class="spinner-border text-primary"></div>
+    <p>Chargement des informations du client...</p>
+    <p class="text-muted small">Si cela reste bloqué, vérifie que json-server tourne sur le port 3000.</p>
+  </div>
+</div>

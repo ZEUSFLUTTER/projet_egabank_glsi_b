@@ -1,0 +1,75 @@
+{
+  "clients": [
+    {
+      "id": "1",
+      "numero": "12345",
+      "nom": "SEWAVI",
+      "prenom": "Koffi Gael",
+      "email": "koffi@banque.tg",
+      "type": "Courant",
+      "statut": "Actif",
+      "solde": 150000
+    },
+    {
+      "id": "27b1",
+      "numero": "79572",
+      "nom": "PADARO",
+      "prenom": "Dorinda",
+      "email": "dorinda11@gmail.com",
+      "type": "Épargne",
+      "statut": "Actif",
+      "solde": 4000000
+    },
+    {
+      "id": "1050",
+      "numero": "88211",
+      "nom": "TCHABODJO",
+      "prenom": "Jamilou",
+      "email": "jamil@gmail.com",
+      "type": "Épargne",
+      "statut": "Actif",
+      "solde": 215000
+    },
+    {
+      "id": "2776",
+      "numero": "55655",
+      "nom": "Laudantium est et d",
+      "prenom": "Modi repellendus Do",
+      "email": "qyxi@mailinator.com",
+      "type": "Courant",
+      "statut": "Actif",
+      "solde": 120032
+    }
+  ],
+  "comptes": [],
+  "transactions": [
+    {
+      "id": "10eb",
+      "clientId": "1050",
+      "type": "VERSEMENT",
+      "montant": 300000,
+      "date": "15/01/2026 21:53:04"
+    },
+    {
+      "id": "0325",
+      "clientId": "27b1",
+      "type": "VERSEMENT",
+      "montant": 3000000,
+      "date": "15/01/2026 21:53:49"
+    },
+    {
+      "id": "577e",
+      "clientId": "2776",
+      "type": "VERSEMENT",
+      "montant": 120000,
+      "date": "17/01/2026 08:50:07"
+    },
+    {
+      "id": "44c5",
+      "clientId": "1050",
+      "type": "RETRAIT",
+      "montant": 100000,
+      "date": "17/01/2026 08:51:21"
+    }
+  ]
+}

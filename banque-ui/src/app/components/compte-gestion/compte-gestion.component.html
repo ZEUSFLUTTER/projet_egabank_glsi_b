@@ -1,0 +1,29 @@
+<div class="container mt-5">
+  <div class="card shadow">
+    <div class="card-header bg-primary text-white">
+      <h5>Gestion des Opérations</h5>
+    </div>
+    <div class="card-body">
+      <form #opForm="ngForm">
+        <div class="mb-3">
+          <label class="form-label">Numéro de compte</label>
+          <input type="text" name="numero" ngModel class="form-control" required>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Montant</label>
+          <input type="number" name="montant" ngModel class="form-control" required>
+        </div>
+
+        <div class="d-flex">
+          <button type="button" class="btn btn-success me-2" (click)="onVerser(opForm.value)">
+            Versement
+          </button>
+
+          <button type="button" class="btn btn-danger" (click)="onRetirer(opForm.value)">
+            Retrait
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,45 @@
+<div class="container mt-4" *ngIf="client">
+  <div class="card shadow border-0 p-4">
+    <h3 class="fw-bold text-primary mb-4">Détails du Client</h3>
+
+    <div class="row mb-3">
+      <div class="col-md-4 fw-bold">Nom & Prénom :</div>
+      <div class="col-md-8">{{ client.nom }} {{ client.prenom }}</div>
+    </div>
+
+    <div class="row mb-3">
+      <div class="col-md-4 fw-bold">Email :</div>
+      <div class="col-md-8">{{ client.email }}</div>
+    </div>
+
+    <div class="row mb-3">
+      <div class="col-md-4 fw-bold">Solde actuel :</div>
+      <div class="col-md-8">
+        <span class="badge bg-success fs-5">
+          {{ client.compte?.solde ?? client.solde ?? 0 }} FCFA
+        </span>
+      </div>
+    </div>
+
+    <div class="row mb-3">
+      <div class="col-md-4 fw-bold">Statut du compte :</div>
+      <div class="col-md-8">
+        <span class="badge"
+              [ngClass]="(client.compte?.statut || client.statut) === 'ACTIF' ? 'bg-info' : 'bg-danger'">
+          {{ client.compte?.statut || client.statut || 'INACTIF' }}
+        </span>
+      </div>
+    </div>
+
+    <hr>
+    <div class="d-flex gap-2">
+      <button class="btn btn-secondary" routerLink="/clients">Retour à la liste</button>
+      <button class="btn btn-warning" [routerLink]="['/modifier-client', client.id]">Modifier</button>
+    </div>
+  </div>
+</div>
+
+<div class="text-center mt-5" *ngIf="!client">
+  <div class="spinner-border text-primary"></div>
+  <p>Chargement des données depuis le serveur...</p>
+</div>

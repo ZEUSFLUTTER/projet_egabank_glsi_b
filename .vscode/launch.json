@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-BanqueApplication<banque>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.ega.banque.BanqueApplication",
+            "projectName": "banque",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}

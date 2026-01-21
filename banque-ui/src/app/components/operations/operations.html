@@ -1,0 +1,32 @@
+<div class="container mt-4">
+  <div class="card shadow border-0 p-4">
+    <h3 class="text-primary fw-bold mb-4">Nouvelle Opération</h3>
+
+    <div class="mb-3">
+      <label class="form-label">Sélectionner le Client</label>
+      <select class="form-select" [(ngModel)]="selectedClientId">
+        <option value="" disabled selected>Choisir un client...</option>
+        <option *ngFor="let c of clients" [value]="c.id">
+          {{ c.nom }} {{ c.prenom }} - {{ c.numeroCompte }} (Solde: {{ c.solde }} FCFA)
+        </option>
+      </select>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Type d'opération</label>
+      <select class="form-select" [(ngModel)]="typeOp">
+        <option value="VERSEMENT">Versement (+)</option>
+        <option value="RETRAIT">Retrait (-)</option>
+      </select>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Montant (FCFA)</label>
+      <input type="number" class="form-control" [(ngModel)]="montant" placeholder="Ex: 5000">
+    </div>
+
+    <button class="btn btn-primary w-100" (click)="validerOperation()">
+      Confirmer l'opération
+    </button>
+  </div>
+</div>

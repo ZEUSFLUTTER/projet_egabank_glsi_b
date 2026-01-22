@@ -1,0 +1,33 @@
+server:
+  port: 8080
+
+spring:
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/ega_db}
+    username: ${DB_USERNAME:laetitia}
+    password: ${DB_PASSWORD:martial}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  jackson:
+    serialization:
+      WRITE_DATES_AS_TIMESTAMPS: false
+  flyway:
+    enabled: true
+    locations: classpath:db/migration/postgresql
+    out-of-order: true
+    validate-on-migrate: false
+    ignore-migration-patterns: "*:missing"
+
+app:
+  jwt:
+    secret: ${JWT_SECRET:change-me-please-at-least-256-bits}
+    expirationMs: ${JWT_EXPIRATION_MS:86400000}
+  iban:
+    country: ${IBAN_COUNTRY:FR}

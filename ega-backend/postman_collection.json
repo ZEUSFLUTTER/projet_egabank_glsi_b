@@ -1,0 +1,142 @@
+{
+  "info": {
+    "name": "EGA Banking API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8080" },
+    { "key": "token", "value": "" },
+    { "key": "accountNumber", "value": "" },
+    { "key": "clientId", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "Auth - Register",
+      "request": {
+        "method": "POST",
+        "header": [ { "key": "Content-Type", "value": "application/json" } ],
+        "url": { "raw": "{{baseUrl}}/api/auth/register", "host": ["{{baseUrl}}"], "path": ["api","auth","register"] },
+        "body": { "mode": "raw", "raw": "{\n  \"username\": \"user1\",\n  \"email\": \"user1@example.com\",\n  \"password\": \"Password123!\"\n}" }
+      }
+    },
+    {
+      "name": "Auth - Login",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const data = pm.response.json();",
+              "if (data.token) { pm.collectionVariables.set('token', data.token); }"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [ { "key": "Content-Type", "value": "application/json" } ],
+        "url": { "raw": "{{baseUrl}}/api/auth/login", "host": ["{{baseUrl}}"], "path": ["api","auth","login"] },
+        "body": { "mode": "raw", "raw": "{\n  \"username\": \"user1\",\n  \"password\": \"Password123!\"\n}" }
+      }
+    },
+
+    {
+      "name": "Client - Create",
+      "request": {
+        "method": "POST",
+        "header": [ { "key": "Authorization", "value": "Bearer {{token}}" }, { "key": "Content-Type", "value": "application/json" } ],
+        "url": { "raw": "{{baseUrl}}/api/clients", "host": ["{{baseUrl}}"], "path": ["api","clients"] },
+        "body": { "mode": "raw", "raw": "{\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\",\n  \"birthDate\": \"1990-01-10\",\n  \"gender\": \"MALE\",\n  \"address\": \"1 rue de la Paix\",\n  \"phone\": \"0600000000\",\n  \"email\": \"john.doe@example.com\",\n  \"nationality\": \"FR\"\n}" }
+      }
+    },
+    {
+      "name": "Client - List",
+      "request": {
+        "method": "GET",
+        "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ],
+        "url": { "raw": "{{baseUrl}}/api/clients", "host": ["{{baseUrl}}"], "path": ["api","clients"] }
+      }
+    },
+
+    {
+      "name": "Account - Create CURRENT",
+      "request": {
+        "method": "POST",
+        "header": [ { "key": "Authorization", "value": "Bearer {{token}}" }, { "key": "Content-Type", "value": "application/json" } ],
+        "url": { "raw": "{{baseUrl}}/api/accounts", "host": ["{{baseUrl}}"], "path": ["api","accounts"] },
+        "body": { "mode": "raw", "raw": "{\n  \"ownerId\": {{clientId}},\n  \"type\": \"CURRENT\"\n}" }
+      }
+    },
+    {
+      "name": "Account - Create SAVINGS",
+      "request": {
+        "method": "POST",
+        "header": [ { "key": "Authorization", "value": "Bearer {{token}}" }, { "key": "Content-Type", "value": "application/json" } ],
+        "url": { "raw": "{{baseUrl}}/api/accounts", "host": ["{{baseUrl}}"], "path": ["api","accounts"] },
+        "body": { "mode": "raw", "raw": "{\n  \"ownerId\": {{clientId}},\n  \"type\": \"SAVINGS\"\n}" }
+      }
+    },
+    {
+      "name": "Account - Get by Number",
+      "request": {
+        "method": "GET",
+        "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ],
+        "url": { "raw": "{{baseUrl}}/api/accounts/{{accountNumber}}", "host": ["{{baseUrl}}"], "path": ["api","accounts","{{accountNumber}}"] }
+      }
+    },
+    {
+      "name": "Account - List by Client",
+      "request": {
+        "method": "GET",
+        "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ],
+        "url": { "raw": "{{baseUrl}}/api/accounts/by-client/{{clientId}}", "host": ["{{baseUrl}}"], "path": ["api","accounts","by-client","{{clientId}}"] }
+      }
+    },
+
+    {
+      "name": "Txn - Deposit",
+      "request": {
+        "method": "POST",
+        "header": [ { "key": "Authorization", "value": "Bearer {{token}}" }, { "key": "Content-Type", "value": "application/json" } ],
+        "url": { "raw": "{{baseUrl}}/api/transactions/deposit", "host": ["{{baseUrl}}"], "path": ["api","transactions","deposit"] },
+        "body": { "mode": "raw", "raw": "{\n  \"accountNumber\": \"{{accountNumber}}\",\n  \"amount\": 1000\n}" }
+      }
+    },
+    {
+      "name": "Txn - Withdraw",
+      "request": {
+        "method": "POST",
+        "header": [ { "key": "Authorization", "value": "Bearer {{token}}" }, { "key": "Content-Type", "value": "application/json" } ],
+        "url": { "raw": "{{baseUrl}}/api/transactions/withdraw", "host": ["{{baseUrl}}"], "path": ["api","transactions","withdraw"] },
+        "body": { "mode": "raw", "raw": "{\n  \"accountNumber\": \"{{accountNumber}}\",\n  \"amount\": 300\n}" }
+      }
+    },
+    {
+      "name": "Txn - Transfer",
+      "request": {
+        "method": "POST",
+        "header": [ { "key": "Authorization", "value": "Bearer {{token}}" }, { "key": "Content-Type", "value": "application/json" } ],
+        "url": { "raw": "{{baseUrl}}/api/transactions/transfer", "host": ["{{baseUrl}}"], "path": ["api","transactions","transfer"] },
+        "body": { "mode": "raw", "raw": "{\n  \"fromAccount\": \"{{accountNumber}}\",\n  \"toAccount\": \"REPLACE_WITH_OTHER_IBAN\",\n  \"amount\": 100\n}" }
+      }
+    },
+    {
+      "name": "Txn - History",
+      "request": {
+        "method": "GET",
+        "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ],
+        "url": {
+          "raw": "{{baseUrl}}/api/transactions/history?accountNumber={{accountNumber}}&from=2024-01-01T00:00:00Z&to=2099-12-31T23:59:59Z",
+          "host": ["{{baseUrl}}"],
+          "path": ["api","transactions","history"],
+          "query": [
+            {"key":"accountNumber","value":"{{accountNumber}}"},
+            {"key":"from","value":"2024-01-01T00:00:00Z"},
+            {"key":"to","value":"2099-12-31T23:59:59Z"}
+          ]
+        }
+      }
+    }
+  ]
+}

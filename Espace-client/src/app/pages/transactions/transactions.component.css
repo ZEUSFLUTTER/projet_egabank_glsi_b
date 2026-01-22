@@ -1,0 +1,77 @@
+.card {
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.table th {
+  border-top: none;
+  font-weight: 600;
+  color: #6c757d;
+  background-color: #f8f9fa;
+}
+
+.table-hover tbody tr:hover {
+  background-color: rgba(0, 123, 255, 0.05);
+}
+
+.badge {
+  font-size: 0.75em;
+  padding: 0.375rem 0.75rem;
+}
+
+.bg-success {
+  background-color: #28a745 !important;
+}
+
+.bg-danger {
+  background-color: #dc3545 !important;
+}
+
+.bg-secondary {
+  background-color: #6c757d !important;
+}
+
+.text-success {
+  color: #28a745 !important;
+}
+
+.text-danger {
+  color: #dc3545 !important;
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.btn {
+  border-radius: 6px;
+}
+
+.gap-2 {
+  gap: 0.5rem;
+}
+
+.spinner-border {
+  color: #007bff;
+}
+
+.fa-inbox {
+  opacity: 0.5;
+}
+
+@media (max-width: 768px) {
+  .card-body {
+    padding: 1rem;
+  }
+  
+  .row.mb-4 {
+    margin-bottom: 1rem !important;
+  }
+  
+  .col-md-3,
+  .col-md-2 {
+    margin-bottom: 1rem;
+  }
+}

@@ -1,0 +1,138 @@
+<div class="container-fluid py-4">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <div class="card">
+        <div class="card-header">
+          <h4 class="card-title mb-0">
+            <i class="fas fa-file-pdf me-2"></i>
+            Générer un Relevé de Compte
+          </h4>
+        </div>
+        <div class="card-body">
+          <div *ngIf="chargement" class="text-center py-4">
+            <div class="spinner-border" role="status">
+              <span class="visually-hidden">Chargement...</span>
+            </div>
+          </div>
+
+          <div *ngIf="!chargement && comptes.length === 0" class="text-center py-4">
+            <i class="fas fa-exclamation-triangle fa-3x text-warning mb-3"></i>
+            <p class="text-muted">Aucun compte disponible pour générer un relevé</p>
+          </div>
+
+          <div *ngIf="!chargement && comptes.length > 0">
+            <div class="mb-4">
+              <label class="form-label">
+                <i class="fas fa-credit-card me-1"></i>
+                Sélectionner un compte
+              </label>
+              <select class="form-select" [(ngModel)]="donneesReleve.compteId">
+                <option *ngFor="let compte of comptes" [value]="compte.id">
+                  {{ compte.numeroCompte }} - {{ obtenirTypeCompteLibelle(compte.typeCompte) }}
+                  ({{ compte.solde | currency:'FCFA':'symbol':'1.2-2' }})
+                </option>
+              </select>
+            </div>
+
+            <div *ngIf="obtenirCompteSelectionne()" class="alert alert-info mb-4">
+              <div class="row">
+                <div class="col-md-6">
+                  <strong>Compte sélectionné:</strong><br>
+                  {{ obtenirCompteSelectionne()?.numeroCompte }}<br>
+                  <small>{{ obtenirTypeCompteLibelle(obtenirCompteSelectionne()?.typeCompte || '') }}</small>
+                </div>
+                <div class="col-md-6 text-md-end">
+                  <strong>Solde actuel:</strong><br>
+                  <span class="h5" [class]="(obtenirCompteSelectionne()?.solde || 0) >= 0 ? 'text-success' : 'text-danger'">
+                    {{ obtenirCompteSelectionne()?.solde | currency:'FCFA':'symbol':'1.2-2' }}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div class="mb-4">
+              <label class="form-label">
+                <i class="fas fa-calendar-alt me-1"></i>
+                Périodes prédéfinies
+              </label>
+              <div class="d-flex gap-2 flex-wrap">
+                <button type="button" class="btn btn-outline-primary btn-sm" 
+                        (click)="definirPeriodePredefinie('semaine')">
+                  7 derniers jours
+                </button>
+                <button type="button" class="btn btn-outline-primary btn-sm" 
+                        (click)="definirPeriodePredefinie('mois')">
+                  Ce mois
+                </button>
+                <button type="button" class="btn btn-outline-primary btn-sm" 
+                        (click)="definirPeriodePredefinie('trimestre')">
+                  Ce trimestre
+                </button>
+                <button type="button" class="btn btn-outline-primary btn-sm" 
+                        (click)="definirPeriodePredefinie('annee')">
+                  Cette année
+                </button>
+              </div>
+            </div>
+
+            <div class="row mb-4">
+              <div class="col-md-6">
+                <label class="form-label">
+                  <i class="fas fa-calendar me-1"></i>
+                  Date de début
+                </label>
+                <input type="date" class="form-control" [(ngModel)]="donneesReleve.dateDebut">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">
+                  <i class="fas fa-calendar me-1"></i>
+                  Date de fin
+                </label>
+                <input type="date" class="form-control" [(ngModel)]="donneesReleve.dateFin">
+              </div>
+            </div>
+
+            <div *ngIf="donneesReleve.dateDebut && donneesReleve.dateFin" class="alert alert-light mb-4">
+              <div class="d-flex align-items-center">
+                <i class="fas fa-info-circle text-info me-2"></i>
+                <span>
+                  Relevé pour la période du 
+                  <strong>{{ donneesReleve.dateDebut | date:'dd/MM/yyyy' }}</strong>
+                  au 
+                  <strong>{{ donneesReleve.dateFin | date:'dd/MM/yyyy' }}</strong>
+                </span>
+              </div>
+            </div>
+
+            <div class="text-center">
+              <button type="button" class="btn btn-primary btn-lg" 
+                      (click)="genererReleve()" 
+                      [disabled]="generationEnCours">
+                <span *ngIf="generationEnCours" class="spinner-border spinner-border-sm me-2"></span>
+                <i *ngIf="!generationEnCours" class="fas fa-download me-2"></i>
+                {{ generationEnCours ? 'Génération en cours...' : 'Télécharger le Relevé PDF' }}
+              </button>
+            </div>
+
+            <div class="mt-4">
+              <div class="card bg-light">
+                <div class="card-body">
+                  <h6 class="card-title">
+                    <i class="fas fa-lightbulb text-warning me-1"></i>
+                    Informations importantes
+                  </h6>
+                  <ul class="mb-0 small">
+                    <li>Le relevé sera généré au format PDF</li>
+                    <li>La période ne peut pas dépasser 1 an</li>
+                    <li>Seules les transactions de la période sélectionnée seront incluses</li>
+                    <li>Le téléchargement commencera automatiquement une fois le relevé généré</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

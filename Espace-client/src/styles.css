@@ -1,0 +1,149 @@
+/* Styles globaux pour l'espace client EGABANK */
+@import 'bootstrap/dist/css/bootstrap.min.css';
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css');
+
+body {
+  font-family: 'Cambria', 'Times New Roman', serif;
+  background-color: #f8f9fa;
+  margin: 0;
+  padding: 0;
+}
+
+* {
+  font-family: 'Cambria', 'Times New Roman', serif;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Cambria', 'Times New Roman', serif;
+  font-weight: 600;
+}
+
+p, span, div, label, input, textarea, select, button {
+  font-family: 'Cambria', 'Times New Roman', serif;
+}
+
+.navbar-brand {
+  font-weight: bold;
+  color: #2c3e50 !important;
+  font-family: 'Cambria', 'Times New Roman', serif;
+}
+
+.card {
+  border: none;
+  border-radius: 10px;
+  box-shadow: 0 0 20px rgba(0,0,0,0.1);
+}
+
+.btn-primary {
+  background-color: #3498db;
+  border-color: #3498db;
+}
+
+.btn-primary:hover {
+  background-color: #2980b9;
+  border-color: #2980b9;
+}
+
+.btn-success {
+  background-color: #27ae60;
+  border-color: #27ae60;
+}
+
+.btn-danger {
+  background-color: #e74c3c;
+  border-color: #e74c3c;
+}
+
+.form-control:focus {
+  border-color: #3498db;
+  box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+}
+
+.alert {
+  border-radius: 8px;
+}
+
+.table {
+  background-color: white;
+}
+
+.spinner-border-sm {
+  width: 1rem;
+  height: 1rem;
+}
+
+/* Styles pour les modales */
+.modal-backdrop {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+  border-radius: 10px;
+  border: none;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.btn {
+  border-radius: 6px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  font-family: 'Cambria', 'Times New Roman', serif;
+}
+
+.card-header {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+  background-color: rgba(0, 0, 0, 0.03);
+  font-family: 'Cambria', 'Times New Roman', serif;
+}
+
+.card-body {
+  font-family: 'Cambria', 'Times New Roman', serif;
+}
+
+.card-title {
+  font-family: 'Cambria', 'Times New Roman', serif;
+  font-weight: 600;
+}
+
+.form-label {
+  font-weight: 600;
+  color: #495057;
+  font-family: 'Cambria', 'Times New Roman', serif;
+}
+
+.form-control, .form-select {
+  font-family: 'Cambria', 'Times New Roman', serif;
+}
+
+.table {
+  background-color: white;
+  font-family: 'Cambria', 'Times New Roman', serif;
+}
+
+.table th, .table td {
+  font-family: 'Cambria', 'Times New Roman', serif;
+}
+
+.badge {
+  font-size: 0.75em;
+  padding: 0.375rem 0.75rem;
+  font-family: 'Cambria', 'Times New Roman', serif;
+}
+
+.btn {
+  border-radius: 6px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  font-family: 'Cambria', 'Times New Roman', serif;
+}
+
+.swal2-popup {
+  border-radius: 10px !important;
+}
+
+@media (max-width: 768px) {
+  .container-fluid {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+}

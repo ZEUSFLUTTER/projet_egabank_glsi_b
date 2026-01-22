@@ -1,0 +1,173 @@
+<div class="container-fluid py-4">
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-body">
+          <h4 class="card-title mb-0">
+            Bienvenue, {{ client?.prenom }} {{ client?.nom }}
+          </h4>
+          <p class="text-muted mb-0">Voici un aperçu de vos comptes et transactions récentes</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row mb-4">
+    <div class="col-md-4">
+      <div class="card bg-primary text-white">
+        <div class="card-body">
+          <div class="d-flex justify-content-between">
+            <div>
+              <h6 class="card-title">Solde  Total</h6>
+              <h3 class="mb-0">{{ soldeTotal | currency:'FCFA':'symbol':'1.2-2' }}</h3>
+            </div>
+            <div class="align-self-center">
+              <i class="fas fa-wallet fa-2x"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card bg-success text-white">
+        <div class="card-body">
+          <div class="d-flex justify-content-between">
+            <div>
+              <h6 class="card-title">Nombre de Comptes</h6>
+              <h3 class="mb-0">{{ comptes.length }}</h3>
+            </div>
+            <div class="align-self-center">
+              <i class="fas fa-credit-card fa-2x"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card bg-info text-white">
+        <div class="card-body">
+          <div class="d-flex justify-content-between">
+            <div>
+              <h6 class="card-title">Transactions Récentes</h6>
+              <h3 class="mb-0">{{ dernieresTransactions.length }}</h3>
+            </div>
+            <div class="align-self-center">
+              <i class="fas fa-exchange-alt fa-2x"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h5 class="mb-0">Mes Comptes</h5>
+          <a routerLink="/mes-comptes" class="btn btn-primary btn-sm">
+            Voir tous les comptes
+          </a>
+        </div>
+        <div class="card-body">
+          <div *ngIf="chargement" class="text-center py-4">
+            <div class="spinner-border" role="status">
+              <span class="visually-hidden">Chargement...</span>
+            </div>
+          </div>
+          
+          <div *ngIf="!chargement && comptes.length === 0" class="text-center py-4">
+            <p class="text-muted">Aucun compte trouvé</p>
+          </div>
+
+          <div *ngIf="!chargement && comptes.length > 0" class="row">
+            <div *ngFor="let compte of comptes" class="col-md-6 mb-3">
+              <div class="card border">
+                <div class="card-body">
+                  <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                      <h6 class="card-title">{{ obtenirTypeCompteLibelle(compte.typeCompte) }}</h6>
+                      <p class="text-muted small mb-1">{{ compte.numeroCompte }}</p>
+                      <h5 class="mb-0" [class]="compte.solde >= 0 ? 'text-success' : 'text-danger'">
+                        {{ compte.solde | currency:'FCFA':'symbol':'1.2-2' }}
+                      </h5>
+                    </div>
+                    <div class="text-end">
+                      <i class="fas" [class.fa-university]="compte.typeCompte === 'COURANT'" 
+                         [class.fa-piggy-bank]="compte.typeCompte === 'EPARGNE'"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h5 class="mb-0">Dernières Transactions</h5>
+          <a routerLink="/transactions" class="btn btn-primary btn-sm">
+            Voir toutes les transactions
+          </a>
+        </div>
+        <div class="card-body">
+          <div *ngIf="chargement" class="text-center py-4">
+            <div class="spinner-border" role="status">
+              <span class="visually-hidden">Chargement...</span>
+            </div>
+          </div>
+          
+          <div *ngIf="!chargement && dernieresTransactions.length === 0" class="text-center py-4">
+            <p class="text-muted">Aucune transaction trouvée</p>
+          </div>
+
+          <div *ngIf="!chargement && dernieresTransactions.length > 0" class="table-responsive">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Type</th>
+                  <th>Description</th>
+                  <th>Destination</th>
+                  <th class="text-end">Montant</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let transaction of dernieresTransactions">
+                  <td>{{ transaction.dateOperation | date:'dd/MM/yyyy HH:mm' }}</td>
+                  <td>
+                    <span class="badge" 
+                          [class.bg-success]="transaction.typeTransaction === 'DEPOT'"
+                          [class.bg-danger]="transaction.typeTransaction === 'RETRAIT'"
+                          [class.bg-info]="transaction.typeTransaction === 'VIREMENT'">
+                      {{ obtenirTypeTransactionLibelle(transaction.typeTransaction) }}
+                    </span>
+                  </td>
+                  <td>{{ transaction.libelle }}</td>
+                  <td>
+                    <span *ngIf="transaction.compteDestination" class="text-muted">
+                      {{ transaction.compteDestination.numeroCompte }}
+                    </span>
+                    <span *ngIf="!transaction.compteDestination" class="text-muted">-</span>
+                  </td>
+                  <td class="text-end" [class]="obtenirClasseTransaction(transaction.typeTransaction)">
+                    <span *ngIf="transaction.typeTransaction === 'DEPOT'">+</span>
+                    <span *ngIf="transaction.typeTransaction === 'RETRAIT'">-</span>
+                    <span *ngIf="transaction.typeTransaction === 'VIREMENT' && transaction.compteDestination && !transaction.compteSource">+</span>
+                    <span *ngIf="transaction.typeTransaction === 'VIREMENT' && transaction.compteSource && !transaction.compteDestination">-</span>
+                    {{ transaction.montant | currency:'EUR':'symbol':'1.2-2' }}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

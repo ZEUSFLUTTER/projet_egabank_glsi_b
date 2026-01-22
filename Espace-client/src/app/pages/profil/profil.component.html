@@ -1,0 +1,187 @@
+<div class="container-fluid py-4">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <div class="card">
+        <div class="card-header">
+          <h4 class="card-title mb-0">
+            <i class="fas fa-user me-2"></i>
+            Mon Profil
+          </h4>
+        </div>
+        <div class="card-body">
+          <div *ngIf="chargement" class="text-center py-4">
+            <div class="spinner-border" role="status">
+              <span class="visually-hidden">Chargement...</span>
+            </div>
+          </div>
+
+          <div *ngIf="!chargement && client">
+            <div class="row mb-4">
+              <div class="col-md-6">
+                <div class="card bg-light">
+                  <div class="card-body">
+                    <h5 class="card-title">
+                      <i class="fas fa-id-card text-primary me-2"></i>
+                    </h5>
+                    <div class="row">
+                      <div class="col-sm-6 mb-3">
+                        <label class="form-label text-muted">Nom</label>
+                        <p class="mb-0 fw-bold">{{ client.nom }}</p>
+                      </div>
+                      <div class="col-sm-6 mb-3">
+                        <label class="form-label text-muted">Prénom</label>
+                        <p class="mb-0 fw-bold">{{ client.prenom }}</p>
+                      </div>
+                      <div class="col-sm-6 mb-3">
+                        <label class="form-label text-muted">Date de naissance</label>
+                        <p class="mb-0">{{ client.dateNaissance | date:'dd/MM/yyyy' }}</p>
+                        <small class="text-muted">({{ calculerAge() }} ans)</small>
+                      </div>
+                      <div class="col-sm-6 mb-3">
+                        <label class="form-label text-muted">Sexe</label>
+                        <p class="mb-0">{{ obtenirSexeLibelle(client.sexe) }}</p>
+                      </div>
+                      <div class="col-12 mb-3">
+                        <label class="form-label text-muted">Nationalité</label>
+                        <p class="mb-0">{{ client.nationalite }}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="col-md-6">
+                <div class="card bg-light">
+                  <div class="card-body">
+                    <h5 class="card-title">
+                      <i class="fas fa-address-book text-success me-2"></i>
+                      Coordonnées
+                    </h5>
+                    <div class="mb-3">
+                      <label class="form-label text-muted">Adresse</label>
+                      <p class="mb-0">{{ client.adresse }}</p>
+                    </div>
+                    <div class="mb-3">
+                      <label class="form-label text-muted">Téléphone</label>
+                      <p class="mb-0">
+                        <i class="fas fa-phone text-info me-1"></i>
+                        {{ client.numeroTelephone }}
+                      </p>
+                    </div>
+                    <div class="mb-3">
+                      <label class="form-label text-muted">Email</label>
+                      <p class="mb-0">
+                        <i class="fas fa-envelope text-warning me-1"></i>
+                        {{ client.courriel }}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card bg-light mb-4">
+              <div class="card-body">
+                <h5 class="card-title">
+                  <i class="fas fa-calendar-alt text-info me-2"></i>
+                  Informations du Compte
+                </h5>
+                <div class="row">
+                  <div class="col-md-6">
+                    <label class="form-label text-muted">Date de création du compte</label>
+                    <p class="mb-0">{{ client.dateCreation | date:'dd/MM/yyyy à HH:mm' }}</p>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label text-muted">Statut du compte</label>
+                    <p class="mb-0">
+                      <span class="badge bg-success">
+                        <i class="fas fa-check-circle me-1"></i>
+                        Actif
+                      </span>
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">
+                  <i class="fas fa-cogs text-secondary me-2"></i>
+                  Actions
+                </h5>
+                <div class="d-flex gap-3 flex-wrap">
+                  <button class="btn btn-warning" (click)="ouvrirModalMotDePasse()">
+                    <i class="fas fa-key me-2"></i>
+                    Changer le mot de passe
+                  </button>
+                  <button class="btn btn-info" (click)="chargerProfil()">
+                    <i class="fas fa-sync-alt me-2"></i>
+                    Actualiser les informations
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" [class.show]="modalMotDePasseOuverte" [style.display]="modalMotDePasseOuverte ? 'block' : 'none'" 
+     tabindex="-1" *ngIf="modalMotDePasseOuverte">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">
+          <i class="fas fa-key me-2"></i>
+          Changer le mot de passe
+        </h5>
+        <button type="button" class="btn-close" (click)="fermerModalMotDePasse()"></button>
+      </div>
+      <div class="modal-body">
+        <div class="alert alert-info">
+          <i class="fas fa-info-circle me-2"></i>
+          <strong>Sécurité:</strong> Votre nouveau mot de passe doit contenir au moins 6 caractères.
+        </div>
+        
+        <div class="mb-3">
+          <label class="form-label">Ancien mot de passe</label>
+          <input type="password" class="form-control" [(ngModel)]="donneesChangement.ancienMotDePasse" 
+                 placeholder="Saisissez votre ancien mot de passe">
+        </div>
+        
+        <div class="mb-3">
+          <label class="form-label">Nouveau mot de passe</label>
+          <input type="password" class="form-control" [(ngModel)]="donneesChangement.nouveauMotDePasse" 
+                 placeholder="Saisissez votre nouveau mot de passe">
+          <div class="form-text">
+            <i class="fas fa-shield-alt text-success me-1"></i>
+            Minimum 6 caractères
+          </div>
+        </div>
+        
+        <div class="mb-3">
+          <label class="form-label">Confirmer le nouveau mot de passe</label>
+          <input type="password" class="form-control" [(ngModel)]="confirmationMotDePasse" 
+                 placeholder="Confirmez votre nouveau mot de passe">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="fermerModalMotDePasse()">
+          Annuler
+        </button>
+        <button type="button" class="btn btn-warning" (click)="changerMotDePasse()" 
+                [disabled]="changementEnCours">
+          <span *ngIf="changementEnCours" class="spinner-border spinner-border-sm me-2"></span>
+          <i *ngIf="!changementEnCours" class="fas fa-save me-2"></i>
+          {{ changementEnCours ? 'Modification...' : 'Modifier le mot de passe' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-backdrop fade show" *ngIf="modalMotDePasseOuverte" 
+     (click)="fermerModalMotDePasse()"></div>

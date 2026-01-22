@@ -1,0 +1,57 @@
+<div class="container-fluid vh-100">
+  <div class="row h-100">
+    <div class="col-md-6 d-none d-md-flex align-items-center justify-content-center bg-primary text-white">
+      <div class="text-center">
+        <h1 class="display-4 fw-bold mb-4">EGABANK</h1>
+        <p class="lead">Votre banque digitale de confiance</p>
+        <p>Gérez vos comptes en toute sécurité</p>
+      </div>
+    </div>
+
+    <div class="col-md-6 d-flex align-items-center justify-content-center">
+      <div class="card shadow-lg border-0" style="width: 100%; max-width: 400px;">
+        <div class="card-body p-5">
+          <div class="text-center mb-4">
+            <h2 class="card-title">Connexion</h2>
+            <p class="text-muted">Accédez à votre espace client</p>
+          </div>
+
+          <form (ngSubmit)="connecter()" #formulaire="ngForm">
+            <div class="mb-3">
+              <label for="courriel" class="form-label">Email</label>
+              <input
+                type="email"
+                class="form-control"
+                id="courriel"
+                name="courriel"
+                [(ngModel)]="donnees.courriel"
+                required
+                email
+                [disabled]="connexionEnCours">
+            </div>
+
+            <div class="mb-4">
+              <label for="motDePasse" class="form-label">Mot de passe</label>
+              <input
+                type="password"
+                class="form-control"
+                id="motDePasse"
+                name="motDePasse"
+                [(ngModel)]="donnees.motDePasse"
+                required
+                [disabled]="connexionEnCours">
+            </div>
+
+            <button
+              type="submit"
+              class="btn btn-primary w-100 mb-3"
+              [disabled]="connexionEnCours || !formulaire.form.valid">
+              <span *ngIf="connexionEnCours" class="spinner-border spinner-border-sm me-2"></span>
+              {{ connexionEnCours ? 'Connexion...' : 'Se connecter' }}
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

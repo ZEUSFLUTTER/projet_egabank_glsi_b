@@ -1,0 +1,237 @@
+<div class="container-fluid py-4">
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header">
+          <h4 class="card-title mb-0">Mes Comptes</h4>
+        </div>
+        <div class="card-body">
+          <div *ngIf="chargement" class="text-center py-4">
+            <div class="spinner-border" role="status">
+              <span class="visually-hidden">Chargement...</span>
+            </div>
+          </div>
+
+          <div *ngIf="!chargement && comptes.length === 0" class="text-center py-4">
+            <p class="text-muted">Aucun compte trouvé</p>
+          </div>
+
+          <div *ngIf="!chargement && comptes.length > 0" class="row">
+            <div *ngFor="let compte of comptes" class="col-lg-6 mb-4">
+              <div class="card border">
+                <div class="card-body">
+                  <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div>
+                      <h5 class="card-title">{{ obtenirTypeCompteLibelle(compte.typeCompte) }}</h5>
+                      <p class="text-muted mb-1">{{ compte.numeroCompte }}</p>
+                      <small class="text-muted">Créé le {{ compte.dateCreation | date:'dd/MM/yyyy' }}</small>
+                    </div>
+                    <div class="text-end">
+                      <i class="fas fa-2x" 
+                         [class.fa-university]="compte.typeCompte === 'COURANT'" 
+                         [class.fa-piggy-bank]="compte.typeCompte === 'EPARGNE'"
+                         [class.text-primary]="compte.typeCompte === 'COURANT'"
+                         [class.text-success]="compte.typeCompte === 'EPARGNE'"></i>
+                    </div>
+                  </div>
+
+                  <div class="mb-3">
+                    <h4 class="mb-0" [class]="compte.solde >= 0 ? 'text-success' : 'text-danger'">
+                      {{ compte.solde | currency:'FCFA':'symbol':'1.2-2' }}
+                    </h4>
+                    <small class="text-muted">Solde disponible</small>
+                  </div>
+
+                  <div *ngIf="compte.typeCompte === 'COURANT' && compte.decouvertAutorise" class="mb-3">
+                    <small class="text-info">
+                      <i class="fas fa-info-circle"></i>
+                      Découvert autorisé: {{ compte.decouvertAutorise | currency:'FCFA':'symbol':'1.2-2' }}
+                    </small>
+                  </div>
+
+                  <div *ngIf="compte.typeCompte === 'EPARGNE' && compte.tauxInteret" class="mb-3">
+                    <small class="text-success">
+                      <i class="fas fa-percentage"></i>
+                      Taux d'intérêt: {{ compte.tauxInteret }}%
+                    </small>
+                  </div>
+
+                  <div class="d-flex gap-2 flex-wrap">
+                    <button class="btn btn-success btn-sm" (click)="ouvrirModalDepot(compte)">
+                      <i class="fas fa-plus"></i> Dépôt
+                    </button>
+                    <button class="btn btn-warning btn-sm" (click)="ouvrirModalRetrait(compte)">
+                      <i class="fas fa-minus"></i> Retrait
+                    </button>
+                    <button class="btn btn-info btn-sm" (click)="ouvrirModalVirement(compte)">
+                      <i class="fas fa-exchange-alt"></i> Virement
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" [class.show]="modalDepotOuverte" [style.display]="modalDepotOuverte ? 'block' : 'none'" 
+     tabindex="-1" *ngIf="modalDepotOuverte">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Effectuer un Dépôt</h5>
+        <button type="button" class="btn-close" (click)="fermerModalDepot()"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <label class="form-label">Compte</label>
+          <input type="text" class="form-control" 
+                 [value]="compteSelectionne?.numeroCompte + ' - ' + obtenirTypeCompteLibelle(compteSelectionne?.typeCompte || '')" 
+                 readonly>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Montant (FCFA)</label>
+          <input type="number" class="form-control" [(ngModel)]="donneesDepot.montant" 
+                 min="0.01" step="0.01" placeholder="0.00">
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Description (optionnelle)</label>
+          <input type="text" class="form-control" [(ngModel)]="donneesDepot.description" 
+                 placeholder="Description du dépôt">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="fermerModalDepot()">Annuler</button>
+        <button type="button" class="btn btn-success" (click)="effectuerDepot()" 
+                [disabled]="operationEnCours">
+          <span *ngIf="operationEnCours" class="spinner-border spinner-border-sm me-2"></span>
+          Effectuer le Dépôt
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" [class.show]="modalRetraitOuverte" [style.display]="modalRetraitOuverte ? 'block' : 'none'" 
+     tabindex="-1" *ngIf="modalRetraitOuverte">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Effectuer un Retrait</h5>
+        <button type="button" class="btn-close" (click)="fermerModalRetrait()"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <label class="form-label">Compte</label>
+          <input type="text" class="form-control" 
+                 [value]="compteSelectionne?.numeroCompte + ' - ' + obtenirTypeCompteLibelle(compteSelectionne?.typeCompte || '')" 
+                 readonly>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Solde disponible</label>
+          <input type="text" class="form-control" 
+                 [value]="(compteSelectionne?.solde || 0) | currency:'FCFA':'symbol':'1.2-2'" 
+                 readonly>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Montant (FCFA)</label>
+          <input type="number" class="form-control" [(ngModel)]="donneesRetrait.montant" 
+                 min="0.01" step="0.01" placeholder="0.00">
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Description (optionnelle)</label>
+          <input type="text" class="form-control" [(ngModel)]="donneesRetrait.description" 
+                 placeholder="Description du retrait">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="fermerModalRetrait()">Annuler</button>
+        <button type="button" class="btn btn-warning" (click)="effectuerRetrait()" 
+                [disabled]="operationEnCours">
+          <span *ngIf="operationEnCours" class="spinner-border spinner-border-sm me-2"></span>
+          Effectuer le Retrait
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" [class.show]="modalVirementOuvert" [style.display]="modalVirementOuvert ? 'block' : 'none'" 
+     tabindex="-1" *ngIf="modalVirementOuvert">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Effectuer un Virement</h5>
+        <button type="button" class="btn-close" (click)="fermerModalVirement()"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <label class="form-label">Compte source</label>
+          <input type="text" class="form-control" 
+                 [value]="compteSelectionne?.numeroCompte + ' - ' + obtenirTypeCompteLibelle(compteSelectionne?.typeCompte || '')" 
+                 readonly>
+        </div>
+        
+        <div class="mb-3">
+          <label class="form-label">Type de virement</label>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" [(ngModel)]="typeVirement" 
+                   value="interne" id="virementInterne" (change)="changerTypeVirement()">
+            <label class="form-check-label" for="virementInterne">
+              Virement interne (entre mes comptes)
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" [(ngModel)]="typeVirement" 
+                   value="externe" id="virementExterne" (change)="changerTypeVirement()">
+            <label class="form-check-label" for="virementExterne">
+              Virement externe (vers un autre compte)
+            </label>
+          </div>
+        </div>
+
+        <div class="mb-3" *ngIf="typeVirement === 'interne'">
+          <label class="form-label">Compte de destination</label>
+          <select class="form-select" [(ngModel)]="donneesVirement.compteDestinationId">
+            <option value="">Sélectionnez un compte</option>
+            <option *ngFor="let compte of obtenirComptesDestination()" [value]="compte.id">
+              {{ compte.numeroCompte }} - {{ obtenirTypeCompteLibelle(compte.typeCompte) }}
+            </option>
+          </select>
+        </div>
+
+        <div class="mb-3" *ngIf="typeVirement === 'externe'">
+          <label class="form-label">Numéro de compte de destination</label>
+          <input type="text" class="form-control" [(ngModel)]="donneesVirement.numeroCompteDestination" 
+                 placeholder="Saisissez le numéro de compte">
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Montant (FCFA)</label>
+          <input type="number" class="form-control" [(ngModel)]="donneesVirement.montant" 
+                 min="0.01" step="0.01" placeholder="0.00">
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Description (optionnelle)</label>
+          <input type="text" class="form-control" [(ngModel)]="donneesVirement.description" 
+                 placeholder="Description du virement">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="fermerModalVirement()">Annuler</button>
+        <button type="button" class="btn btn-info" (click)="effectuerVirement()" 
+                [disabled]="operationEnCours">
+          <span *ngIf="operationEnCours" class="spinner-border spinner-border-sm me-2"></span>
+          Effectuer le Virement
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-backdrop fade show" 
+     *ngIf="modalDepotOuverte || modalRetraitOuverte || modalVirementOuvert"
+     (click)="fermerModalDepot(); fermerModalRetrait(); fermerModalVirement()"></div>

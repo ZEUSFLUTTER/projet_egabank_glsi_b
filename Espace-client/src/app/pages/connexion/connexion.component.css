@@ -1,0 +1,60 @@
+.bg-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+}
+
+.card {
+  border-radius: 15px;
+  font-family: 'Cambria', 'Times New Roman', serif;
+}
+
+.form-control {
+  border-radius: 8px;
+  padding: 12px 15px;
+  border: 1px solid #e0e0e0;
+  font-family: 'Cambria', 'Times New Roman', serif;
+}
+
+.form-control:focus {
+  border-color: #667eea;
+  box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  border-radius: 8px;
+  padding: 12px;
+  font-weight: 500;
+  font-family: 'Cambria', 'Times New Roman', serif;
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.card-title {
+  color: #2c3e50;
+  font-weight: 600;
+  font-family: 'Cambria', 'Times New Roman', serif;
+}
+
+a {
+  color: #667eea;
+  font-weight: 500;
+  font-family: 'Cambria', 'Times New Roman', serif;
+}
+
+a:hover {
+  color: #5a6fd8;
+}
+
+/* Styles spécifiques pour les labels et textes */
+.form-label, label {
+  font-family: 'Cambria', 'Times New Roman', serif;
+}
+
+h1, h2, h3, h4, h5, h6, p, span, div {
+  font-family: 'Cambria', 'Times New Roman', serif;
+}

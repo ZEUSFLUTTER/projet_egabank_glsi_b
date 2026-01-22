@@ -1,0 +1,186 @@
+<!-- src/app/components/transactions/transaction-list/transaction-list.component.html -->
+<app-navbar></app-navbar>
+
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="fas fa-list me-2"></i>Historique des Transactions</h2>
+    <a routerLink="/transactions/new" class="btn btn-primary">
+      <i class="fas fa-plus me-2"></i>Nouvelle Transaction
+    </a>
+  </div>
+
+  <!-- Filtres de Recherche -->
+  <div class="card mb-4 shadow-sm">
+    <div class="card-header bg-light">
+      <h5 class="mb-0"><i class="fas fa-filter me-2"></i>Rechercher des Transactions</h5>
+    </div>
+    <div class="card-body">
+      <div class="row g-3">
+        <div class="col-md-5">
+          <label for="compte" class="form-label fw-semibold">Compte *</label>
+          <select
+            class="form-select"
+            id="compte"
+            [(ngModel)]="filter.numeroCompte">
+            <option value="">Sélectionnez un compte</option>
+            <option *ngFor="let account of accounts" [value]="account.numeroCompte">
+              {{ account.numeroCompte }} - {{ account.proprietaireNom }} ({{ account.solde | number:'1.0-0' }} FCFA)
+            </option>
+          </select>
+        </div>
+
+        <div class="col-md-3">
+          <label for="dateDebut" class="form-label fw-semibold">Date Début</label>
+          <input
+            type="date"
+            class="form-control"
+            id="dateDebut"
+            [(ngModel)]="filter.dateDebut">
+        </div>
+
+        <div class="col-md-3">
+          <label for="dateFin" class="form-label fw-semibold">Date Fin</label>
+          <input
+            type="date"
+            class="form-control"
+            id="dateFin"
+            [(ngModel)]="filter.dateFin">
+        </div>
+
+        <div class="col-md-1 d-flex align-items-end">
+          <button
+            class="btn btn-success w-100"
+            (click)="searchTransactions()"
+            [disabled]="!filter.numeroCompte">
+            <i class="fas fa-search"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="mt-3 d-flex gap-2">
+        <button
+          class="btn btn-danger"
+          (click)="generatePDF()"
+          [disabled]="!filter.numeroCompte || transactions.length === 0">
+          <i class="fas fa-file-pdf me-2"></i>Générer Relevé PDF
+        </button>
+        <button
+          class="btn btn-secondary"
+          (click)="resetFilters()">
+          <i class="fas fa-redo me-2"></i>Réinitialiser
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Messages -->
+  <div *ngIf="errorMessage" class="alert alert-danger alert-dismissible fade show">
+    <i class="fas fa-exclamation-triangle me-2"></i>{{ errorMessage }}
+    <button type="button" class="btn-close" (click)="errorMessage = ''"></button>
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="isLoading" class="text-center py-5">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Chargement...</span>
+    </div>
+    <p class="mt-2">Recherche des transactions...</p>
+  </div>
+
+  <!-- Pas de compte sélectionné -->
+  <div *ngIf="!filter.numeroCompte && !isLoading" class="alert alert-warning text-center">
+    <i class="fas fa-arrow-up me-2"></i>
+    Sélectionnez un compte et une période pour afficher les transactions
+  </div>
+
+  <!-- Aucune transaction -->
+  <div *ngIf="!isLoading && filter.numeroCompte && transactions.length === 0" class="alert alert-info text-center">
+    <i class="fas fa-info-circle me-2"></i>
+    Aucune transaction trouvée pour cette période.
+  </div>
+
+  <!-- Liste des transactions -->
+  <div *ngIf="!isLoading && transactions.length > 0">
+    <div class="card shadow-sm">
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table table-hover table-striped mb-0">
+            <thead class="table-dark">
+            <tr>
+              <th>Date & Heure</th>
+              <th>Type</th>
+              <th class="text-end">Montant</th>
+              <th>Compte Destination</th>
+              <th>Description</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let transaction of transactions">
+              <td>
+                <i class="fas fa-clock me-2 text-muted"></i>
+                {{ transaction.dateTransaction | date:'dd/MM/yyyy HH:mm' }}
+              </td>
+              <td>
+                  <span class="badge"
+                        [ngClass]="{
+                          'bg-success': transaction.typeTransaction === 'DEPOT',
+                          'bg-warning text-dark': transaction.typeTransaction === 'RETRAIT',
+                          'bg-primary': transaction.typeTransaction === 'VIREMENT'
+                        }">
+                    <i class="fas"
+                       [ngClass]="{
+                         'fa-arrow-down': transaction.typeTransaction === 'DEPOT',
+                         'fa-arrow-up': transaction.typeTransaction === 'RETRAIT',
+                         'fa-exchange-alt': transaction.typeTransaction === 'VIREMENT'
+                       }"></i>
+                    {{ transaction.typeTransaction }}
+                  </span>
+              </td>
+              <td class="text-end fw-bold">
+                {{ transaction.montant | number:'1.0-0' }} FCFA
+              </td>
+              <td>
+                <small class="text-muted font-monospace">
+                  {{ transaction.compteDestination || '-' }}
+                </small>
+              </td>
+              <td>{{ transaction.description || '-' }}</td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Statistiques -->
+    <div class="row g-3 mt-3">
+      <div class="col-md-4">
+        <div class="card bg-light border-0">
+          <div class="card-body text-center">
+            <i class="fas fa-list fa-2x text-primary mb-2"></i>
+            <h5 class="mb-0">{{ transactions.length }}</h5>
+            <small class="text-muted">Transactions Totales</small>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card bg-light border-0">
+          <div class="card-body text-center">
+            <i class="fas fa-arrow-down fa-2x text-success mb-2"></i>
+            <h5 class="mb-0">{{ getTotalByType('DEPOT') | number:'1.0-0' }} FCFA</h5>
+            <small class="text-muted">Total Dépôts</small>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card bg-light border-0">
+          <div class="card-body text-center">
+            <i class="fas fa-arrow-up fa-2x text-warning mb-2"></i>
+            <h5 class="mb-0">{{ getTotalByType('RETRAIT') | number:'1.0-0' }} FCFA</h5>
+            <small class="text-muted">Total Retraits</small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

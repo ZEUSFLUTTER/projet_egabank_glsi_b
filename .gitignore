@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 HELP.md
 target/
 .mvn/wrapper/maven-wrapper.jar
@@ -31,3 +32,49 @@ build/
 
 ### VS Code ###
 .vscode/
+=======
+### IDE ###
+/.idea/
+.vscode/
+*.iml
+*.iws
+*.ipr
+.settings/
+.classpath
+.project
+
+### Backend - Maven ###
+**/target/
+**/mvnw
+**/mvnw.cmd
+**/.mvn/
+
+### Backend - Logs ###
+**/logs/
+*.log
+
+### Frontend - Node ###
+**/node_modules/
+**/dist/
+**/.angular/
+**/coverage/
+
+### OS ###
+.DS_Store
+Thumbs.db
+*.swp
+*.bak
+*~
+
+### Environment ###
+.env
+.env.local
+.env.*.local
+
+### Build artifacts ###
+*.jar
+*.war
+*.class
+>>>>>>> 454523a7ac7a442f82f924fd84df436ce103418b
+.angular/cache/
+node_modules/

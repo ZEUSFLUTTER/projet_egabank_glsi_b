@@ -1,0 +1,122 @@
+═══════════════════════════════════════════════════════════════
+    EGA BANK - APPLICATION ANGULAR 17 + TAILWINDCSS
+═══════════════════════════════════════════════════════════════
+
+🚀 INSTALLATION RAPIDE
+═══════════════════════════════════════════════════════════════
+
+1. PRÉREQUIS
+   - Node.js 18 ou supérieur
+   - npm 9 ou supérieur
+   - Backend Spring Boot en cours d'exécution
+
+2. INSTALLATION
+   
+   Ouvrir un terminal dans le dossier ega-bank-app/
+   
+   Installer les dépendances :
+   $ npm install
+   
+   Si vous avez des erreurs :
+   $ npm install --legacy-peer-deps
+
+3. DÉMARRAGE
+   
+   $ npm start
+   
+   L'application s'ouvrira automatiquement sur :
+   http://localhost:4200
+
+4. CONNEXION
+   
+   Username: administrateur
+   Password: 96118586
+   Rôle: ADMIN
+
+5. BUILD POUR PRODUCTION
+   
+   $ npm run build
+   
+   Les fichiers seront dans : dist/ega-bank-app/
+
+═══════════════════════════════════════════════════════════════
+ FONCTIONNALITÉS IMPLÉMENTÉES
+═══════════════════════════════════════════════════════════════
+
+✅ ADMIN
+   - Créer gestionnaires et caissières
+   - Gérer les utilisateurs (activer/désactiver)
+
+✅ GESTIONNAIRE
+   - Gérer les clients (CRUD)
+   - Créer des comptes bancaires
+   - Consulter l'historique des transactions
+   - Générer des relevés PDF
+
+✅ CAISSIERE
+   - Effectuer des dépôts
+   - Effectuer des retraits
+   - Effectuer des transferts
+
+═══════════════════════════════════════════════════════════════
+ TECHNOLOGIES UTILISÉES
+═══════════════════════════════════════════════════════════════
+
+- Angular 17 (Standalone Components)
+- TailwindCSS 3.3
+- FontAwesome 6.5
+- RxJS 7.8
+- TypeScript 5.2
+
+═══════════════════════════════════════════════════════════════
+ CONFIGURATION API
+═══════════════════════════════════════════════════════════════
+
+Par défaut : http://localhost:8080
+
+Pour changer l'URL de l'API, modifier :
+- src/environments/environment.ts (développement)
+- src/environments/environment.prod.ts (production)
+
+Ou directement dans les services :
+- src/app/core/services/*.service.ts
+
+═══════════════════════════════════════════════════════════════
+ STRUCTURE DU PROJET
+═══════════════════════════════════════════════════════════════
+
+src/app/
+├── core/
+│   ├── guards/         → Guards d'authentification
+│   ├── interceptors/   → Intercepteur JWT
+│   └── services/       → Services API
+├── features/
+│   ├── auth/          → Connexion
+│   ├── dashboard/     → Dashboard et navigation
+│   ├── users/         → Gestion utilisateurs
+│   ├── clients/       → Gestion clients
+│   ├── accounts/      → Gestion comptes
+│   ├── transactions/  → Transactions
+│   └── reports/       → Rapports et relevés
+└── shared/
+    └── models/        → Modèles TypeScript
+
+═══════════════════════════════════════════════════════════════
+ DOCUMENTATION COMPLÈTE
+═══════════════════════════════════════════════════════════════
+
+Consulter les fichiers :
+- README.md          → Vue d'ensemble du projet
+- DEPLOYMENT.md      → Guide de déploiement détaillé
+
+═══════════════════════════════════════════════════════════════
+ SUPPORT
+═══════════════════════════════════════════════════════════════
+
+Pour toute question :
+- Consulter la documentation Angular : https://angular.io
+- Consulter la documentation TailwindCSS : https://tailwindcss.com
+
+═══════════════════════════════════════════════════════════════
+
+Bonne utilisation ! 🎉

@@ -1,0 +1,66 @@
+<div class="p-6">
+  <div class="flex justify-between items-center mb-6">
+    <h2 class="text-2xl font-bold text-gray-800">Dépôts</h2>
+    <button 
+      (click)="ouvrirModal()" 
+      class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition">
+      + Effectuer un dépôt
+    </button>
+  </div>
+
+  <!-- Statistiques -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+    <div class="bg-white p-6 rounded-lg shadow">
+      <h3 class="text-sm text-gray-500 mb-2">Total dépôts</h3>
+      <p class="text-2xl font-bold text-blue-600">
+        {{ formatCurrency(getTotalDepots()) }}
+      </p>
+    </div>
+
+    <div class="bg-white p-6 rounded-lg shadow">
+      <h3 class="text-sm text-gray-500 mb-2">Nombre de dépôts</h3>
+      <p class="text-2xl font-bold text-green-600">{{ transactions.length }}</p>
+    </div>
+
+    <div class="bg-white p-6 rounded-lg shadow">
+      <h3 class="text-sm text-gray-500 mb-2">Dernier dépôt</h3>
+      <p class="text-lg font-semibold">
+        {{ getDernierDepot() !== null ? formatCurrency(getDernierDepot()!) : 'N/A' }}
+      </p>
+    </div>
+  </div>
+
+  <!-- Liste des dépôts récents -->
+  <div class="bg-white p-6 rounded-lg shadow">
+    <h3 class="text-lg font-semibold mb-4">Derniers dépôts</h3>
+    <div *ngIf="transactions.length === 0" class="text-center py-8 text-gray-500">
+      Aucun dépôt effectué
+    </div>
+    <table *ngIf="transactions.length > 0" class="w-full text-sm">
+      <thead>
+        <tr class="text-left text-gray-500 border-b">
+          <th class="pb-2">Compte</th>
+          <th class="pb-2">Montant</th>
+          <th class="pb-2">Date</th>
+          <th class="pb-2">Source</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y">
+        <tr *ngFor="let transaction of transactions">
+          <td class="py-3 font-medium">{{ transaction.compteDestination?.numeroCompte || '-' }}</td>
+          <td class="text-green-600 font-semibold">{{ formatCurrency(transaction.montant || 0) }}</td>
+          <td>{{ transaction.dateTransaction | date:'dd/MM/yyyy HH:mm' }}</td>
+          <td>{{ transaction.source || '-' }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Modal -->
+  <app-depot-modal 
+    *ngIf="isModalOpen"
+    [comptes]="comptes"
+    (close)="fermerModal()"
+    (success)="onDepotSuccess()">
+  </app-depot-modal>
+</div>

@@ -1,0 +1,60 @@
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+  <!-- Statistiques -->
+  <div class="bg-white p-4 rounded shadow">
+    <h3 class="font-bold mb-2">Statistiques Retraits</h3>
+    <p>Total retraits ce mois: {{ 3456 }} XOF</p>
+    <p>Nombre de retraits: {{ 67}}</p>
+  </div>
+
+  <!-- Bouton effectuer retrait -->
+  <div class="bg-white p-4 rounded shadow flex items-center justify-between">
+    <h3 class="font-bold mb-2">Actions</h3>
+    <button (click)="ouvrirModal()" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">Effectuer un retrait</button>
+  </div>
+
+  <!-- Tableau retraits -->
+  <div class="col-span-1 md:col-span-2 bg-white p-4 rounded shadow">
+    <h3 class="font-bold mb-2">Liste des retraits</h3>
+    <table class="w-full text-left border">
+      <thead>
+        <tr class="bg-gray-200">
+          <th class="p-2 border">Compte</th>
+          <th class="p-2 border">Montant</th>
+          <th class="p-2 border">Date</th>
+          <th class="p-2 border">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let retrait of retraits">
+          <td class="p-2 border">{{ "H7T" }}</td>
+          <td class="p-2 border">{{ 8765 }} XOF</td>
+          <td class="p-2 border">{{ "345" }}</td>
+          <td class="p-2 border">
+            <button (click)="voirDetails(retrait)" class="text-blue-500 hover:underline">Voir</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Modal retrait -->
+<div *ngIf="isModalOpen" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+  <div class="bg-white p-6 rounded shadow w-96">
+    <h3 class="font-bold mb-4">Effectuer un retrait</h3>
+    <form (ngSubmit)="effectuerRetrait()">
+      <div class="mb-2">
+        <label>Compte</label>
+        <input type="text"  name="compteId" class="w-full border px-2 py-1 rounded" required />
+      </div>
+      <div class="mb-2">
+        <label>Montant</label>
+        <input type="number"  name="montant" class="w-full border px-2 py-1 rounded" required />
+      </div>
+      <div class="flex justify-end gap-2 mt-4">
+        <button type="button" (click)="fermerModal()" class="px-4 py-2 rounded border">Annuler</button>
+        <button type="submit" class="px-4 py-2 rounded bg-red-500 text-white hover:bg-red-600">Retirer</button>
+      </div>
+    </form>
+  </div>
+</div>

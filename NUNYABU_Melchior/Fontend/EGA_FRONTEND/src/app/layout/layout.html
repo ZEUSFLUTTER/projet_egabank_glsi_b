@@ -1,0 +1,18 @@
+<div class="flex min-h-screen">
+  <!-- Sidebar fixe -->
+  <app-sidebar class="fixed w-64 h-screen bg-slate-900 text-slate-300"></app-sidebar>
+  
+  <!-- Contenu principal avec décalage pour la sidebar -->
+  <div class="flex-1 flex flex-col ml-64">
+    <!-- Navbar -->
+    <app-navbar></app-navbar>
+    
+    <!-- Contenu variable des pages -->
+    <main class="flex-1 p-6 bg-gray-50">
+      <router-outlet></router-outlet>
+    </main>
+    
+    <!-- Footer -->
+    <app-footer></app-footer>
+  </div>
+</div>

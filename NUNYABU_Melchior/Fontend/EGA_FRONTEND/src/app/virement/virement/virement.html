@@ -1,0 +1,80 @@
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+  <!-- Statistiques -->
+  <div class="bg-white p-4 rounded shadow">
+    <h3 class="font-bold mb-2">Statistiques Virements</h3>
+    <p>Total virements ce mois : {{ 6 }} XOF</p>
+    <p>Nombre de virements : {{ 5}}</p>
+  </div>
+
+  <!-- Action -->
+  <div class="bg-white p-4 rounded shadow flex justify-between items-center">
+    <h3 class="font-bold">Actions</h3>
+    <button
+      (click)="ouvrirModal()"
+      class="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600">
+      Nouveau virement
+    </button>
+  </div>
+
+  <!-- Tableau virements -->
+  <div class="col-span-1 md:col-span-2 bg-white p-4 rounded shadow">
+    <h3 class="font-bold mb-3">Historique des virements</h3>
+
+    <table class="w-full border text-left">
+      <thead>
+        <tr class="bg-gray-200">
+          <th class="p-2 border">Compte source</th>
+          <th class="p-2 border">Compte destination</th>
+          <th class="p-2 border">Montant</th>
+          <th class="p-2 border">Date</th>
+          <th class="p-2 border text-center">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr >
+          <td class="p-2 border">{{ "" }}</td>
+          <td class="p-2 border">{{  56}}</td>
+          <td class="p-2 border">{{876 }} XOF</td>
+          <td class="p-2 border">{{ "" }}</td>
+          <td class="p-2 border text-center">
+            <!-- Icône voir -->
+            <button
+             
+              class="text-blue-500 hover:text-blue-700"
+              title="Voir détails">
+              👁️
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Modal virement -->
+<div *ngIf="isModalOpen" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+  <div class="bg-white p-6 rounded w-96 shadow">
+    <h3 class="font-bold mb-4">Nouveau virement</h3>
+
+    <form (ngSubmit)="effectuerVirement()">
+      <input class="w-full border p-2 mb-2" placeholder="Compte source"
+            name="source" required>
+
+      <input class="w-full border p-2 mb-2" placeholder="Compte destination"
+            name="destination" required>
+
+      <input type="number" class="w-full border p-2 mb-2" placeholder="Montant"
+             name="montant" required>
+
+      <div class="flex justify-end gap-2 mt-4">
+        <button type="button" (click)="fermerModal()" class="border px-4 py-2 rounded">
+          Annuler
+        </button>
+        <button type="submit" class="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600">
+          Envoyer
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

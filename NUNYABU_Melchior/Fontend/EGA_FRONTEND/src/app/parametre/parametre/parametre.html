@@ -1,0 +1,69 @@
+<div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-12 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-4xl mx-auto">
+    <!-- Header -->
+    <div class="mb-8">
+      <h1 class="text-4xl font-bold text-gray-900 mb-2">Paramètres</h1>
+      <p class="text-gray-600">Gérez vos préférences et paramètres personnels</p>
+    </div>
+
+    <!-- Messages -->
+    <div *ngIf="successMessage" class="mb-4 p-4 bg-green-100 text-green-700 rounded-lg border border-green-400">
+      {{ successMessage }}
+    </div>
+    <div *ngIf="errorMessage" class="mb-4 p-4 bg-red-100 text-red-700 rounded-lg border border-red-400">
+      {{ errorMessage }}
+    </div>
+
+    <!-- Formulaire Ajouter Paramètre -->
+    <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+      <h2 class="text-2xl font-semibold text-gray-900 mb-4">Ajouter un nouveau paramètre</h2>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+        <div>
+          <label class="block text-gray-700 font-semibold mb-2">Clé</label>
+          <input 
+            type="text" 
+            [(ngModel)]="newParametre.cle"
+            placeholder="Ex: langue, theme"
+            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500">
+        </div>
+        <div>
+          <label class="block text-gray-700 font-semibold mb-2">Valeur</label>
+          <input 
+            type="text" 
+            [(ngModel)]="newParametre.valeur"
+            placeholder="Ex: FR, DARK"
+            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500">
+        </div>
+      </div>
+
+      <button 
+        (click)="saveParametre()"
+        [disabled]="loading"
+        class="w-full bg-indigo-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-indigo-700 disabled:bg-gray-400">
+        {{ loading ? 'Chargement...' : 'Ajouter paramètre' }}
+      </button>
+    </div>
+
+    <!-- Liste des Paramètres -->
+    <div class="bg-white rounded-lg shadow-md p-6">
+      <h2 class="text-2xl font-semibold text-gray-900 mb-4">Mes paramètres</h2>
+      
+      <div *ngIf="parametres.length === 0" class="text-center py-8 text-gray-500">
+        Aucun paramètre configuré
+      </div>
+
+      <div *ngFor="let param of parametres" class="flex justify-between items-center p-4 border-b border-gray-200 hover:bg-gray-50">
+        <div>
+          <h3 class="font-semibold text-gray-900">{{ param.cle }}</h3>
+          <p class="text-gray-600">{{ param.valeur }}</p>
+        </div>
+        <button 
+          (click)="deleteParametre(param.cle || '')"
+          class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">
+          Supprimer
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

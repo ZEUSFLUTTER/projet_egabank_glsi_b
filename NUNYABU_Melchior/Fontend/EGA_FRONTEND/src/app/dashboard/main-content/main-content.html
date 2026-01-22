@@ -1,0 +1,173 @@
+<!-- Dashboard CLIENT -->
+<div *ngIf="!isAdmin">
+  <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+
+    <!-- KPI : Nombre de comptes -->
+    <div class="bg-white rounded-xl shadow p-5">
+      <p class="text-sm text-gray-500">Nombre de comptes</p>
+      <p class="text-2xl font-bold text-slate-800">{{ nombreComptes }}</p>
+    </div>
+
+    <!-- KPI : Solde total -->
+    <div class="bg-white rounded-xl shadow p-5">
+      <p class="text-sm text-gray-500">Solde total</p>
+      <p class="text-2xl font-bold text-green-600">{{ formatCurrency(soldeTotal) }}</p>
+    </div>
+
+    <!-- KPI : Dépôts du mois -->
+    <div class="bg-white rounded-xl shadow p-5">
+      <p class="text-sm text-gray-500">Dépôts du mois</p>
+      <p class="text-2xl font-bold text-blue-600">{{ formatCurrency(depotsMois) }}</p>
+    </div>
+
+    <!-- KPI : Retraits du mois -->
+    <div class="bg-white rounded-xl shadow p-5">
+      <p class="text-sm text-gray-500">Retraits du mois</p>
+      <p class="text-2xl font-bold text-red-500">{{ formatCurrency(retraitsMois) }}</p>
+    </div>
+
+  </div>
+</div>
+
+<!-- Dashboard ADMIN -->
+<div *ngIf="isAdmin">
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <!-- KPI : Nombre de clients -->
+    <div class="bg-white rounded-xl shadow p-5">
+      <p class="text-sm text-gray-500">Nombre de clients</p>
+      <p class="text-2xl font-bold text-slate-800">{{ totalClients }}</p>
+    </div>
+
+    <!-- KPI : Nombre de comptes -->
+    <div class="bg-white rounded-xl shadow p-5">
+      <p class="text-sm text-gray-500">Nombre de comptes</p>
+      <p class="text-2xl font-bold text-blue-600">{{ totalComptes }}</p>
+    </div>
+
+    <!-- KPI : Nombre de transactions -->
+    <div class="bg-white rounded-xl shadow p-5">
+      <p class="text-sm text-gray-500">Total transactions</p>
+      <p class="text-2xl font-bold text-green-600">{{ totalTransactions }}</p>
+    </div>
+  </div>
+</div>
+
+<!-- Actions rapides (CLIENT uniquement) -->
+<div *ngIf="!isAdmin" class="bg-white rounded-xl shadow p-6 mt-8">
+  <h3 class="text-lg font-semibold mb-4">Actions rapides</h3>
+
+  <div class="flex flex-wrap gap-4">
+    <button (click)="navigateTo('/depot')" class="bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition">
+      Dépôt
+    </button>
+
+    <button (click)="navigateTo('/retrait')" class="bg-green-600 text-white px-5 py-2 rounded-lg hover:bg-green-700 transition">
+      Retrait
+    </button>
+
+    <button (click)="navigateTo('/virement')" class="bg-yellow-500 text-white px-5 py-2 rounded-lg hover:bg-yellow-600 transition">
+      Virement
+    </button>
+
+    <button (click)="navigateTo('/historique')" class="bg-slate-700 text-white px-5 py-2 rounded-lg hover:bg-slate-800 transition">
+      Relevé
+    </button>
+  </div>
+</div>
+
+<!-- Mes comptes (CLIENT) -->
+<div *ngIf="!isAdmin" class="bg-white rounded-xl shadow p-6 mt-8">
+  <h3 class="text-lg font-semibold mb-4">Mes comptes</h3>
+
+  <div *ngIf="loading" class="text-center py-8">
+    <p class="text-gray-500">Chargement...</p>
+  </div>
+
+  <table *ngIf="!loading && comptes.length > 0" class="w-full text-sm">
+    <thead>
+      <tr class="text-left text-gray-500 border-b">
+        <th class="pb-2">N° Compte</th>
+        <th class="pb-2">Type</th>
+        <th class="pb-2">Solde</th>
+        <th class="pb-2">Date création</th>
+      </tr>
+    </thead>
+
+    <tbody class="divide-y">
+      <tr *ngFor="let compte of comptes">
+        <td class="py-3 font-medium">{{ compte.numeroCompte }}</td>
+        <td>{{ compte.typeCompte }}</td>
+        <td class="text-green-600 font-semibold">{{ formatCurrency(compte.solde || 0) }}</td>
+        <td>{{ compte.dateCreation | date:'dd/MM/yyyy' }}</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div *ngIf="!loading && comptes.length === 0" class="text-center py-8">
+    <p class="text-gray-500">Aucun compte trouvé</p>
+  </div>
+</div>
+
+<!-- Liste des clients (ADMIN) -->
+<div *ngIf="isAdmin" class="bg-white rounded-xl shadow p-6 mt-8">
+  <h3 class="text-lg font-semibold mb-4">Tous les clients</h3>
+
+  <div *ngIf="loading" class="text-center py-8">
+    <p class="text-gray-500">Chargement...</p>
+  </div>
+
+  <div *ngIf="!loading && clients.length > 0" class="overflow-x-auto">
+    <table class="w-full text-sm">
+      <thead>
+        <tr class="text-left text-gray-500 border-b">
+          <th class="pb-2">Nom</th>
+          <th class="pb-2">Prénom</th>
+          <th class="pb-2">Email</th>
+          <th class="pb-2">Téléphone</th>
+          <th class="pb-2">Actions</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y">
+        <tr *ngFor="let client of clients">
+          <td class="py-3">{{ client.nom }}</td>
+          <td>{{ client.prenom }}</td>
+          <td>{{ client.email }}</td>
+          <td>{{ client.telephone }}</td>
+          <td>
+            <button (click)="navigateTo('/admin/clients')" class="text-blue-600 hover:underline">
+              Voir détails
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Dernières transactions (ADMIN) -->
+<div *ngIf="isAdmin" class="bg-white rounded-xl shadow p-6 mt-8">
+  <h3 class="text-lg font-semibold mb-4">Dernières transactions</h3>
+
+  <div *ngIf="allTransactions.length > 0" class="overflow-x-auto">
+    <table class="w-full text-sm">
+      <thead>
+        <tr class="text-left text-gray-500 border-b">
+          <th class="pb-2">Type</th>
+          <th class="pb-2">Montant</th>
+          <th class="pb-2">Date</th>
+          <th class="pb-2">Compte source</th>
+          <th class="pb-2">Compte destination</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y">
+        <tr *ngFor="let transaction of allTransactions">
+          <td class="py-3">{{ transaction.type }}</td>
+          <td class="font-semibold">{{ formatCurrency(transaction.montant || 0) }}</td>
+          <td>{{ transaction.dateTransaction | date:'dd/MM/yyyy HH:mm' }}</td>
+          <td>{{ transaction.compteSource?.numeroCompte || '-' }}</td>
+          <td>{{ transaction.compteDestination?.numeroCompte || '-' }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

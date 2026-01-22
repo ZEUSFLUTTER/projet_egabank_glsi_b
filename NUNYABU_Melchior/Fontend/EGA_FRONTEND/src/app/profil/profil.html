@@ -1,0 +1,192 @@
+<div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-12 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-4xl mx-auto">
+    <!-- Header -->
+    <div class="mb-8">
+      <h1 class="text-4xl font-bold text-gray-900 mb-2">Mon Profil</h1>
+      <p class="text-gray-600">Visualisez et mettez à jour vos informations personnelles</p>
+    </div>
+
+    <!-- Messages -->
+    <div *ngIf="successMessage" class="mb-4 p-4 bg-green-100 text-green-700 rounded-lg border border-green-400 flex items-center">
+      <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+      </svg>
+      {{ successMessage }}
+    </div>
+    <div *ngIf="errorMessage" class="mb-4 p-4 bg-red-100 text-red-700 rounded-lg border border-red-400 flex items-center">
+      <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+      </svg>
+      {{ errorMessage }}
+    </div>
+
+    <!-- Profil Card -->
+    <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+      <!-- Header Card -->
+      <div class="bg-gradient-to-r from-indigo-600 to-blue-600 px-6 py-8 text-white">
+        <h2 class="text-3xl font-bold">{{ profil.prenom }} {{ profil.nom }}</h2>
+        <p class="text-indigo-100 mt-1">Membre depuis {{ profil.dateCreation | date:'d/M/yyyy' }}</p>
+      </div>
+
+      <!-- Content -->
+      <div class="p-6">
+        <!-- Buttons -->
+        <div class="flex gap-3 mb-8">
+          <button 
+            *ngIf="!isEditing"
+            (click)="toggleEdit()"
+            class="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700 font-semibold">
+            ✏️ Modifier le profil
+          </button>
+          <button 
+            *ngIf="isEditing"
+            (click)="cancelEdit()"
+            class="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600 font-semibold">
+            Annuler
+          </button>
+        </div>
+
+        <!-- Profil Display Mode -->
+        <div *ngIf="!isEditing" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="flex flex-col">
+            <span class="text-gray-600 font-semibold text-sm">Nom</span>
+            <span class="text-gray-900 text-lg mt-1">{{ profil.nom }}</span>
+          </div>
+          <div class="flex flex-col">
+            <span class="text-gray-600 font-semibold text-sm">Prénom</span>
+            <span class="text-gray-900 text-lg mt-1">{{ profil.prenom }}</span>
+          </div>
+          <div class="flex flex-col">
+            <span class="text-gray-600 font-semibold text-sm">Date de naissance</span>
+            <span class="text-gray-900 text-lg mt-1">{{ profil.dateNaissance | date:'d/M/yyyy' }}</span>
+          </div>
+          <div class="flex flex-col">
+            <span class="text-gray-600 font-semibold text-sm">Sexe</span>
+            <span class="text-gray-900 text-lg mt-1">{{ profil.sexe }}</span>
+          </div>
+          <div class="flex flex-col">
+            <span class="text-gray-600 font-semibold text-sm">Email</span>
+            <span class="text-gray-900 text-lg mt-1">{{ profil.email }}</span>
+          </div>
+          <div class="flex flex-col">
+            <span class="text-gray-600 font-semibold text-sm">Téléphone</span>
+            <span class="text-gray-900 text-lg mt-1">{{ profil.telephone }}</span>
+          </div>
+          <div class="flex flex-col md:col-span-2">
+            <span class="text-gray-600 font-semibold text-sm">Adresse</span>
+            <span class="text-gray-900 text-lg mt-1">{{ profil.adresse }}</span>
+          </div>
+          <div class="flex flex-col">
+            <span class="text-gray-600 font-semibold text-sm">Nationalité</span>
+            <span class="text-gray-900 text-lg mt-1">{{ profil.nationalite }}</span>
+          </div>
+        </div>
+
+        <!-- Edit Mode Form -->
+        <div *ngIf="isEditing" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- Nom -->
+          <div>
+            <label class="block text-gray-700 font-semibold mb-2">Nom *</label>
+            <input 
+              type="text" 
+              [(ngModel)]="profil.nom"
+              [class.border-red-500]="fieldErrors['nom']"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500">
+            <span *ngIf="fieldErrors['nom']" class="text-red-600 text-sm mt-1">{{ fieldErrors['nom'] }}</span>
+          </div>
+
+          <!-- Prénom -->
+          <div>
+            <label class="block text-gray-700 font-semibold mb-2">Prénom *</label>
+            <input 
+              type="text" 
+              [(ngModel)]="profil.prenom"
+              [class.border-red-500]="fieldErrors['prenom']"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500">
+            <span *ngIf="fieldErrors['prenom']" class="text-red-600 text-sm mt-1">{{ fieldErrors['prenom'] }}</span>
+          </div>
+
+          <!-- Date de Naissance -->
+          <div>
+            <label class="block text-gray-700 font-semibold mb-2">Date de naissance *</label>
+            <input 
+              type="date" 
+              [(ngModel)]="profil.dateNaissance"
+              [class.border-red-500]="fieldErrors['dateNaissance']"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500">
+            <span *ngIf="fieldErrors['dateNaissance']" class="text-red-600 text-sm mt-1">{{ fieldErrors['dateNaissance'] }}</span>
+          </div>
+
+          <!-- Sexe -->
+          <div>
+            <label class="block text-gray-700 font-semibold mb-2">Sexe *</label>
+            <select 
+              [(ngModel)]="profil.sexe"
+              [class.border-red-500]="fieldErrors['sexe']"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500">
+              <option value="">-- Sélectionner --</option>
+              <option value="Homme">Homme</option>
+              <option value="Femme">Femme</option>
+              <option value="Autre">Autre</option>
+            </select>
+            <span *ngIf="fieldErrors['sexe']" class="text-red-600 text-sm mt-1">{{ fieldErrors['sexe'] }}</span>
+          </div>
+
+          <!-- Email -->
+          <div>
+            <label class="block text-gray-700 font-semibold mb-2">Email *</label>
+            <input 
+              type="email" 
+              [(ngModel)]="profil.email"
+              [class.border-red-500]="fieldErrors['email']"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500">
+            <span *ngIf="fieldErrors['email']" class="text-red-600 text-sm mt-1">{{ fieldErrors['email'] }}</span>
+          </div>
+
+          <!-- Téléphone -->
+          <div>
+            <label class="block text-gray-700 font-semibold mb-2">Téléphone *</label>
+            <input 
+              type="tel" 
+              [(ngModel)]="profil.telephone"
+              [class.border-red-500]="fieldErrors['telephone']"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500">
+            <span *ngIf="fieldErrors['telephone']" class="text-red-600 text-sm mt-1">{{ fieldErrors['telephone'] }}</span>
+          </div>
+
+          <!-- Adresse -->
+          <div class="md:col-span-2">
+            <label class="block text-gray-700 font-semibold mb-2">Adresse *</label>
+            <input 
+              type="text" 
+              [(ngModel)]="profil.adresse"
+              [class.border-red-500]="fieldErrors['adresse']"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500">
+            <span *ngIf="fieldErrors['adresse']" class="text-red-600 text-sm mt-1">{{ fieldErrors['adresse'] }}</span>
+          </div>
+
+          <!-- Nationalité -->
+          <div>
+            <label class="block text-gray-700 font-semibold mb-2">Nationalité *</label>
+            <input 
+              type="text" 
+              [(ngModel)]="profil.nationalite"
+              [class.border-red-500]="fieldErrors['nationalite']"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500">
+            <span *ngIf="fieldErrors['nationalite']" class="text-red-600 text-sm mt-1">{{ fieldErrors['nationalite'] }}</span>
+          </div>
+
+          <!-- Boutons Save -->
+          <div class="md:col-span-2 flex gap-4 mt-6">
+            <button 
+              (click)="saveProfil()"
+              [disabled]="loading"
+              class="flex-1 bg-green-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-green-700 disabled:bg-gray-400">
+              {{ loading ? 'Sauvegarde en cours...' : '✅ Enregistrer les modifications' }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

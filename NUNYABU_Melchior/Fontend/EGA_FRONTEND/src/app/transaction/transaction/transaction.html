@@ -1,0 +1,108 @@
+<div class="bg-white p-6 rounded-lg shadow">
+  <div class="flex justify-between items-center mb-6">
+    <h2 class="text-2xl font-bold text-gray-800">Historique des transactions</h2>
+    <button 
+      (click)="imprimerReleve()"
+      class="bg-slate-700 text-white px-4 py-2 rounded-lg hover:bg-slate-800 transition">
+      📄 Imprimer le relevé
+    </button>
+  </div>
+
+  <!-- Filtres -->
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-2">Type de transaction</label>
+      <select 
+        [(ngModel)]="filtreType"
+        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+        <option value="ALL">Tous</option>
+        <option value="DEPOT">Dépôts</option>
+        <option value="RETRAIT">Retraits</option>
+        <option value="VIREMENT">Virements</option>
+      </select>
+    </div>
+
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-2">Compte</label>
+      <select 
+        [(ngModel)]="compteSelectionne"
+        (change)="filtrerParCompte()"
+        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+        <option value="">Tous les comptes</option>
+        <option *ngFor="let compte of comptes" [value]="compte.numeroCompte">
+          {{ compte.numeroCompte }} - {{ compte.typeCompte }}
+        </option>
+      </select>
+    </div>
+
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-2">Date début</label>
+      <input 
+        type="datetime-local"
+        [(ngModel)]="dateDebut"
+        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+    </div>
+
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-2">Date fin</label>
+      <div class="flex gap-2">
+        <input 
+          type="datetime-local"
+          [(ngModel)]="dateFin"
+          class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+        <button 
+          (click)="filtrerParPeriode()"
+          class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+          Filtrer
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tableau des transactions -->
+  <div *ngIf="loading" class="text-center py-8">
+    <p class="text-gray-500">Chargement...</p>
+  </div>
+
+  <div *ngIf="!loading" class="overflow-x-auto">
+    <table class="w-full border-collapse">
+      <thead>
+        <tr class="bg-gray-100">
+          <th class="p-3 text-left border border-gray-300">Date</th>
+          <th class="p-3 text-left border border-gray-300">Type</th>
+          <th class="p-3 text-left border border-gray-300">Compte source</th>
+          <th class="p-3 text-left border border-gray-300">Compte destination</th>
+          <th class="p-3 text-right border border-gray-300">Montant</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr *ngFor="let tx of transactionsFiltrees()" class="hover:bg-gray-50">
+          <td class="p-3 border border-gray-300">
+            {{ tx.dateTransaction | date:'dd/MM/yyyy HH:mm' }}
+          </td>
+          <td class="p-3 border border-gray-300">
+            <span class="px-2 py-1 rounded text-sm" [ngClass]="badgeClass(tx.type)">
+              {{ tx.type }}
+            </span>
+          </td>
+          <td class="p-3 border border-gray-300">
+            {{ tx.compteSource?.numeroCompte || '-' }}
+          </td>
+          <td class="p-3 border border-gray-300">
+            {{ tx.compteDestination?.numeroCompte || '-' }}
+          </td>
+          <td class="p-3 border border-gray-300 text-right font-semibold"
+              [ngClass]="tx.type === 'DEPOT' ? 'text-green-600' : tx.type === 'RETRAIT' ? 'text-red-600' : 'text-yellow-600'">
+            {{ tx.type === 'DEPOT' ? '+' : tx.type === 'RETRAIT' ? '-' : '' }}{{ formatCurrency(tx.montant || 0) }}
+          </td>
+        </tr>
+        <tr *ngIf="transactionsFiltrees().length === 0">
+          <td colspan="5" class="p-8 text-center text-gray-500 border border-gray-300">
+            Aucune transaction trouvée
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

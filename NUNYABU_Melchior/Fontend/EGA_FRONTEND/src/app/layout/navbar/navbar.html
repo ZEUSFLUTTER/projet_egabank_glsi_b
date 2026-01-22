@@ -1,0 +1,61 @@
+<div class="w-full h-16 bg-white border-b border-slate-200 flex items-center justify-between px-6">
+
+  <!-- Gauche : message de bienvenue -->
+  <div class="text-slate-700 font-semibold text-lg">
+    Bienvenue, <span class="text-blue-600">{{ username }}</span> {{ isAdmin ? '👨‍💼 (Admin)' : '👤' }}
+  </div>
+
+  <!-- Droite : utilisateur -->
+  <div class="relative">
+
+    <!-- Bouton utilisateur -->
+    <button
+      (click)="toggleDropdown()"
+      class="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-slate-100 transition-all"
+    >
+      <!-- Avatar -->
+      <div class="bg-blue-600 text-white rounded-full w-10 h-10 flex items-center justify-center font-bold uppercase">
+        {{ usernameInitial }}
+      </div>
+
+      <!-- Nom -->
+      <span class="font-medium text-slate-700 hidden sm:block">
+        {{ username }}
+      </span>
+
+      <!-- Chevron -->
+      <svg class="w-4 h-4 text-slate-500 transition-transform"
+           [class.rotate-180]="isOpen"
+           fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M19 9l-7 7-7-7" />
+      </svg>
+    </button>
+
+    <!-- Dropdown -->
+    <div *ngIf="isOpen"
+         class="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-lg border border-slate-200 overflow-hidden z-50">
+
+      <a routerLink="/profil"
+         (click)="isOpen = false"
+         class="flex items-center gap-3 px-4 py-3 hover:bg-slate-100 transition">
+        👤 <span>Mon profil</span>
+      </a>
+
+      <a routerLink="/parametres"
+         (click)="isOpen = false"
+         class="flex items-center gap-3 px-4 py-3 hover:bg-slate-100 transition">
+        ⚙️ <span>Paramètres</span>
+      </a>
+
+      <div class="border-t border-slate-200"></div>
+
+      <button
+        (click)="logout()"
+        class="w-full text-left flex items-center gap-3 px-4 py-3 text-red-500 hover:bg-red-50 transition">
+        🚪 <span>Déconnexion</span>
+      </button>
+    </div>
+
+  </div>
+</div>

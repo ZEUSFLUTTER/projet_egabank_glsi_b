@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Opérations Bancaires - API Backend</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .container { max-width: 1000px; margin: 0 auto; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .success { background-color: #d4edda; border-color: #c3e6cb; }
+        .error { background-color: #f8d7da; border-color: #f5c6cb; }
+        .warning { background-color: #fff3cd; border-color: #ffeaa7; }
+        button { padding: 10px 20px; margin: 5px; cursor: pointer; }
+        pre { background: #f8f9fa; padding: 10px; border-radius: 3px; overflow-x: auto; }
+        input, select { padding: 8px; margin: 5px; width: 200px; }
+        .form-group { margin: 10px 0; }
+        .form-row { display: flex; gap: 10px; align-items: center; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏦 Test Opérations Bancaires - Système EGA</h1>
+        
+        <div class="test-section">
+            <h2>1. Préparation - Créer un Client et un Compte</h2>
+            <button onclick="creerClientEtCompte()">Créer Client + Compte de Test</button>
+            <div id="preparationResult"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>2. Lister les Comptes Disponibles</h2>
+            <button onclick="listerComptes()">Lister tous les comptes</button>
+            <div id="comptesResult"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>3. Effectuer un Dépôt</h2>
+            <div class="form-group">
+                <div class="form-row">
+                    <label>Compte:</label>
+                    <select id="compteDepot">
+                        <option value="">Sélectionner un compte</option>
+                    </select>
+                </div>
+                <div class="form-row">
+                    <label>Montant:</label>
+                    <input type="number" id="montantDepot" value="50000" min="1">
+                    <label>Description:</label>
+                    <input type="text" id="descriptionDepot" value="Dépôt de test">
+                </div>
+                <button onclick="effectuerDepot()">Effectuer le dépôt</button>
+            </div>
+            <div id="depotResult"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>4. Effectuer un Retrait</h2>
+            <div class="form-group">
+                <div class="form-row">
+                    <label>Compte:</label>
+                    <select id="compteRetrait">
+                        <option value="">Sélectionner un compte</option>
+                    </select>
+                </div>
+                <div class="form-row">
+                    <label>Montant:</label>
+                    <input type="number" id="montantRetrait" value="10000" min="1">
+                    <label>Description:</label>
+                    <input type="text" id="descriptionRetrait" value="Retrait de test">
+                </div>
+                <button onclick="effectuerRetrait()">Effectuer le retrait</button>
+            </div>
+            <div id="retraitResult"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>5. Effectuer un Virement</h2>
+            <div class="form-group">
+                <div class="form-row">
+                    <label>Compte Source:</label>
+                    <select id="compteSource">
+                        <option value="">Sélectionner un compte</option>
+                    </select>
+                </div>
+                <div class="form-row">
+                    <label>Compte Destinataire:</label>
+                    <input type="text" id="compteDestinataire" placeholder="Numéro de compte destinataire">
+                </div>
+                <div class="form-row">
+                    <label>Montant:</label>
+                    <input type="number" id="montantVirement" value="5000" min="1">
+                    <label>Description:</label>
+                    <input type="text" id="descriptionVirement" value="Virement de test">
+                </div>
+                <button onclick="effectuerVirement()">Effectuer le virement</button>
+            </div>
+            <div id="virementResult"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>6. Historique des Transactions</h2>
+            <button onclick="listerTransactions()">Lister toutes les transactions</button>
+            <div id="transactionsResult"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>7. Logs de Debug</h2>
+            <div id="debugLogs"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:8080/api';
+        let comptesDisponibles = [];
+        
+        function log(message, type = 'info') {
+            const debugLogs = document.getElementById('debugLogs');
+            const timestamp = new Date().toLocaleTimeString();
+            debugLogs.innerHTML += `<div style="color: ${type === 'error' ? 'red' : 'blue'};">[${timestamp}] ${message}</div>`;
+        }
+
+        async function creerClientEtCompte() {
+            const resultDiv = document.getElementById('preparationResult');
+            resultDiv.innerHTML = '<p>⏳ Création du client et du compte...</p>';
+            
+            try {
+                // 1. Créer un client
+                const clientData = {
+                    nom: "TestOp",
+                    prenom: "Bancaire",
+                    dateNaissance: "1985-03-20",
+                    sexe: "M",
+                    adresse: "456 Avenue des Tests, Dakar",
+                    numeroTelephone: "+221779876543",
+                    courriel: "test.operations@bank.com",
+                    nationalite: "Sénégalaise"
+                };
+                
+                log('Création du client de test...');
+                const clientResponse = await fetch(`${API_BASE}/clients`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(clientData)
+                });
+                
+                if (!clientResponse.ok) {
+                    throw new Error(`Erreur création client: ${clientResponse.status}`);
+                }
+                
+                const client = await clientResponse.json();
+                log(`Client créé: ID ${client.id}`);
+                
+                // 2. Créer un compte pour ce client
+                const compteData = {
+                    proprietaireId: client.id,
+                    typeCompte: "COURANT",
+                    solde: 100000 // Solde initial de 100,000 XOF
+                };
+                
+                log('Création du compte de test...');
+                const compteResponse = await fetch(`${API_BASE}/comptes`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(compteData)
+                });
+                
+                if (!compteResponse.ok) {
+                    throw new Error(`Erreur création compte: ${compteResponse.status}`);
+                }
+                
+                const compte = await compteResponse.json();
+                log(`Compte créé: ${compte.numeroCompte}`);
+                
+                resultDiv.innerHTML = `
+                    <div class="success">
+                        ✅ Client et compte créés avec succès !<br>
+                        Client: ${client.nom} ${client.prenom} (ID: ${client.id})<br>
+                        Compte: ${compte.numeroCompte} - Solde: ${compte.solde.toLocaleString()} XOF
+                    </div>
+                `;
+                
+                // Actualiser la liste des comptes
+                setTimeout(listerComptes, 1000);
+                
+            } catch (error) {
+                log(`Erreur: ${error.message}`, 'error');
+                resultDiv.innerHTML = `<div class="error">❌ Erreur: ${error.message}</div>`;
+            }
+        }
+
+        async function listerComptes() {
+            const resultDiv = document.getElementById('comptesResult');
+            resultDiv.innerHTML = '<p>⏳ Chargement des comptes...</p>';
+            
+            try {
+                log('Récupération des comptes...');
+                const response = await fetch(`${API_BASE}/comptes`);
+                
+                if (!response.ok) {
+                    throw new Error(`Erreur HTTP ${response.status}`);
+                }
+                
+                const comptes = await response.json();
+                comptesDisponibles = comptes;
+                log(`${comptes.length} comptes trouvés`);
+                
+                // Mettre à jour les sélecteurs
+                updateCompteSelectors(comptes);
+                
+                if (comptes.length === 0) {
+                    resultDiv.innerHTML = '<div class="warning">⚠️ Aucun compte trouvé. Créez d\'abord un client et un compte.</div>';
+                } else {
+                    let html = '<div class="success">✅ Comptes disponibles:<br>';
+                    comptes.forEach(compte => {
+                        html += `• ${compte.numeroCompte} - ${compte.typeCompte} - ${compte.solde.toLocaleString()} XOF (${compte.proprietaireNom} ${compte.proprietairePrenom})<br>`;
+                    });
+                    html += '</div>';
+                    resultDiv.innerHTML = html;
+                }
+                
+            } catch (error) {
+                log(`Erreur: ${error.message}`, 'error');
+                resultDiv.innerHTML = `<div class="error">❌ Erreur: ${error.message}</div>`;
+            }
+        }
+
+        function updateCompteSelectors(comptes) {
+            const selectors = ['compteDepot', 'compteRetrait', 'compteSource'];
+            
+            selectors.forEach(selectorId => {
+                const selector = document.getElementById(selectorId);
+                selector.innerHTML = '<option value="">Sélectionner un compte</option>';
+                
+                comptes.forEach(compte => {
+                    const option = document.createElement('option');
+                    option.value = compte.numeroCompte;
+                    option.textContent = `${compte.numeroCompte} - ${compte.solde.toLocaleString()} XOF`;
+                    selector.appendChild(option);
+                });
+            });
+            
+            // Pour le virement, remplir aussi le destinataire avec un autre compte
+            if (comptes.length > 1) {
+                document.getElementById('compteDestinataire').value = comptes[1].numeroCompte;
+            }
+        }
+
+        async function effectuerDepot() {
+            const resultDiv = document.getElementById('depotResult');
+            const numeroCompte = document.getElementById('compteDepot').value;
+            const montant = parseFloat(document.getElementById('montantDepot').value);
+            const description = document.getElementById('descriptionDepot').value;
+            
+            if (!numeroCompte || !montant) {
+                resultDiv.innerHTML = '<div class="error">❌ Veuillez remplir tous les champs</div>';
+                return;
+            }
+            
+            resultDiv.innerHTML = '<p>⏳ Effectuer le dépôt...</p>';
+            
+            try {
+                const operationData = {
+                    numeroCompte: numeroCompte,
+                    montant: montant,
+                    description: description
+                };
+                
+                log(`Dépôt: ${montant} XOF sur ${numeroCompte}`);
+                const response = await fetch(`${API_BASE}/transactions/depot`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(operationData)
+                });
+                
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || `Erreur HTTP ${response.status}`);
+                }
+                
+                const transaction = await response.json();
+                log(`Dépôt réussi: Transaction ID ${transaction.id}`);
+                
+                resultDiv.innerHTML = `
+                    <div class="success">
+                        ✅ Dépôt effectué avec succès !<br>
+                        Montant: ${transaction.montant.toLocaleString()} XOF<br>
+                        Nouveau solde: ${transaction.soldeApres.toLocaleString()} XOF<br>
+                        Transaction ID: ${transaction.id}
+                    </div>
+                `;
+                
+                // Actualiser la liste des comptes
+                setTimeout(listerComptes, 1000);
+                
+            } catch (error) {
+                log(`Erreur dépôt: ${error.message}`, 'error');
+                resultDiv.innerHTML = `<div class="error">❌ Erreur: ${error.message}</div>`;
+            }
+        }
+
+        async function effectuerRetrait() {
+            const resultDiv = document.getElementById('retraitResult');
+            const numeroCompte = document.getElementById('compteRetrait').value;
+            const montant = parseFloat(document.getElementById('montantRetrait').value);
+            const description = document.getElementById('descriptionRetrait').value;
+            
+            if (!numeroCompte || !montant) {
+                resultDiv.innerHTML = '<div class="error">❌ Veuillez remplir tous les champs</div>';
+                return;
+            }
+            
+            resultDiv.innerHTML = '<p>⏳ Effectuer le retrait...</p>';
+            
+            try {
+                const operationData = {
+                    numeroCompte: numeroCompte,
+                    montant: montant,
+                    description: description
+                };
+                
+                log(`Retrait: ${montant} XOF sur ${numeroCompte}`);
+                const response = await fetch(`${API_BASE}/transactions/retrait`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(operationData)
+                });
+                
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || `Erreur HTTP ${response.status}`);
+                }
+                
+                const transaction = await response.json();
+                log(`Retrait réussi: Transaction ID ${transaction.id}`);
+                
+                resultDiv.innerHTML = `
+                    <div class="success">
+                        ✅ Retrait effectué avec succès !<br>
+                        Montant: ${transaction.montant.toLocaleString()} XOF<br>
+                        Nouveau solde: ${transaction.soldeApres.toLocaleString()} XOF<br>
+                        Transaction ID: ${transaction.id}
+                    </div>
+                `;
+                
+                // Actualiser la liste des comptes
+                setTimeout(listerComptes, 1000);
+                
+            } catch (error) {
+                log(`Erreur retrait: ${error.message}`, 'error');
+                resultDiv.innerHTML = `<div class="error">❌ Erreur: ${error.message}</div>`;
+            }
+        }
+
+        async function effectuerVirement() {
+            const resultDiv = document.getElementById('virementResult');
+            const compteSource = document.getElementById('compteSource').value;
+            const compteDestinataire = document.getElementById('compteDestinataire').value;
+            const montant = parseFloat(document.getElementById('montantVirement').value);
+            const description = document.getElementById('descriptionVirement').value;
+            
+            if (!compteSource || !compteDestinataire || !montant) {
+                resultDiv.innerHTML = '<div class="error">❌ Veuillez remplir tous les champs</div>';
+                return;
+            }
+            
+            if (compteSource === compteDestinataire) {
+                resultDiv.innerHTML = '<div class="error">❌ Le compte source et destinataire doivent être différents</div>';
+                return;
+            }
+            
+            resultDiv.innerHTML = '<p>⏳ Effectuer le virement...</p>';
+            
+            try {
+                const virementData = {
+                    compteSource: compteSource,
+                    compteDestinataire: compteDestinataire,
+                    montant: montant,
+                    description: description
+                };
+                
+                log(`Virement: ${montant} XOF de ${compteSource} vers ${compteDestinataire}`);
+                const response = await fetch(`${API_BASE}/transactions/virement`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(virementData)
+                });
+                
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || `Erreur HTTP ${response.status}`);
+                }
+                
+                const transactions = await response.json();
+                log(`Virement réussi: ${transactions.length} transactions créées`);
+                
+                resultDiv.innerHTML = `
+                    <div class="success">
+                        ✅ Virement effectué avec succès !<br>
+                        Montant: ${montant.toLocaleString()} XOF<br>
+                        De: ${compteSource}<br>
+                        Vers: ${compteDestinataire}<br>
+                        ${transactions.length} transactions créées
+                    </div>
+                `;
+                
+                // Actualiser la liste des comptes
+                setTimeout(listerComptes, 1000);
+                
+            } catch (error) {
+                log(`Erreur virement: ${error.message}`, 'error');
+                resultDiv.innerHTML = `<div class="error">❌ Erreur: ${error.message}</div>`;
+            }
+        }
+
+        async function listerTransactions() {
+            const resultDiv = document.getElementById('transactionsResult');
+            resultDiv.innerHTML = '<p>⏳ Chargement des transactions...</p>';
+            
+            try {
+                log('Récupération des transactions...');
+                const response = await fetch(`${API_BASE}/transactions`);
+                
+                if (!response.ok) {
+                    throw new Error(`Erreur HTTP ${response.status}`);
+                }
+                
+                const transactions = await response.json();
+                log(`${transactions.length} transactions trouvées`);
+                
+                if (transactions.length === 0) {
+                    resultDiv.innerHTML = '<div class="warning">⚠️ Aucune transaction trouvée</div>';
+                } else {
+                    let html = '<div class="success">✅ Dernières transactions:<br><pre>';
+                    transactions.slice(-10).reverse().forEach(t => {
+                        const date = new Date(t.dateTransaction).toLocaleString('fr-FR');
+                        html += `${date} | ${t.typeTransaction} | ${t.montant.toLocaleString()} XOF | ${t.numeroCompte} | ${t.description || ''}\n`;
+                    });
+                    html += '</pre></div>';
+                    resultDiv.innerHTML = html;
+                }
+                
+            } catch (error) {
+                log(`Erreur: ${error.message}`, 'error');
+                resultDiv.innerHTML = `<div class="error">❌ Erreur: ${error.message}</div>`;
+            }
+        }
+
+        // Initialisation
+        window.onload = function() {
+            log('Page de test des opérations bancaires chargée');
+            listerComptes();
+        };
+    </script>
+</body>
+</html>

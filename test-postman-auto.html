@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧪 Test Automatique des APIs - Bank EGA</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            min-height: 100vh;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 2px solid #ecf0f1;
+            border-radius: 10px;
+            background: #f8f9fa;
+        }
+        
+        .test-section h3 {
+            margin-top: 0;
+            color: #34495e;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .status {
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            display: inline-block;
+            margin-left: 10px;
+        }
+        
+        .status.pending {
+            background: #f39c12;
+            color: white;
+        }
+        
+        .status.success {
+            background: #27ae60;
+            color: white;
+        }
+        
+        .status.error {
+            background: #e74c3c;
+            color: white;
+        }
+        
+        .test-details {
+            margin: 15px 0;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            border-left: 4px solid #3498db;
+        }
+        
+        .test-result {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+        }
+        
+        .test-result.success {
+            background: #d5f4e6;
+            border: 1px solid #27ae60;
+        }
+        
+        .test-result.error {
+            background: #fadbd8;
+            border: 1px solid #e74c3c;
+        }
+        
+        .controls {
+            text-align: center;
+            margin: 30px 0;
+        }
+        
+        button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 0 10px;
+            transition: all 0.3s;
+        }
+        
+        button:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+        
+        button:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .summary {
+            background: #ecf0f1;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 30px;
+            text-align: center;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: #ecf0f1;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #27ae60, #2ecc71);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+        
+        .api-info {
+            background: #e8f4f8;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #3498db;
+        }
+        
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>
+            🧪 Test Automatique des APIs Bank EGA
+        </h1>
+        
+        <div class="api-info">
+            <strong>🔗 Base URL:</strong> <span id="baseUrl">http://localhost:8080</span><br>
+            <strong>📊 Tests:</strong> 6 endpoints principaux<br>
+            <strong>⏱️ Durée estimée:</strong> ~30 secondes
+        </div>
+        
+        <div class="controls">
+            <button onclick="runAllTests()" id="runBtn">🚀 Lancer tous les tests</button>
+            <button onclick="clearResults()" id="clearBtn">🧹 Effacer les résultats</button>
+        </div>
+        
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressBar"></div>
+        </div>
+        
+        <!-- Test 1: Vérification Backend -->
+        <div class="test-section">
+            <h3>
+                🔧 1. Vérification Backend
+                <span class="status pending" id="status1">En attente</span>
+            </h3>
+            <div class="test-details">
+                <strong>Endpoint:</strong> GET /api/clients<br>
+                <strong>Objectif:</strong> Vérifier que le backend Spring Boot répond
+            </div>
+            <div class="test-result" id="result1" style="display: none;"></div>
+        </div>
+        
+        <!-- Test 2: Création Client -->
+        <div class="test-section">
+            <h3>
+                👤 2. Création d'un Client
+                <span class="status pending" id="status2">En attente</span>
+            </h3>
+            <div class="test-details">
+                <strong>Endpoint:</strong> POST /api/clients<br>
+                <strong>Objectif:</strong> Créer un nouveau client de test
+            </div>
+            <div class="test-result" id="result2" style="display: none;"></div>
+        </div>
+        
+        <!-- Test 3: Création Compte -->
+        <div class="test-section">
+            <h3>
+                💳 3. Création d'un Compte
+                <span class="status pending" id="status3">En attente</span>
+            </h3>
+            <div class="test-details">
+                <strong>Endpoint:</strong> POST /api/comptes<br>
+                <strong>Objectif:</strong> Créer un compte pour le client
+            </div>
+            <div class="test-result" id="result3" style="display: none;"></div>
+        </div>
+        
+        <!-- Test 4: Dépôt -->
+        <div class="test-section">
+            <h3>
+                💵 4. Opération Dépôt
+                <span class="status pending" id="status4">En attente</span>
+            </h3>
+            <div class="test-details">
+                <strong>Endpoint:</strong> POST /api/transactions/depot<br>
+                <strong>Objectif:</strong> Effectuer un dépôt de 100 000 XOF
+            </div>
+            <div class="test-result" id="result4" style="display: none;"></div>
+        </div>
+        
+        <!-- Test 5: Retrait -->
+        <div class="test-section">
+            <h3>
+                💸 5. Opération Retrait
+                <span class="status pending" id="status5">En attente</span>
+            </h3>
+            <div class="test-details">
+                <strong>Endpoint:</strong> POST /api/transactions/retrait<br>
+                <strong>Objectif:</strong> Effectuer un retrait de 25 000 XOF
+            </div>
+            <div class="test-result" id="result5" style="display: none;"></div>
+        </div>
+        
+        <!-- Test 6: Vérification Solde -->
+        <div class="test-section">
+            <h3>
+                📊 6. Vérification du Solde
+                <span class="status pending" id="status6">En attente</span>
+            </h3>
+            <div class="test-details">
+                <strong>Endpoint:</strong> GET /api/comptes/numero/{numeroCompte}<br>
+                <strong>Objectif:</strong> Vérifier que le solde final est correct (125 000 XOF)
+            </div>
+            <div class="test-result" id="result6" style="display: none;"></div>
+        </div>
+        
+        <div class="summary" id="summary" style="display: none;">
+            <h3>📋 Résumé des Tests</h3>
+            <div id="summaryContent"></div>
+        </div>
+    </div>
+
+    <script>
+        const baseUrl = 'http://localhost:8080';
+        let testData = {
+            clientId: null,
+            numeroCompte: null
+        };
+        let testResults = [];
+        
+        async function runAllTests() {
+            const runBtn = document.getElementById('runBtn');
+            const clearBtn = document.getElementById('clearBtn');
+            
+            runBtn.disabled = true;
+            clearBtn.disabled = true;
+            runBtn.innerHTML = '<span class="spinner"></span> Tests en cours...';
+            
+            clearResults();
+            testResults = [];
+            
+            try {
+                await test1_VerificationBackend();
+                await test2_CreationClient();
+                await test3_CreationCompte();
+                await test4_Depot();
+                await test5_Retrait();
+                await test6_VerificationSolde();
+                
+                showSummary();
+            } catch (error) {
+                console.error('Erreur lors des tests:', error);
+            } finally {
+                runBtn.disabled = false;
+                clearBtn.disabled = false;
+                runBtn.innerHTML = '🚀 Lancer tous les tests';
+            }
+        }
+        
+        async function test1_VerificationBackend() {
+            updateStatus(1, 'pending', '<span class="spinner"></span> Test en cours...');
+            updateProgress(16.67);
+            
+            try {
+                const response = await fetch(`${baseUrl}/api/clients`);
+                
+                if (response.ok) {
+                    const clients = await response.json();
+                    updateStatus(1, 'success', 'Réussi');
+                    showResult(1, 'success', `✅ Backend accessible - ${clients.length} clients trouvés`);
+                    testResults.push({ test: 'Backend', status: 'success' });
+                } else {
+                    throw new Error(`Status ${response.status}`);
+                }
+            } catch (error) {
+                updateStatus(1, 'error', 'Échec');
+                showResult(1, 'error', `❌ Erreur: ${error.message}`);
+                testResults.push({ test: 'Backend', status: 'error', error: error.message });
+                throw error;
+            }
+        }
+        
+        async function test2_CreationClient() {
+            updateStatus(2, 'pending', '<span class="spinner"></span> Test en cours...');
+            updateProgress(33.33);
+            
+            const clientData = {
+                nom: "TestAuto",
+                prenom: "Postman",
+                dateNaissance: "1990-01-01",
+                sexe: "M",
+                adresse: "123 Test Street, Dakar",
+                numeroTelephone: "+221701234567",
+                courriel: "test.auto@bank.com",
+                nationalite: "Sénégalaise"
+            };
+            
+            try {
+                const response = await fetch(`${baseUrl}/api/clients`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(clientData)
+                });
+                
+                if (response.status === 201) {
+                    const client = await response.json();
+                    testData.clientId = client.id;
+                    updateStatus(2, 'success', 'Réussi');
+                    showResult(2, 'success', `✅ Client créé - ID: ${client.id}, Email: ${client.courriel}`);
+                    testResults.push({ test: 'Création Client', status: 'success', data: client });
+                } else {
+                    throw new Error(`Status ${response.status}`);
+                }
+            } catch (error) {
+                updateStatus(2, 'error', 'Échec');
+                showResult(2, 'error', `❌ Erreur: ${error.message}`);
+                testResults.push({ test: 'Création Client', status: 'error', error: error.message });
+                throw error;
+            }
+        }
+        
+        async function test3_CreationCompte() {
+            updateStatus(3, 'pending', '<span class="spinner"></span> Test en cours...');
+            updateProgress(50);
+            
+            const compteData = {
+                proprietaireId: testData.clientId,
+                typeCompte: "COURANT",
+                solde: 50000
+            };
+            
+            try {
+                const response = await fetch(`${baseUrl}/api/comptes`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(compteData)
+                });
+                
+                if (response.status === 201) {
+                    const compte = await response.json();
+                    testData.numeroCompte = compte.numeroCompte;
+                    updateStatus(3, 'success', 'Réussi');
+                    showResult(3, 'success', `✅ Compte créé - IBAN: ${compte.numeroCompte}, Solde: ${compte.solde.toLocaleString()} XOF`);
+                    testResults.push({ test: 'Création Compte', status: 'success', data: compte });
+                } else {
+                    throw new Error(`Status ${response.status}`);
+                }
+            } catch (error) {
+                updateStatus(3, 'error', 'Échec');
+                showResult(3, 'error', `❌ Erreur: ${error.message}`);
+                testResults.push({ test: 'Création Compte', status: 'error', error: error.message });
+                throw error;
+            }
+        }
+        
+        async function test4_Depot() {
+            updateStatus(4, 'pending', '<span class="spinner"></span> Test en cours...');
+            updateProgress(66.67);
+            
+            const depotData = {
+                numeroCompte: testData.numeroCompte,
+                montant: 100000,
+                description: "Dépôt test automatique"
+            };
+            
+            try {
+                const response = await fetch(`${baseUrl}/api/transactions/depot`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(depotData)
+                });
+                
+                if (response.status === 201) {
+                    const transaction = await response.json();
+                    updateStatus(4, 'success', 'Réussi');
+                    showResult(4, 'success', `✅ Dépôt effectué - Montant: ${transaction.montant.toLocaleString()} XOF, Nouveau solde: ${transaction.soldeApres.toLocaleString()} XOF`);
+                    testResults.push({ test: 'Dépôt', status: 'success', data: transaction });
+                } else {
+                    throw new Error(`Status ${response.status}`);
+                }
+            } catch (error) {
+                updateStatus(4, 'error', 'Échec');
+                showResult(4, 'error', `❌ Erreur: ${error.message}`);
+                testResults.push({ test: 'Dépôt', status: 'error', error: error.message });
+                throw error;
+            }
+        }
+        
+        async function test5_Retrait() {
+            updateStatus(5, 'pending', '<span class="spinner"></span> Test en cours...');
+            updateProgress(83.33);
+            
+            const retraitData = {
+                numeroCompte: testData.numeroCompte,
+                montant: 25000,
+                description: "Retrait test automatique"
+            };
+            
+            try {
+                const response = await fetch(`${baseUrl}/api/transactions/retrait`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(retraitData)
+                });
+                
+                if (response.status === 201) {
+                    const transaction = await response.json();
+                    updateStatus(5, 'success', 'Réussi');
+                    showResult(5, 'success', `✅ Retrait effectué - Montant: ${transaction.montant.toLocaleString()} XOF, Nouveau solde: ${transaction.soldeApres.toLocaleString()} XOF`);
+                    testResults.push({ test: 'Retrait', status: 'success', data: transaction });
+                } else {
+                    throw new Error(`Status ${response.status}`);
+                }
+            } catch (error) {
+                updateStatus(5, 'error', 'Échec');
+                showResult(5, 'error', `❌ Erreur: ${error.message}`);
+                testResults.push({ test: 'Retrait', status: 'error', error: error.message });
+                throw error;
+            }
+        }
+        
+        async function test6_VerificationSolde() {
+            updateStatus(6, 'pending', '<span class="spinner"></span> Test en cours...');
+            updateProgress(100);
+            
+            try {
+                const response = await fetch(`${baseUrl}/api/comptes/numero/${testData.numeroCompte}`);
+                
+                if (response.ok) {
+                    const compte = await response.json();
+                    const soldeAttendu = 125000; // 50000 + 100000 - 25000
+                    
+                    if (compte.solde === soldeAttendu) {
+                        updateStatus(6, 'success', 'Réussi');
+                        showResult(6, 'success', `✅ Solde correct - Attendu: ${soldeAttendu.toLocaleString()} XOF, Actuel: ${compte.solde.toLocaleString()} XOF`);
+                        testResults.push({ test: 'Vérification Solde', status: 'success', data: compte });
+                    } else {
+                        throw new Error(`Solde incorrect - Attendu: ${soldeAttendu}, Actuel: ${compte.solde}`);
+                    }
+                } else {
+                    throw new Error(`Status ${response.status}`);
+                }
+            } catch (error) {
+                updateStatus(6, 'error', 'Échec');
+                showResult(6, 'error', `❌ Erreur: ${error.message}`);
+                testResults.push({ test: 'Vérification Solde', status: 'error', error: error.message });
+                throw error;
+            }
+        }
+        
+        function updateStatus(testNumber, status, text) {
+            const statusElement = document.getElementById(`status${testNumber}`);
+            statusElement.className = `status ${status}`;
+            statusElement.innerHTML = text;
+        }
+        
+        function showResult(testNumber, type, message) {
+            const resultElement = document.getElementById(`result${testNumber}`);
+            resultElement.className = `test-result ${type}`;
+            resultElement.innerHTML = message;
+            resultElement.style.display = 'block';
+        }
+        
+        function updateProgress(percentage) {
+            const progressBar = document.getElementById('progressBar');
+            progressBar.style.width = `${percentage}%`;
+        }
+        
+        function showSummary() {
+            const summary = document.getElementById('summary');
+            const summaryContent = document.getElementById('summaryContent');
+            
+            const successCount = testResults.filter(r => r.status === 'success').length;
+            const totalCount = testResults.length;
+            
+            let summaryHtml = `
+                <div style="font-size: 24px; margin-bottom: 20px;">
+                    ${successCount === totalCount ? '🎉' : '⚠️'} 
+                    ${successCount}/${totalCount} tests réussis
+                </div>
+            `;
+            
+            if (successCount === totalCount) {
+                summaryHtml += `
+                    <div style="color: #27ae60; font-weight: bold; margin-bottom: 15px;">
+                        ✅ Toutes les APIs fonctionnent parfaitement !
+                    </div>
+                    <div>
+                        🎯 <strong>Prochaines étapes :</strong><br>
+                        • Tester l'interface Angular sur <a href="http://localhost:4200" target="_blank">http://localhost:4200</a><br>
+                        • Importer la collection Postman pour des tests manuels<br>
+                        • Tester les cas d'erreur (solde insuffisant, etc.)
+                    </div>
+                `;
+            } else {
+                summaryHtml += `
+                    <div style="color: #e74c3c; font-weight: bold; margin-bottom: 15px;">
+                        ❌ Certains tests ont échoué
+                    </div>
+                    <div>
+                        🔧 <strong>Vérifications :</strong><br>
+                        • Le backend Spring Boot est-il démarré ?<br>
+                        • La base de données MySQL est-elle accessible ?<br>
+                        • Les tables sont-elles créées ?
+                    </div>
+                `;
+            }
+            
+            summaryContent.innerHTML = summaryHtml;
+            summary.style.display = 'block';
+        }
+        
+        function clearResults() {
+            for (let i = 1; i <= 6; i++) {
+                updateStatus(i, 'pending', 'En attente');
+                document.getElementById(`result${i}`).style.display = 'none';
+            }
+            document.getElementById('summary').style.display = 'none';
+            updateProgress(0);
+        }
+        
+        // Vérification automatique au chargement
+        window.addEventListener('load', () => {
+            console.log('🧪 Test automatique des APIs Bank EGA chargé');
+            console.log('📡 Base URL:', baseUrl);
+        });
+    </script>
+</body>
+</html>

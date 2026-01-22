@@ -1,0 +1,262 @@
+<div class="historique-container">
+  <div class="historique-card">
+    <!-- En-tête -->
+    <div class="header">
+      <h2>Historique des Transactions</h2>
+      <p class="subtitle">Consultez et téléchargez l'historique des transactions d'un compte</p>
+    </div>
+    
+    <!-- Formulaire de recherche -->
+    <form [formGroup]="historiqueForm" (ngSubmit)="onSubmit()" class="search-form">
+      <div class="form-row">
+        <div class="form-group full-width">
+          <label for="accountNumber">
+            <span class="label-icon"></span>
+            Numéro de compte
+          </label>
+          <input 
+            type="text" 
+            id="accountNumber" 
+            formControlName="accountNumber"
+            placeholder="Ex: ACC123456"
+            [class.invalid]="historiqueForm.get('accountNumber')?.invalid && 
+                           (historiqueForm.get('accountNumber')?.dirty || 
+                            historiqueForm.get('accountNumber')?.touched)"
+          />
+          <span class="error" 
+                *ngIf="historiqueForm.get('accountNumber')?.invalid && 
+                       (historiqueForm.get('accountNumber')?.dirty || 
+                        historiqueForm.get('accountNumber')?.touched)">
+            Le numéro de compte est requis (minimum 5 caractères)
+          </span>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="dateDebut">
+            <span class="label-icon"></span>
+            Date de début
+          </label>
+          <input 
+            type="date" 
+            id="dateDebut" 
+            formControlName="dateDebut"
+            [class.invalid]="historiqueForm.get('dateDebut')?.invalid && 
+                           (historiqueForm.get('dateDebut')?.dirty || 
+                            historiqueForm.get('dateDebut')?.touched)"
+          />
+          <span class="error" 
+                *ngIf="historiqueForm.get('dateDebut')?.hasError('required') && 
+                       (historiqueForm.get('dateDebut')?.dirty || 
+                        historiqueForm.get('dateDebut')?.touched)">
+            La date de début est requise
+          </span>
+          <span class="error" 
+                *ngIf="historiqueForm.get('dateDebut')?.hasError('futureDate') && 
+                       (historiqueForm.get('dateDebut')?.dirty || 
+                        historiqueForm.get('dateDebut')?.touched)">
+            La date de début ne peut pas être dans le futur
+          </span>
+        </div>
+
+        <div class="form-group">
+          <label for="dateFin">
+            <span class="label-icon"></span>
+            Date de fin
+          </label>
+          <input 
+            type="date" 
+            id="dateFin" 
+            formControlName="dateFin"
+            [class.invalid]="historiqueForm.get('dateFin')?.invalid && 
+                           (historiqueForm.get('dateFin')?.dirty || 
+                            historiqueForm.get('dateFin')?.touched)"
+          />
+          <span class="error" 
+                *ngIf="historiqueForm.get('dateFin')?.hasError('required') && 
+                       (historiqueForm.get('dateFin')?.dirty || 
+                        historiqueForm.get('dateFin')?.touched)">
+            La date de fin est requise
+          </span>
+          <span class="error" 
+                *ngIf="historiqueForm.get('dateFin')?.hasError('futureDate') && 
+                       (historiqueForm.get('dateFin')?.dirty || 
+                        historiqueForm.get('dateFin')?.touched)">
+            La date de fin ne peut pas être dans le futur
+          </span>
+        </div>
+      </div>
+
+      <!-- Message d'erreur pour la comparaison des dates (au niveau du formulaire) -->
+      <div class="form-row" *ngIf="historiqueForm.hasError('dateRange') && 
+                                   (historiqueForm.get('dateDebut')?.touched || 
+                                    historiqueForm.get('dateFin')?.touched)">
+        <div class="form-group full-width">
+          <span class="error">
+            La date de début doit être antérieure ou égale à la date de fin
+          </span>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary" [disabled]="loading || loadingPdf">
+          <span *ngIf="!loading">Rechercher</span>
+          <span *ngIf="loading" class="loading-text">
+            <span class="spinner"></span>
+            Chargement...
+          </span>
+        </button>
+        
+        <button 
+          type="button" 
+          class="btn btn-success" 
+          (click)="telechargerReleve()" 
+          [disabled]="loading || loadingPdf">
+          <span *ngIf="!loadingPdf">Télécharger PDF</span>
+          <span *ngIf="loadingPdf" class="loading-text">
+            <span class="spinner"></span>
+            Génération...
+          </span>
+        </button>
+
+        <button 
+          type="button" 
+          class="btn btn-secondary" 
+          (click)="reset()" 
+          [disabled]="loading || loadingPdf">
+          Réinitialiser
+        </button>
+      </div>
+    </form>
+
+    <!-- Messages d'alerte -->
+    <div class="alerts">
+      <!-- Message d'erreur -->
+      <div class="alert alert-error" *ngIf="error">
+        <span class="alert-icon"></span>
+        <div class="alert-content">
+          <strong>Erreur</strong>
+          <p>{{ error }}</p>
+        </div>
+        <button class="alert-close" (click)="error = null">✕</button>
+      </div>
+
+      <!-- Message de succès -->
+      <div class="alert alert-success" *ngIf="successMessage">
+        <span class="alert-icon"></span>
+        <div class="alert-content">
+          <strong>Succès</strong>
+          <p>{{ successMessage }}</p>
+        </div>
+        <button class="alert-close" (click)="successMessage = null">✕</button>
+      </div>
+
+      <!-- Aucune donnée -->
+      <div class="alert alert-info" *ngIf="noData && !loading">
+        <span class="alert-icon"></span>
+        <div class="alert-content">
+          <strong>Information</strong>
+          <p>Aucune transaction trouvée pour cette période</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tableau des transactions -->
+    <div class="table-section" *ngIf="transactions.length > 0 && !loading">
+      <div class="table-header">
+        <h3>Liste des Transactions</h3>
+        <span class="badge badge-count">{{ transactions.length }} transaction(s)</span>
+      </div>
+
+      <div class="table-container">
+        <table class="transactions-table">
+          <thead>
+            <tr>
+              <th>Date & Heure</th>
+              <th>Type</th>
+              <th>Montant</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let transaction of transactions; let i = index" 
+                [class]="'row-' + getTransactionColor(transaction.transactionType)"
+                >
+              <td>
+                <div class="date-cell">
+                  <span class="date">{{ transaction.transactionDate | date:'dd/MM/yyyy' }}</span>
+                  <span class="time">{{ transaction.transactionDate | date:'HH:mm:ss' }}</span>
+                </div>
+              </td>
+              <td>
+                <span [class]="'badge badge-' + getTransactionColor(transaction.transactionType)">
+                  <span class="badge-icon">{{ getTransactionIcon(transaction.transactionType) }}</span>
+                  {{ transaction.transactionType }}
+                </span>
+              </td>
+              <td class="amount-cell">
+                <span [class]="'amount amount-' + getTransactionColor(transaction.transactionType)">
+                  {{ transaction.transactionType === 'RETRAIT' ? '-' : '+' }}
+                  {{ transaction.amount | number:'1.2-2' }} 
+                  <span class="currency">FCFA</span>
+                </span>
+              </td>
+              <td>
+                <span class="description">{{ transaction.description || '-' }}</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Résumé statistiques -->
+      <div class="summary">
+        <div class="summary-title">
+          <h4>Résumé de la période</h4>
+        </div>
+        <div class="summary-grid">
+          <div class="summary-card">
+            <div class="summary-icon"></div>
+            <div class="summary-info">
+              <span class="summary-label">Total transactions</span>
+              <span class="summary-value">{{ transactions.length }}</span>
+            </div>
+          </div>
+
+          <div class="summary-card success">
+            <div class="summary-icon">↓</div>
+            <div class="summary-info">
+              <span class="summary-label">Total dépôts</span>
+              <span class="summary-value">{{ getTotalDepots() | number:'1.2-2' }} <small>FCFA</small></span>
+            </div>
+          </div>
+
+          <div class="summary-card danger">
+            <div class="summary-icon">↑</div>
+            <div class="summary-info">
+              <span class="summary-label">Total retraits</span>
+              <span class="summary-value">{{ getTotalRetraits() | number:'1.2-2' }} <small>FCFA</small></span>
+            </div>
+          </div>
+
+          <div class="summary-card info">
+            <div class="summary-icon">⇄</div>
+            <div class="summary-info">
+              <span class="summary-label">Total transferts</span>
+              <span class="summary-value">{{ getTotalTransferts() | number:'1.2-2' }} <small>FCFA</small></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Loader -->
+    <div class="loader-container" *ngIf="loading">
+      <div class="loader">
+        <div class="loader-spinner"></div>
+      </div>
+      <p class="loader-text">Chargement des transactions...</p>
+    </div>
+  </div>
+</div>

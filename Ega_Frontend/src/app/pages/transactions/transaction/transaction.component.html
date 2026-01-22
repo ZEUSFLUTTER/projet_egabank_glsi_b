@@ -1,0 +1,299 @@
+<div class="transaction-container">
+    <div class="transaction-box">
+        <h2>Gestion des Transactions</h2>
+
+        <!-- Onglets pour choisir le type de transaction -->
+        <div class="tabs">
+            <button 
+                class="tab" 
+                [class.active]="activeTab === 'deposit'"
+                (click)="switchTab('deposit')">
+                Dépôt
+            </button>
+            <button 
+                class="tab" 
+                [class.active]="activeTab === 'withdrawal'"
+                (click)="switchTab('withdrawal')">
+                Retrait
+            </button>
+            <button 
+                class="tab" 
+                [class.active]="activeTab === 'transfer'"
+                (click)="switchTab('transfer')">
+                Transfert
+            </button>
+        </div>
+
+        <!-- Message de succès -->
+        @if (successMessage) {
+            <div class="alert-success">
+                {{ successMessage }}
+            </div>
+        }
+
+        <!-- Message d'erreur -->
+        @if (errorMessage) {
+            <div class="alert-error">
+                {{ errorMessage }}
+            </div>
+        }
+
+        <!-- ==================== DÉPÔT ==================== -->
+        @if (activeTab === 'deposit') {
+            <div class="transaction-form">
+                <h3>Effectuer un dépôt</h3>
+
+                <!-- Étape 1: Recherche du compte -->
+                @if (!depositAccountFound) {
+                    <form [formGroup]="depositSearchForm" (ngSubmit)="searchDepositAccount()">
+                        <div class="form-group">
+                            <label for="depositAccountSearch">Numéro de compte :</label>
+                            <input 
+                                type="text" 
+                                id="depositAccountSearch" 
+                                placeholder="Entrez le numéro de compte"
+                                formControlName="accountNumber"
+                            />
+                            @if (depositSearchForm.get('accountNumber')?.invalid && 
+                            (depositSearchForm.get('accountNumber')?.dirty || depositSearchForm.get('accountNumber')?.touched)) {
+                                <div class="error">
+                                    Ce champ est requis.
+                                </div>
+                            }
+                        </div>
+
+                        <button type="submit" class="btn-submit" [disabled]="depositSearchForm.invalid || isSearching">
+                            @if (isSearching) {
+                                Recherche en cours...
+                            } @else {
+                                Rechercher le compte
+                            }
+                        </button>
+                    </form>
+                }
+
+                <!-- Étape 2: Affichage du compte + montant -->
+                @if (depositAccountFound && depositAccount) {
+                    <div class="account-info">
+                        <h4>Informations du compte</h4>
+                        <div class="info-row">
+                            <span class="label">Numéro de compte :</span>
+                            <span class="value">{{ depositAccount.accountNumber }}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="label">Titulaire :</span>
+                            <span class="value">{{ depositAccount.client.firstName }} {{ depositAccount.client.lastName }}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="label">Type de compte :</span>
+                            <span class="value">{{ depositAccount.accountType }}</span>
+                        </div>
+       
+                    </div>
+
+                    <form [formGroup]="depositForm" (ngSubmit)="onDeposit()">
+                        <div class="form-group">
+                            <label for="depositAmount">Montant à déposer :</label>
+                            <input 
+                                type="number" 
+                                id="depositAmount" 
+                                placeholder="Entrez le montant"
+                                formControlName="amount"
+                                step="0.01"
+                                min="0"
+                            />
+                            @if (depositForm.get('amount')?.invalid && 
+                            (depositForm.get('amount')?.dirty || depositForm.get('amount')?.touched)) {
+                                <div class="error">
+                                    @if (depositForm.get('amount')?.errors?.['required']) {
+                                        Ce champ est requis.
+                                    }
+                                    @if (depositForm.get('amount')?.errors?.['min']) {
+                                        Le montant doit être supérieur à 0.
+                                    }
+                                </div>
+                            }
+                        </div>
+
+                        <div class="button-group">
+                            <button type="button" class="btn-secondary" (click)="resetDeposit()">
+                                Annuler
+                            </button>
+                            <button type="submit" class="btn-submit" [disabled]="depositForm.invalid || isSubmitting">
+                                @if (isSubmitting) {
+                                    Traitement en cours...
+                                } @else {
+                                    Confirmer le dépôt
+                                }
+                            </button>
+                        </div>
+                    </form>
+                }
+            </div>
+        }
+
+        <!-- ==================== RETRAIT ==================== -->
+        @if (activeTab === 'withdrawal') {
+            <div class="transaction-form">
+                <h3>Effectuer un retrait</h3>
+
+                <!-- Étape 1: Recherche du compte -->
+                @if (!withdrawalAccountFound) {
+                    <form [formGroup]="withdrawalSearchForm" (ngSubmit)="searchWithdrawalAccount()">
+                        <div class="form-group">
+                            <label for="withdrawalAccountSearch">Numéro de compte :</label>
+                            <input 
+                                type="text" 
+                                id="withdrawalAccountSearch" 
+                                placeholder="Entrez le numéro de compte"
+                                formControlName="accountNumber"
+                            />
+                            @if (withdrawalSearchForm.get('accountNumber')?.invalid && 
+                            (withdrawalSearchForm.get('accountNumber')?.dirty || withdrawalSearchForm.get('accountNumber')?.touched)) {
+                                <div class="error">
+                                    Ce champ est requis.
+                                </div>
+                            }
+                        </div>
+
+                        <button type="submit" class="btn-submit" [disabled]="withdrawalSearchForm.invalid || isSearching">
+                            @if (isSearching) {
+                                Recherche en cours...
+                            } @else {
+                                Rechercher le compte
+                            }
+                        </button>
+                    </form>
+                }
+
+                <!-- Étape 2: Affichage du compte + montant -->
+                @if (withdrawalAccountFound && withdrawalAccount) {
+                    <div class="account-info">
+                        <h4>Informations du compte</h4>
+                        <div class="info-row">
+                            <span class="label">Numéro de compte :</span>
+                            <span class="value">{{ withdrawalAccount.accountNumber }}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="label">Titulaire :</span>
+                            <span class="value">{{ withdrawalAccount.client.firstName }} {{ withdrawalAccount.client.lastName }}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="label">Type de compte :</span>
+                            <span class="value">{{ withdrawalAccount.accountType }}</span>
+                        </div>
+
+                    </div>
+
+                    <form [formGroup]="withdrawalForm" (ngSubmit)="onWithdrawal()">
+                        <div class="form-group">
+                            <label for="withdrawalAmount">Montant à retirer :</label>
+                            <input 
+                                type="number" 
+                                id="withdrawalAmount" 
+                                placeholder="Entrez le montant"
+                                formControlName="amount"
+                                step="0.01"
+                                min="0"
+                            />
+                            @if (withdrawalForm.get('amount')?.invalid && 
+                            (withdrawalForm.get('amount')?.dirty || withdrawalForm.get('amount')?.touched)) {
+                                <div class="error">
+                                    @if (withdrawalForm.get('amount')?.errors?.['required']) {
+                                        Ce champ est requis.
+                                    }
+                                    @if (withdrawalForm.get('amount')?.errors?.['min']) {
+                                        Le montant doit être supérieur à 0.
+                                    }
+                                </div>
+                            }
+                        </div>
+
+                        <div class="button-group">
+                            <button type="button" class="btn-secondary" (click)="resetWithdrawal()">
+                                Annuler
+                            </button>
+                            <button type="submit" class="btn-submit" [disabled]="withdrawalForm.invalid || isSubmitting">
+                                @if (isSubmitting) {
+                                    Traitement en cours...
+                                } @else {
+                                    Confirmer le retrait
+                                }
+                            </button>
+                        </div>
+                    </form>
+                }
+            </div>
+        }
+
+        <!-- ==================== TRANSFERT ==================== -->
+        @if (activeTab === 'transfer') {
+            <form [formGroup]="transferForm" (ngSubmit)="onTransfer()" class="transaction-form">
+                <h3>Effectuer un transfert</h3>
+                
+                <div class="form-group">
+                    <label for="sourceAccount">Compte source :</label>
+                    <input 
+                        type="text" 
+                        id="sourceAccount" 
+                        placeholder="Compte à débiter"
+                        formControlName="compteSource"
+                    />
+                    @if (transferForm.get('compteSource')?.invalid && 
+                    (transferForm.get('compteSource')?.dirty || transferForm.get('compteSource')?.touched)) {
+                        <div class="error">
+                            Ce champ est requis.
+                        </div>
+                    }
+                </div>
+
+                <div class="form-group">
+                    <label for="destAccount">Compte destinataire :</label>
+                    <input 
+                        type="text" 
+                        id="destAccount" 
+                        placeholder="Compte à créditer"
+                        formControlName="compteDest"
+                    />
+                    @if (transferForm.get('compteDest')?.invalid && 
+                    (transferForm.get('compteDest')?.dirty || transferForm.get('compteDest')?.touched)) {
+                        <div class="error">
+                            Ce champ est requis.
+                        </div>
+                    }
+                </div>
+
+                <div class="form-group">
+                    <label for="transferAmount">Montant :</label>
+                    <input 
+                        type="number" 
+                        id="transferAmount" 
+                        placeholder="Entrez le montant"
+                        formControlName="amount"
+                        step="0.01"
+                        min="0"
+                    />
+                    @if (transferForm.get('amount')?.invalid && 
+                    (transferForm.get('amount')?.dirty || transferForm.get('amount')?.touched)) {
+                        <div class="error">
+                            @if (transferForm.get('amount')?.errors?.['required']) {
+                                Ce champ est requis.
+                            }
+                            @if (transferForm.get('amount')?.errors?.['min']) {
+                                Le montant doit être supérieur à 0.
+                            }
+                        </div>
+                    }
+                </div>
+
+                <button type="submit" class="btn-submit" [disabled]="transferForm.invalid || isSubmitting">
+                    @if (isSubmitting) {
+                        Traitement en cours...
+                    } @else {
+                        Effectuer le transfert
+                    }
+                </button>
+            </form>
+        }
+    </div>
+</div>

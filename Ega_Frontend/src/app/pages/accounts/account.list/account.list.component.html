@@ -1,0 +1,130 @@
+<div class="login-container">
+    <div class="account-list-box">
+        <h2>Gestion des Comptes Bancaires</h2>
+
+        <!-- Onglets -->
+        <div class="tabs">
+            <button 
+                class="tab" 
+                [class.active]="activeTab === 'active'"
+                (click)="switchTab('active')">
+                ✅ Comptes Actifs
+            </button>
+            <button 
+                class="tab" 
+                [class.active]="activeTab === 'inactive'"
+                (click)="switchTab('inactive')">
+                🗑️ Comptes Supprimés
+            </button>
+        </div>
+
+        <!-- Messages -->
+        @if (successMessage) {
+            <div class="alert-success">
+                {{ successMessage }}
+            </div>
+        }
+
+        @if (errorMessage) {
+            <div class="alert-error">
+                {{ errorMessage }}
+            </div>
+        }
+
+        <!-- Loading -->
+        @if (isLoading) {
+            <div class="loading">
+                Chargement des comptes...
+            </div>
+        }
+
+        <!-- Liste des comptes actifs -->
+        @if (activeTab === 'active' && !isLoading) {
+            <div class="table-container">
+                <h3>Comptes Actifs ({{ activeAccounts.length }})</h3>
+                
+                @if (activeAccounts.length === 0) {
+                    <div class="empty-state">
+                        Aucun compte actif pour le moment.
+                    </div>
+                } @else {
+                    <div class="table-wrapper">
+                        <table class="account-table">
+                            <thead>
+                                <tr>
+                                    <th>Numéro de compte</th>
+                                    <th>Type de compte</th>
+                                    <th>Solde (FCFA)</th>
+                                    <th>Date de création</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @for (account of activeAccounts; track account.accountNumber) {
+                                    <tr>
+                                        <td class="account-number">{{ account.accountNumber }}</td>
+                                        <td>
+                                            <span class="badge" [class]="'badge-' + account.accountType.toLowerCase()">
+                                                {{ account.accountType }}
+                                            </span>
+                                        </td>
+                                        <td class="balance">{{ formatAmount(account.balance) }}</td>
+                                        <td>{{ formatDate(account.createdAt) }}</td>
+                                        <td>
+                                            <button 
+                                                class="btn-delete"
+                                                (click)="deleteAccount(account.accountNumber)"
+                                                [disabled]="isProcessing">
+                                                🗑️ Supprimer
+                                            </button>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+            </div>
+        }
+
+        <!-- Liste des comptes inactifs -->
+        @if (activeTab === 'inactive' && !isLoading) {
+            <div class="table-container">
+                <h3>Comptes Supprimés ({{ inactiveAccounts.length }})</h3>
+                
+                @if (inactiveAccounts.length === 0) {
+                    <div class="empty-state">
+                        Aucun compte supprimé.
+                    </div>
+                } @else {
+                    <div class="table-wrapper">
+                        <table class="account-table">
+                            <thead>
+                                <tr>
+                                    <th>Numéro de compte</th>
+                                    <th>Type de compte</th>
+                                    <th>Solde (FCFA)</th>
+                                    <th>Date de création</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @for (account of inactiveAccounts; track account.accountNumber) {
+                                    <tr class="inactive-row">
+                                        <td class="account-number">{{ account.accountNumber }}</td>
+                                        <td>
+                                            <span class="badge" [class]="'badge-' + account.accountType.toLowerCase()">
+                                                {{ account.accountType }}
+                                            </span>
+                                        </td>
+                                        <td class="balance">{{ formatAmount(account.balance) }}</td>
+                                        <td>{{ formatDate(account.createdAt) }}</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+</div>

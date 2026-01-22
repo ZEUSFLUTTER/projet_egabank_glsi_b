@@ -1,0 +1,187 @@
+<div class="login-container">
+    <div class="login-form">
+        <h3>Créer un nouveau compte</h3>
+        <form [formGroup]="create_account_newForm" (ngSubmit)="onCreateAccountNewSubmit()">
+            <div>
+                <label for="lastName">Nom :</label>
+                <input type="text" id="lastName" name="lastName" placeholder="Entrez le nom" formControlName="lastName"/>
+            </div>
+            @if (create_account_newForm.get("lastName")?.invalid && 
+            (create_account_newForm.get("lastName")?.dirty ||
+            create_account_newForm.get("lastName")?.touched)) {
+                <div class="error">
+                    @if (create_account_newForm.get("lastName")?.errors?.["required"]) {
+                        Ce champ est requis.
+                    }
+                    @if (create_account_newForm.get("lastName")?.errors?.["minlength"]) {
+                        Minimum 2 caractères requis.
+                    }
+                    @if (create_account_newForm.get("lastName")?.errors?.["maxlength"]) {
+                        Ce champ ne doit pas dépasser 30 caractères.
+                    }
+                    @if (create_account_newForm.get("lastName")?.errors?.["pattern"]) {
+                        Seules les lettres, espaces et tirets sont autorisés.
+                    }
+                </div>
+            }
+
+            <div>
+                <label for="firstName">Prénom :</label>
+                <input type="text" id="firstName" name="firstName" placeholder="Entrez le prénom" formControlName="firstName"/>
+            </div>
+            @if (create_account_newForm.get("firstName")?.invalid && 
+            (create_account_newForm.get("firstName")?.dirty ||
+            create_account_newForm.get("firstName")?.touched)) {
+                <div class="error">
+                    @if (create_account_newForm.get("firstName")?.errors?.["required"]) {
+                        Ce champ est requis.
+                    }
+                    @if (create_account_newForm.get("firstName")?.errors?.["minlength"]) {
+                        Minimum 2 caractères requis.
+                    }
+                    @if (create_account_newForm.get("firstName")?.errors?.["maxlength"]) {
+                        Ce champ ne doit pas dépasser 30 caractères.
+                    }
+                    @if (create_account_newForm.get("firstName")?.errors?.["pattern"]) {
+                        Seules les lettres, espaces et tirets sont autorisés.
+                    }
+                </div>
+            }
+
+            <div>
+                <label for="dateOfBirth">Date de naissance :</label>
+                <input type="date" id="dateOfBirth" name="dateOfBirth" formControlName="dateOfBirth" [max]="getTodayDate()"/>
+            </div>
+            @if (create_account_newForm.get("dateOfBirth")?.invalid && 
+            (create_account_newForm.get("dateOfBirth")?.dirty ||
+            create_account_newForm.get("dateOfBirth")?.touched)) {
+                <div class="error">
+                    @if (create_account_newForm.get("dateOfBirth")?.errors?.["required"]) {
+                        Ce champ est requis.
+                    }
+                    @if (create_account_newForm.get("dateOfBirth")?.errors?.["futureDate"]) {
+                        La date ne peut pas être dans le futur.
+                    }
+                    @if (create_account_newForm.get("dateOfBirth")?.errors?.["ageRange"]) {
+                        L'âge doit être entre 1 et 120 ans.
+                    }
+                </div>
+            }
+
+            <div>
+                <label for="gender">Genre :</label>
+                <select id="gender" name="gender" formControlName="gender">
+                    <option value="">Sélectionnez le genre</option>
+                    <option value="MASCULIN">Homme</option>
+                    <option value="FEMININ">Femme</option>
+                </select>
+            </div>
+            @if (create_account_newForm.get("gender")?.invalid && 
+            (create_account_newForm.get("gender")?.dirty ||
+            create_account_newForm.get("gender")?.touched)) {
+                <div class="error">
+                    @if (create_account_newForm.get("gender")?.errors?.["required"]) {
+                        Ce champ est requis.
+                    }
+                </div>
+            }
+
+            <div>
+                <label for="address">Adresse :</label>
+                <input type="text" id="address" name="address" placeholder="Entrez l'adresse complète" formControlName="address"/>
+            </div>
+            @if (create_account_newForm.get("address")?.invalid && 
+            (create_account_newForm.get("address")?.dirty ||
+            create_account_newForm.get("address")?.touched)) {
+                <div class="error">
+                    @if (create_account_newForm.get("address")?.errors?.["required"]) {
+                        Ce champ est requis.
+                    }
+                    @if (create_account_newForm.get("address")?.errors?.["minlength"]) {
+                        Minimum 2 caractères requis.
+                    }
+                    @if (create_account_newForm.get("address")?.errors?.["maxlength"]) {
+                        Ce champ ne doit pas dépasser 100 caractères.
+                    }
+                </div>
+            }
+
+            <div>
+                <label for="email">Email :</label>
+                <input type="email" name="email" id="email" placeholder="exemple@email.com" formControlName="email"/>
+            </div>
+            @if (create_account_newForm.get("email")?.invalid && 
+            (create_account_newForm.get("email")?.dirty ||
+            create_account_newForm.get("email")?.touched)) {
+                <div class="error">
+                    @if (create_account_newForm.get("email")?.errors?.["required"]) {
+                        Ce champ est requis.
+                    }
+                    @if (create_account_newForm.get("email")?.errors?.["email"]) {
+                        Entrez un email valide.
+                    }
+                </div>
+            }
+
+            <div>
+                <label for="phoneNumber">Numéro de téléphone :</label>
+                <input type="text" id="phoneNumber" name="phoneNumber" placeholder="+228" formControlName="phoneNumber"/>
+            </div>
+            @if (create_account_newForm.get("phoneNumber")?.invalid && 
+            (create_account_newForm.get("phoneNumber")?.dirty ||
+            create_account_newForm.get("phoneNumber")?.touched)) {
+                <div class="error">
+                    @if (create_account_newForm.get("phoneNumber")?.errors?.["required"]) {
+                        Ce champ est requis.
+                    }
+                    @if (create_account_newForm.get("phoneNumber")?.errors?.["pattern"]) {
+                        Format: +228XXXXXXXX ou +228 XX XX XX XX
+                    }
+                </div>
+            }
+
+            <div>
+                <label for="nationality">Nationalité :</label>
+                <input type="text" id="nationality" name="nationality" placeholder="Entrez la nationalité" formControlName="nationality"/>
+            </div>
+            @if (create_account_newForm.get("nationality")?.invalid && 
+            (create_account_newForm.get("nationality")?.dirty ||
+            create_account_newForm.get("nationality")?.touched)) {
+                <div class="error">
+                    @if (create_account_newForm.get("nationality")?.errors?.["required"]) {
+                        Ce champ est requis.
+                    }
+                    @if (create_account_newForm.get("nationality")?.errors?.["minlength"]) {
+                        Minimum 2 caractères requis.
+                    }
+                    @if (create_account_newForm.get("nationality")?.errors?.["maxlength"]) {
+                        Ce champ ne doit pas dépasser 30 caractères.
+                    }
+                    @if (create_account_newForm.get("nationality")?.errors?.["pattern"]) {
+                        Seules les lettres, espaces et tirets sont autorisés.
+                    }
+                </div>
+            }
+
+            <div>
+                <label for="accountType">Type de compte :</label>
+                <select id="accountType" name="accountType" formControlName="accountType">
+                    <option value="">Sélectionnez le type de compte</option>
+                    <option value="EPARGNE">Compte Épargne</option>
+                    <option value="COURANT">Compte Courant</option>
+                </select>
+            </div>
+            @if (create_account_newForm.get("accountType")?.invalid && 
+            (create_account_newForm.get("accountType")?.dirty ||
+            create_account_newForm.get("accountType")?.touched)) {
+                <div class="error">
+                    @if (create_account_newForm.get("accountType")?.errors?.["required"]) {
+                        Ce champ est requis.
+                    }
+                </div>
+            }
+
+            <button type="submit" class="btn-register" [disabled]="create_account_newForm.invalid">Créer le compte</button>
+        </form>
+    </div>
+</div>

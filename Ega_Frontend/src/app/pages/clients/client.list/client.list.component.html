@@ -1,0 +1,247 @@
+<div class="login-container">
+    <div class="client-list-box">
+        <h2>Gestion des Clients</h2>
+
+        <!-- Onglets -->
+        <div class="tabs">
+            <button 
+                class="tab" 
+                [class.active]="activeTab === 'active'"
+                (click)="switchTab('active')">
+                ✅ Clients Actifs
+            </button>
+            <button 
+                class="tab" 
+                [class.active]="activeTab === 'inactive'"
+                (click)="switchTab('inactive')">
+                🗑️ Clients Supprimés
+            </button>
+        </div>
+
+        <!-- Messages -->
+        @if (successMessage) {
+            <div class="alert-success">
+                {{ successMessage }}
+            </div>
+        }
+
+        @if (errorMessage) {
+            <div class="alert-error">
+                {{ errorMessage }}
+            </div>
+        }
+
+        <!-- Loading -->
+        @if (isLoading) {
+            <div class="loading">
+                Chargement des clients...
+            </div>
+        }
+
+        <!-- Liste des clients actifs -->
+        @if (activeTab === 'active' && !isLoading) {
+            <div class="table-container">
+                <h3>Clients Actifs ({{ activeClients.length }})</h3>
+                
+                @if (activeClients.length === 0) {
+                    <div class="empty-state">
+                        Aucun client actif pour le moment.
+                    </div>
+                } @else {
+                    <div class="table-wrapper">
+                        <table class="client-table">
+                            <thead>
+                                <tr>
+                                    <th>Code Client</th>
+                                    <th>Nom</th>
+                                    <th>Prénom</th>
+                                    <th>Date de naissance</th>
+                                    <th>Genre</th>
+                                    <th>Email</th>
+                                    <th>Téléphone</th>
+                                    <th>Adresse</th>
+                                    <th>Nationalité</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @for (client of activeClients; track client.codeClient) {
+                                    <tr>
+                                        <td>{{ client.codeClient }}</td>
+                                        <td>{{ client.lastName }}</td>
+                                        <td>{{ client.firstName }}</td>
+                                        <td>{{ formatDate(client.dateOfBirth) }}</td>
+                                        <td>{{ client.gender }}</td>
+                                        <td>{{ client.email }}</td>
+                                        <td>{{ client.phoneNumber }}</td>
+                                        <td>{{ client.address }}</td>
+                                        <td>{{ client.nationality }}</td>
+                                        <td>
+                                            <div class="action-buttons">
+                                                <button 
+                                                    class="btn-edit"
+                                                    (click)="openEditModal(client)"
+                                                    [disabled]="isProcessing">
+                                                    ✏️ Modifier
+                                                </button>
+                                                <button 
+                                                    class="btn-delete"
+                                                    (click)="deleteClient(client.codeClient)"
+                                                    [disabled]="isProcessing">
+                                                    🗑️ Supprimer
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+            </div>
+        }
+
+        <!-- Liste des clients inactifs -->
+        @if (activeTab === 'inactive' && !isLoading) {
+            <div class="table-container">
+                <h3>Clients Supprimés ({{ inactiveClients.length }})</h3>
+                
+                @if (inactiveClients.length === 0) {
+                    <div class="empty-state">
+                        Aucun client supprimé.
+                    </div>
+                } @else {
+                    <div class="table-wrapper">
+                        <table class="client-table">
+                            <thead>
+                                <tr>
+                                    <th>Code Client</th>
+                                    <th>Nom</th>
+                                    <th>Prénom</th>
+                                    <th>Date de naissance</th>
+                                    <th>Genre</th>
+                                    <th>Email</th>
+                                    <th>Téléphone</th>
+                                    <th>Adresse</th>
+                                    <th>Nationalité</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @for (client of inactiveClients; track client.codeClient) {
+                                    <tr class="inactive-row">
+                                        <td>{{ client.codeClient }}</td>
+                                        <td>{{ client.lastName }}</td>
+                                        <td>{{ client.firstName }}</td>
+                                        <td>{{ formatDate(client.dateOfBirth) }}</td>
+                                        <td>{{ client.gender }}</td>
+                                        <td>{{ client.email }}</td>
+                                        <td>{{ client.phoneNumber }}</td>
+                                        <td>{{ client.address }}</td>
+                                        <td>{{ client.nationality }}</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+</div>
+
+<!-- Modal de modification -->
+@if (showEditModal && selectedClient) {
+    <div class="modal-overlay" (click)="closeEditModal()">
+        <div class="modal-content" (click)="$event.stopPropagation()">
+            <div class="modal-header">
+                <h3>Modifier le client</h3>
+                <button class="btn-close" (click)="closeEditModal()">✕</button>
+            </div>
+
+            <div class="modal-body">
+                <div class="client-info-display">
+                    <p><strong>Code:</strong> {{ selectedClient.codeClient }}</p>
+                    <p><strong>Nom:</strong> {{ selectedClient.lastName }} {{ selectedClient.firstName }}</p>
+                </div>
+
+                <form [formGroup]="editForm" (ngSubmit)="submitEdit()">
+                    <div class="form-group">
+                        <label for="edit-address">Adresse :</label>
+                        <input 
+                            type="text" 
+                            id="edit-address" 
+                            formControlName="address"
+                            placeholder="Entrez l'adresse"
+                        />
+                        @if (editForm.get('address')?.invalid && 
+                        (editForm.get('address')?.dirty || editForm.get('address')?.touched)) {
+                            <div class="error">
+                                @if (editForm.get('address')?.errors?.['required']) {
+                                    Ce champ est requis.
+                                }
+                                @if (editForm.get('address')?.errors?.['minlength']) {
+                                    Minimum 2 caractères requis.
+                                }
+                            </div>
+                        }
+                    </div>
+
+                    <div class="form-group">
+                        <label for="edit-phone">Téléphone :</label>
+                        <input 
+                            type="text" 
+                            id="edit-phone" 
+                            formControlName="phoneNumber"
+                            placeholder="+228 XX XX XX XX"
+                        />
+                        @if (editForm.get('phoneNumber')?.invalid && 
+                        (editForm.get('phoneNumber')?.dirty || editForm.get('phoneNumber')?.touched)) {
+                            <div class="error">
+                                @if (editForm.get('phoneNumber')?.errors?.['required']) {
+                                    Ce champ est requis.
+                                }
+                                @if (editForm.get('phoneNumber')?.errors?.['pattern']) {
+                                    Format: +228XXXXXXXX ou +228 XX XX XX XX
+                                }
+                            </div>
+                        }
+                    </div>
+
+                    <div class="form-group">
+                        <label for="edit-email">Email :</label>
+                        <input 
+                            type="email" 
+                            id="edit-email" 
+                            formControlName="email"
+                            placeholder="exemple@email.com"
+                        />
+                        @if (editForm.get('email')?.invalid && 
+                        (editForm.get('email')?.dirty || editForm.get('email')?.touched)) {
+                            <div class="error">
+                                @if (editForm.get('email')?.errors?.['required']) {
+                                    Ce champ est requis.
+                                }
+                                @if (editForm.get('email')?.errors?.['email']) {
+                                    Entrez un email valide.
+                                }
+                            </div>
+                        }
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn-cancel" (click)="closeEditModal()">
+                            Annuler
+                        </button>
+                        <button type="submit" class="btn-save" [disabled]="editForm.invalid || isProcessing">
+                            @if (isProcessing) {
+                                Enregistrement...
+                            } @else {
+                                Enregistrer
+                            }
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+}

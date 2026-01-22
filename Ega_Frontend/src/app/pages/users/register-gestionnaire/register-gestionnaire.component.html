@@ -1,0 +1,115 @@
+<div class="login-container">
+    <div class="login-form">
+        <h3>Enregistrer un gestionnaire</h3>
+        <form [formGroup]="register_gestionnaireForm" (ngSubmit)="onRegisterGestionnaireSubmit()">
+            <div>
+                <label for="lastName">Nom :</label>
+                <input type="text" id="lastName" name="lastName" placeholder="Entrez le nom du gestionnaire" formControlName = "lastName"/>
+            </div>
+            @if (register_gestionnaireForm.get("lastName")?.invalid && 
+            (   register_gestionnaireForm.get("lastName")?.dirty ||
+            register_gestionnaireForm.get("lastName")?.touched)){
+                <div class="error">
+                    @if (register_gestionnaireForm.get("lastName")?.errors?.["required"]) {
+                        ce champ est requis.
+                    }
+                    @if (register_gestionnaireForm.get("lastName")?.errors?.["minlength"]) {
+                        minimun 2 caractères requis.
+                    }
+                    @if (register_gestionnaireForm.get("lastName")?.errors?.["maxlength"]) {ce champ ne doit pas depasser 20 caractères}
+                </div>
+            }
+
+            <div>
+                <label for="firstName">Prénom :</label>
+                <input type="text" id="firstName" name="firstName" placeholder="Entrez le prénom du gestionnaire" formControlName = "firstName"/>
+            </div>
+                @if (register_gestionnaireForm.get("firstName")?.invalid && 
+            (   register_gestionnaireForm.get("firstName")?.dirty ||
+            register_gestionnaireForm.get("firstName")?.touched)){
+                <div class="error">
+                    @if (register_gestionnaireForm.get("firstName")?.errors?.["required"]) {
+                        ce champ est requis.
+                    }
+                    @if (register_gestionnaireForm.get("firstName")?.errors?.["minlength"]) {
+                        minimun 2 caractères requis.
+                    }
+                    @if (register_gestionnaireForm.get("firstName")?.errors?.["maxlength"]) {ce champ ne doit pas depasser 20 caractères}
+                </div>
+            }
+
+            <div>
+                <label for="username">Nom d'utilisateur :</label>
+                <input type="text" id="username" name="username" placeholder="Entrez le nom d'utilisateur" formControlName = "username"/>
+            </div>
+            @if (register_gestionnaireForm.get("username")?.invalid && 
+            (   register_gestionnaireForm.get("username")?.dirty ||
+            register_gestionnaireForm.get("username")?.touched)){
+                <div class="error">
+                    @if (register_gestionnaireForm.get("username")?.errors?.["required"]) {
+                        ce champ est requis.
+                    }
+                    @if (register_gestionnaireForm.get("username")?.errors?.["minlength"]) {
+                        minimun 2 caractères requis.
+                    }
+                    @if (register_gestionnaireForm.get("username")?.errors?.["maxlength"]) {ce champ ne doit pas depasser 20 caractères}
+                </div>
+            }
+
+            <div>
+                <label for="password">Mot de passe :</label>
+                <input type="password" id="password" name="password" placeholder="Entrez le mot de passe" formControlName = "password"/>
+            </div>
+            @if (register_gestionnaireForm.get("password")?.invalid && 
+            (   register_gestionnaireForm.get("password")?.dirty ||
+            register_gestionnaireForm.get("password")?.touched)){
+                <div class="error">
+                    @if (register_gestionnaireForm.get("password")?.errors?.["required"]) {
+                        ce champ est requis.
+                    }
+                    @if (register_gestionnaireForm.get("password")?.errors?.["minlength"]) {
+                        minimun 2 caractères requis.
+                    }
+                    @if (register_gestionnaireForm.get("password")?.errors?.["maxlength"]) {ce champ ne doit pas depasser 20 caractères}
+                </div>
+            }
+
+            <div>
+                <label for="email">Email :</label>
+                <input type="email" name="email" id="email" placeholder="Entrez l'email du gestionnaire" formControlName = "email"/>
+            </div>
+            @if (register_gestionnaireForm.get("email")?.invalid && 
+            (   register_gestionnaireForm.get("email")?.dirty ||
+            register_gestionnaireForm.get("email")?.touched)){
+                <div class="error">
+                    @if (register_gestionnaireForm.get("email")?.errors?.["required"]) {
+                        ce champ est requis.
+                    }
+                    @if (register_gestionnaireForm.get("email")?.errors?.["email"]) {
+                        Entrez un email valide.
+                    }
+                </div>
+            }
+
+            <div>
+                <label for="phoneNumber">Numéro de téléphone :</label>
+                <input type="text" id="phoneNumber" name="phoneNumber" placeholder="+228...." formControlName = "phoneNumber"/>
+            </div>
+            @if (register_gestionnaireForm.get("phoneNumber")?.invalid && 
+            (   register_gestionnaireForm.get("phoneNumber")?.dirty ||
+            register_gestionnaireForm.get("phoneNumber")?.touched)){
+                <div class="error">
+                    @if (register_gestionnaireForm.get("phoneNumber")?.errors?.["required"]) {
+                        ce champ est requis.
+                    }
+                    @if (register_gestionnaireForm.get("phoneNumber")?.errors?.["pattern"]) {
+                        Entrez un numéro de téléphone valide.
+                    }
+                </div>
+            }
+
+            <button type="submit" class="btn-register" [disabled]="register_gestionnaireForm.invalid">Enregistrer le gestionnaire</button>
+        </form>
+    </div>
+
+</div>

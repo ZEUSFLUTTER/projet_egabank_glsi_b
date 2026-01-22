@@ -1,0 +1,113 @@
+<!-- app.component.html - Navigation Corrigée -->
+<nav class="main-nav" *ngIf="isAuthenticated">
+  <div class="nav-container">
+    <!-- Logo/Titre -->
+    <div class="nav-brand">
+      <h1>Banque EGA</h1>
+    </div>
+    
+    <ul class="nav-menu">
+      
+      <!-- ========== MENU ADMIN ========== -->
+      <!-- ADMIN: users/list, users/register-caissier, users/register-gestionnaire -->
+      <ng-container *ngIf="hasRole('ADMIN')">
+        <li class="nav-item">
+          <a routerLink="/users/list" routerLinkActive="active" class="nav-link">
+            👥 Liste Utilisateurs
+          </a>
+        </li>
+        
+        <li class="nav-item">
+          <a routerLink="/users/register-caissier" routerLinkActive="active" class="nav-link">
+            ➕ Nouveau Caissier
+          </a>
+        </li>
+        
+        <li class="nav-item">
+          <a routerLink="/users/register-gestionnaire" routerLinkActive="active" class="nav-link">
+            ➕ Nouveau Gestionnaire
+          </a>
+        </li>
+      </ng-container>
+
+      <!-- ========== MENU GESTIONNAIRE ========== -->
+      <!-- GESTIONNAIRE: accounts/list, accounts/create-new, accounts/create-old, clients/list, transactions/historique -->
+      <ng-container *ngIf="hasRole('GESTIONNAIRE')">
+        <!-- Comptes -->
+        <li class="nav-item dropdown">
+          <a class="nav-link">💳 Comptes</a>
+          <ul class="dropdown-menu">
+            <li>
+              <a routerLink="/accounts/list" routerLinkActive="active" class="dropdown-item">
+                📋 Liste des Comptes
+              </a>
+            </li>
+            <li>
+              <a routerLink="/accounts/create-new" routerLinkActive="active" class="dropdown-item">
+                ➕ Nouveau Compte
+              </a>
+            </li>
+            <li>
+              <a routerLink="/accounts/create-old" routerLinkActive="active" class="dropdown-item">
+                🔄 Compte Ancien Client
+              </a>
+            </li>
+          </ul>
+        </li>
+
+        <!-- Clients -->
+        <li class="nav-item">
+          <a routerLink="/clients/list" routerLinkActive="active" class="nav-link">
+            👥 Clients
+          </a>
+        </li>
+
+        <!-- Historique Transactions -->
+        <li class="nav-item">
+          <a routerLink="/transactions/historique" routerLinkActive="active" class="nav-link">
+            Historique
+          </a>
+        </li>
+
+        <!-- ❌ RETIRÉ : Enregistrer Caissier (pas dans vos spécifications) -->
+      </ng-container>
+
+      <!-- ========== MENU CAISSIER ========== -->
+      <!-- CAISSIER: transactions/operations SEULEMENT -->
+      <ng-container *ngIf="hasRole('CAISSIERE')">
+        <li class="nav-item">
+          <a routerLink="/transactions/operations" routerLinkActive="active" class="nav-link">
+            Opérations Bancaires
+          </a>
+        </li>
+      </ng-container>
+
+      <!-- ========== PROFIL & DÉCONNEXION ========== -->
+      <li class="nav-item profile">
+        <div class="user-info">
+          <span class="user-icon"></span>
+          <span class="user-name">{{ userName }}</span>
+          <span class="role-badge" [ngClass]="'role-' + userRole?.toLowerCase()">
+            {{ userRole }}
+          </span>
+        </div>
+      </li>
+
+      <li class="nav-item">
+        <button (click)="logout()" class="btn-logout">
+          Déconnexion
+        </button>
+      </li>
+    </ul>
+  </div>
+</nav>
+
+<!-- Contenu Principal -->
+<main class="main-content">
+  <router-outlet></router-outlet>
+</main>
+
+<!-- Footer 
+<footer class="main-footer" *ngIf="isAuthenticated">
+  <p>&copy; 2025 Banque EGA - Tous droits réservés</p>
+</footer>  -->

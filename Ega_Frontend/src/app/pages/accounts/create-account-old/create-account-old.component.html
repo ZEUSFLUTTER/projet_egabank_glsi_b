@@ -1,0 +1,99 @@
+<div class="login-container">
+    <div class="login-form">
+        <h3>Créer un compte pour un client existant</h3>
+
+        <!-- Étape 1 : Recherche du client -->
+        @if (!clientFound) {
+            <form [formGroup]="searchForm" (ngSubmit)="onSearchClient()">
+                <div>
+                    <label for="email">Email du client :</label>
+                    <input 
+                        type="email" 
+                        id="email" 
+                        name="email" 
+                        placeholder="Entrez l'email du client existant" 
+                        formControlName="email"
+                    />
+                </div>
+                @if (searchForm.get("email")?.invalid && 
+                (searchForm.get("email")?.dirty ||
+                searchForm.get("email")?.touched)) {
+                    <div class="error">
+                        @if (searchForm.get("email")?.errors?.["required"]) {
+                            Ce champ est requis.
+                        }
+                        @if (searchForm.get("email")?.errors?.["email"]) {
+                            Entrez un email valide.
+                        }
+                    </div>
+                }
+
+                @if (searchError) {
+                    <div class="alert-error">
+                        {{ searchError }}
+                    </div>
+                }
+
+                <button type="submit" class="btn-register" [disabled]="searchForm.invalid || isSearching">
+                    @if (isSearching) {
+                        Recherche en cours...
+                    } @else {
+                        Rechercher le client
+                    }
+                </button>
+            </form>
+        }
+
+        <!-- Étape 2 : Affichage des infos du client et création du compte -->
+        @if (clientFound && client) {
+            <div class="client-info">
+                <h4>Informations du client</h4>
+                <div class="info-row">
+                    <span class="label">Nom complet :</span>
+                    <span class="value">{{ client.firstName }} {{ client.lastName }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="label">Email :</span>
+                    <span class="value">{{ client.email }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="label">Téléphone :</span>
+                    <span class="value">{{ client.phoneNumber }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="label">Adresse :</span>
+                    <span class="value">{{ client.address }}</span>
+                </div>
+            </div>
+
+            <form [formGroup]="createAccountForm" (ngSubmit)="onSubmit()">
+                <div>
+                    <label for="accountType">Type de compte :</label>
+                    <select id="accountType" name="accountType" formControlName="accountType">
+                        <option value="">Sélectionnez le type de compte</option>
+                        <option value="COURANT">Compte Courant</option>
+                        <option value="EPARGNE">Compte Épargne</option>
+                    </select>
+                </div>
+                @if (createAccountForm.get("accountType")?.invalid && 
+                (createAccountForm.get("accountType")?.dirty ||
+                createAccountForm.get("accountType")?.touched)) {
+                    <div class="error">
+                        @if (createAccountForm.get("accountType")?.errors?.["required"]) {
+                            Ce champ est requis.
+                        }
+                    </div>
+                }
+
+                <div class="button-group">
+                    <button type="button" class="btn-secondary" (click)="resetSearch()">
+                        Annuler
+                    </button>
+                    <button type="submit" class="btn-register" [disabled]="createAccountForm.invalid">
+                        Créer le compte
+                    </button>
+                </div>
+            </form>
+        }
+    </div>
+</div>

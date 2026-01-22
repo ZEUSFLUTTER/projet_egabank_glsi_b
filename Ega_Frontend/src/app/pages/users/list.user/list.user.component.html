@@ -1,0 +1,135 @@
+<div class="login-container">
+    <div class="user-list-box">
+        <h2>Gestion des Utilisateurs</h2>
+
+        <!-- Onglets -->
+        <div class="tabs">
+            <button 
+                class="tab" 
+                [class.active]="activeTab === 'active'"
+                (click)="switchTab('active')">
+                Utilisateurs Actifs
+            </button>
+            <button 
+                class="tab" 
+                [class.active]="activeTab === 'inactive'"
+                (click)="switchTab('inactive')">
+                Utilisateurs Inactifs
+            </button>
+        </div>
+
+        <!-- Messages -->
+        @if (successMessage) {
+            <div class="alert-success">
+                {{ successMessage }}
+            </div>
+        }
+
+        @if (errorMessage) {
+            <div class="alert-error">
+                {{ errorMessage }}
+            </div>
+        }
+
+        <!-- Loading -->
+        @if (isLoading) {
+            <div class="loading">
+                Chargement des utilisateurs...
+            </div>
+        }
+
+        <!-- Liste des utilisateurs actifs -->
+        @if (activeTab === 'active' && !isLoading) {
+            <div class="table-container">
+                <h3>Utilisateurs Actifs ({{ activeUsers.length }})</h3>
+                
+                @if (activeUsers.length === 0) {
+                    <div class="empty-state">
+                        Aucun utilisateur actif pour le moment.
+                    </div>
+                } @else {
+                    <table class="user-table">
+                        <thead>
+                            <tr>
+                                <th>Matricule</th>
+                                <th>Nom</th>
+                                <th>Prénom</th>
+                                <th>Username</th>
+                                <th>Email</th>
+                                <th>Téléphone</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (user of activeUsers; track user.matricule) {
+                                <tr>
+                                    <td>{{ user.matricule }}</td>
+                                    <td>{{ user.lastName }}</td>
+                                    <td>{{ user.firstName }}</td>
+                                    <td>{{ user.username }}</td>
+                                    <td>{{ user.email }}</td>
+                                    <td>{{ user.phoneNumber }}</td>
+                                    <td>
+                                        <button 
+                                            class="btn-deactivate"
+                                            (click)="deactivateUser(user.matricule)"
+                                            [disabled]="isProcessing">
+                                            Désactiver
+                                        </button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+            </div>
+        }
+
+        <!-- Liste des utilisateurs inactifs -->
+        @if (activeTab === 'inactive' && !isLoading) {
+            <div class="table-container">
+                <h3>Utilisateurs Inactifs ({{ inactiveUsers.length }})</h3>
+                
+                @if (inactiveUsers.length === 0) {
+                    <div class="empty-state">
+                        Aucun utilisateur inactif pour le moment.
+                    </div>
+                } @else {
+                    <table class="user-table">
+                        <thead>
+                            <tr>
+                                <th>Matricule</th>
+                                <th>Nom</th>
+                                <th>Prénom</th>
+                                <th>Username</th>
+                                <th>Email</th>
+                                <th>Téléphone</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (user of inactiveUsers; track user.matricule) {
+                                <tr class="inactive-row">
+                                    <td>{{ user.matricule }}</td>
+                                    <td>{{ user.lastName }}</td>
+                                    <td>{{ user.firstName }}</td>
+                                    <td>{{ user.username }}</td>
+                                    <td>{{ user.email }}</td>
+                                    <td>{{ user.phoneNumber }}</td>
+                                    <td>
+                                        <button 
+                                            class="btn-activate"
+                                            (click)="activateUser(user.matricule)"
+                                            [disabled]="isProcessing">
+                                            Activer
+                                        </button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+            </div>
+        }
+    </div>
+</div>

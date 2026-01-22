@@ -1,0 +1,115 @@
+<div class="login-container">
+    <div class="login-form">
+        <h3>Enregistrer un caissier</h3>
+        <form [formGroup]="register_caissierForm" (ngSubmit)="onRegisterCaissierSubmit()">
+            <div>
+                <label for="lastName">Nom :</label>
+                <input type="text" id="lastName" name="lastName" placeholder="Entrez le nom du caissier" formControlName = "lastName"/>
+            </div>
+            @if (register_caissierForm.get("lastName")?.invalid && 
+            (   register_caissierForm.get("lastName")?.dirty ||
+            register_caissierForm.get("lastName")?.touched)){
+                <div class="error">
+                    @if (register_caissierForm.get("lastName")?.errors?.["required"]) {
+                        ce champ est requis.
+                    }
+                    @if (register_caissierForm.get("lastName")?.errors?.["minlength"]) {
+                        minimun 2 caractères requis.
+                    }
+                    @if (register_caissierForm.get("lastName")?.errors?.["maxlength"]) {ce champ ne doit pas depasser 20 caractères}
+                </div>
+            }
+
+            <div>
+                <label for="firstName">Prénom :</label>
+                <input type="text" id="firstName" name="firstName" placeholder="Entrez le prénom du caissier" formControlName = "firstName"/>
+            </div>
+                @if (register_caissierForm.get("firstName")?.invalid && 
+            (   register_caissierForm.get("firstName")?.dirty ||
+            register_caissierForm.get("firstName")?.touched)){
+                <div class="error">
+                    @if (register_caissierForm.get("firstName")?.errors?.["required"]) {
+                        ce champ est requis.
+                    }
+                    @if (register_caissierForm.get("firstName")?.errors?.["minlength"]) {
+                        minimun 2 caractères requis.
+                    }
+                    @if (register_caissierForm.get("firstName")?.errors?.["maxlength"]) {ce champ ne doit pas depasser 20 caractères}
+                </div>
+            }
+
+            <div>
+                <label for="username">Nom d'utilisateur :</label>
+                <input type="text" id="username" name="username" placeholder="Entrez le nom d'utilisateur" formControlName = "username"/>
+            </div>
+            @if (register_caissierForm.get("username")?.invalid && 
+            (   register_caissierForm.get("username")?.dirty ||
+            register_caissierForm.get("username")?.touched)){
+                <div class="error">
+                    @if (register_caissierForm.get("username")?.errors?.["required"]) {
+                        ce champ est requis.
+                    }
+                    @if (register_caissierForm.get("username")?.errors?.["minlength"]) {
+                        minimun 2 caractères requis.
+                    }
+                    @if (register_caissierForm.get("username")?.errors?.["maxlength"]) {ce champ ne doit pas depasser 20 caractères}
+                </div>
+            }
+
+            <div>
+                <label for="password">Mot de passe :</label>
+                <input type="password" id="password" name="password" placeholder="Entrez le mot de passe" formControlName = "password"/>
+            </div>
+            @if (register_caissierForm.get("password")?.invalid && 
+            (   register_caissierForm.get("password")?.dirty ||
+            register_caissierForm.get("password")?.touched)){
+                <div class="error">
+                    @if (register_caissierForm.get("password")?.errors?.["required"]) {
+                        ce champ est requis.
+                    }
+                    @if (register_caissierForm.get("password")?.errors?.["minlength"]) {
+                        minimun 2 caractères requis.
+                    }
+                    @if (register_caissierForm.get("password")?.errors?.["maxlength"]) {ce champ ne doit pas depasser 20 caractères}
+                </div>
+            }
+
+            <div>
+                <label for="email">Email :</label>
+                <input type="email" name="email" id="email" placeholder="Entrez l'email du caissier" formControlName = "email"/>
+            </div>
+            @if (register_caissierForm.get("email")?.invalid && 
+            (   register_caissierForm.get("email")?.dirty ||
+            register_caissierForm.get("email")?.touched)){
+                <div class="error">
+                    @if (register_caissierForm.get("email")?.errors?.["required"]) {
+                        ce champ est requis.
+                    }
+                    @if (register_caissierForm.get("email")?.errors?.["email"]) {
+                        Entrez un email valide.
+                    }
+                </div>
+            }
+
+            <div>
+                <label for="phoneNumber">Numéro de téléphone :</label>
+                <input type="text" id="phoneNumber" name="phoneNumber" placeholder="+228...." formControlName = "phoneNumber"/>
+            </div>
+            @if (register_caissierForm.get("phoneNumber")?.invalid && 
+            (   register_caissierForm.get("phoneNumber")?.dirty ||
+            register_caissierForm.get("phoneNumber")?.touched)){
+                <div class="error">
+                    @if (register_caissierForm.get("phoneNumber")?.errors?.["required"]) {
+                        ce champ est requis.
+                    }
+                    @if (register_caissierForm.get("phoneNumber")?.errors?.["pattern"]) {
+                        Entrez un numéro de téléphone valide.
+                    }
+                </div>
+            }
+
+            <button type="submit" class="btn-register" [disabled]="register_caissierForm.invalid">Enregistrer le caissier</button>
+        </form>
+    </div>
+
+</div>

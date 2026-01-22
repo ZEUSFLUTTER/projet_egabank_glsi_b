@@ -1,0 +1,6 @@
+export enum TransactionType{
+    DEPOT = "DEPOT",
+    RETRAIT = "RETRAIT",
+    TRANSFER_ENTRANT = "TRANSFER_SORTANT",
+    TRANSFER_SORTANT = "TRANSFER_ENTRANT"
+}

@@ -1,0 +1,3273 @@
+{
+	"info": {
+		"_postman_id": "b463fe0b-e587-42eb-947e-85dae273a519",
+		"name": "API de kevin Banque EGA",
+		"description": "API REST pour la gestion bancaire - Comptes, Clients, Transactions et Notifications\n\nContact Support:\n Name: Support Banque EGA\n Email: egabank@ega.com",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "51394685",
+		"_collection_link": "https://amoujoseph25-2815052.postman.co/workspace/78f79130-c7f0-4fb2-8a7f-8a3611b53419/collection/51394685-b463fe0b-e587-42eb-947e-85dae273a519?action=share&source=collection_link&creator=51394685"
+	},
+	"item": [
+		{
+			"name": "api",
+			"item": [
+				{
+					"name": "auth",
+					"item": [
+						{
+							"name": "Inscription",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"username\": \"admin\",\n  \"password\": \"password123\"\n}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/auth/register",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"auth",
+										"register"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Inscription réussie",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"username\": \"admin\",\n  \"password\": \"password123\"\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/api/auth/register",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"auth",
+												"register"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\",\n  \"type\": \"Bearer\",\n  \"username\": \"admin\",\n  \"role\": \"USER\"\n}"
+								},
+								{
+									"name": "Nom d'utilisateur déjà existant",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"username\": \"admin\",\n  \"password\": \"password123\"\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/api/auth/register",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"auth",
+												"register"
+											]
+										}
+									},
+									"status": "Bad Request",
+									"code": 400,
+									"_postman_previewlanguage": "text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								}
+							]
+						},
+						{
+							"name": "Connexion utilisateur",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"username\": \"admin\",\n  \"password\": \"password123\"\n}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/auth/login",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"auth",
+										"login"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Connexion réussie",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"username\": \"admin\",\n  \"password\": \"password123\"\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/api/auth/login",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"auth",
+												"login"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\",\n  \"type\": \"Bearer\",\n  \"username\": \"admin\",\n  \"role\": \"USER\"\n}"
+								},
+								{
+									"name": "Identifiants invalides",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"username\": \"admin\",\n  \"password\": \"password123\"\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/api/auth/login",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"auth",
+												"login"
+											]
+										}
+									},
+									"status": "Unauthorized",
+									"code": 401,
+									"_postman_previewlanguage": "text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "clients",
+					"item": [
+						{
+							"name": "{id}",
+							"item": [
+								{
+									"name": "Creer un client",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"if (pm.response.code === 201) {",
+													"    var jsonData = pm.response.json();",
+													"    pm.collectionVariables.set('CLIENT_ID', jsonData.data.id);",
+													"}"
+												],
+												"type": "text/javascript",
+												"packages": {},
+												"requests": {}
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Authorization",
+												"value": "Bearer {{TOKEN}}"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"nom\": \"AKOUSSAH\",\n  \"prenom\": \"Jean\",\n  \"dateNaissance\": \"1990-05-15\",\n  \"sexe\": \"M\",\n  \"adresse\": \"Lomé, Togo\",\n  \"telephone\": \"+22890123456\",\n  \"email\": \"jean.akoussah@example.com\",\n  \"nationalite\": \"Togolaise\"\n}"
+										},
+										"url": {
+											"raw": "{{BASE_URL}}/api/clients",
+											"host": [
+												"{{BASE_URL}}"
+											],
+											"path": [
+												"api",
+												"clients"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Récupérer un client par ID",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{bearerToken}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/api/clients/:id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"clients",
+												":id"
+											],
+											"variable": [
+												{
+													"key": "id",
+													"value": "9976"
+												}
+											]
+										}
+									},
+									"response": [
+										{
+											"name": "Client trouvé",
+											"originalRequest": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "application/json"
+													},
+													{
+														"key": "Authorization",
+														"value": "Bearer <token>",
+														"description": "Added as a part of security scheme: bearer"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/api/clients/:id",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"clients",
+														":id"
+													],
+													"variable": [
+														{
+															"key": "id",
+															"value": "9976"
+														}
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "{\n  \"id\": 1,\n  \"numCompte\": \"TG17238947562839\",\n  \"typeCompte\": \"COURANT\",\n  \"dateCreation\": \"2024-01-15\",\n  \"solde\": 2500.75,\n  \"clientId\": 1,\n  \"nom\": 1847.122713898779,\n  \"prenom\": 7870.809415873461\n}"
+										},
+										{
+											"name": "Client non trouvé",
+											"originalRequest": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "Authorization",
+														"value": "Bearer <token>",
+														"description": "Added as a part of security scheme: bearer"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/api/clients/:id",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"clients",
+														":id"
+													],
+													"variable": [
+														{
+															"key": "id",
+															"value": "9976"
+														}
+													]
+												}
+											},
+											"status": "Not Found",
+											"code": 404,
+											"_postman_previewlanguage": "text",
+											"header": [],
+											"cookie": [],
+											"body": ""
+										}
+									]
+								},
+								{
+									"name": "Modifier un client",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{bearerToken}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "PUT",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"id\": 1,\n  \"numCompte\": \"TG17238947562839\",\n  \"typeCompte\": \"COURANT\",\n  \"dateCreation\": \"2024-01-15\",\n  \"solde\": 2500.75,\n  \"clientId\": 1,\n  \"nom\": 1847.122713898779,\n  \"prenom\": 7870.809415873461\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/api/clients/:id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"clients",
+												":id"
+											],
+											"variable": [
+												{
+													"key": "id",
+													"value": "9976"
+												}
+											]
+										}
+									},
+									"response": [
+										{
+											"name": "Client mis à jour",
+											"originalRequest": {
+												"method": "PUT",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "Accept",
+														"value": "application/json"
+													},
+													{
+														"key": "Authorization",
+														"value": "Bearer <token>",
+														"description": "Added as a part of security scheme: bearer"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"id\": 1,\n  \"numCompte\": \"TG17238947562839\",\n  \"typeCompte\": \"COURANT\",\n  \"dateCreation\": \"2024-01-15\",\n  \"solde\": 2500.75,\n  \"clientId\": 1,\n  \"nom\": 1847.122713898779,\n  \"prenom\": 7870.809415873461\n}",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/api/clients/:id",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"clients",
+														":id"
+													],
+													"variable": [
+														{
+															"key": "id",
+															"value": "9976"
+														}
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "{\n  \"id\": 1,\n  \"numCompte\": \"TG17238947562839\",\n  \"typeCompte\": \"COURANT\",\n  \"dateCreation\": \"2024-01-15\",\n  \"solde\": 2500.75,\n  \"clientId\": 1,\n  \"nom\": 1847.122713898779,\n  \"prenom\": 7870.809415873461\n}"
+										},
+										{
+											"name": "Client non trouvé",
+											"originalRequest": {
+												"method": "PUT",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "Authorization",
+														"value": "Bearer <token>",
+														"description": "Added as a part of security scheme: bearer"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"id\": 1,\n  \"numCompte\": \"TG17238947562839\",\n  \"typeCompte\": \"COURANT\",\n  \"dateCreation\": \"2024-01-15\",\n  \"solde\": 2500.75,\n  \"clientId\": 1,\n  \"nom\": 1847.122713898779,\n  \"prenom\": 7870.809415873461\n}",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/api/clients/:id",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"clients",
+														":id"
+													],
+													"variable": [
+														{
+															"key": "id",
+															"value": "9976"
+														}
+													]
+												}
+											},
+											"status": "Not Found",
+											"code": 404,
+											"_postman_previewlanguage": "text",
+											"header": [],
+											"cookie": [],
+											"body": ""
+										},
+										{
+											"name": "Conflit (courriel déjà utilisé)",
+											"originalRequest": {
+												"method": "PUT",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "Authorization",
+														"value": "Bearer <token>",
+														"description": "Added as a part of security scheme: bearer"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"id\": 1,\n  \"numCompte\": \"TG17238947562839\",\n  \"typeCompte\": \"COURANT\",\n  \"dateCreation\": \"2024-01-15\",\n  \"solde\": 2500.75,\n  \"clientId\": 1,\n  \"nom\": 1847.122713898779,\n  \"prenom\": 7870.809415873461\n}",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/api/clients/:id",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"clients",
+														":id"
+													],
+													"variable": [
+														{
+															"key": "id",
+															"value": "9976"
+														}
+													]
+												}
+											},
+											"status": "Conflict",
+											"code": 409,
+											"_postman_previewlanguage": "text",
+											"header": [],
+											"cookie": [],
+											"body": ""
+										}
+									]
+								},
+								{
+									"name": "Supprimer un client",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{bearerToken}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/api/clients/:id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"clients",
+												":id"
+											],
+											"variable": [
+												{
+													"key": "id",
+													"value": "9976"
+												}
+											]
+										}
+									},
+									"response": [
+										{
+											"name": "Client supprimé",
+											"originalRequest": {
+												"method": "DELETE",
+												"header": [
+													{
+														"key": "Authorization",
+														"value": "Bearer <token>",
+														"description": "Added as a part of security scheme: bearer"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/api/clients/:id",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"clients",
+														":id"
+													],
+													"variable": [
+														{
+															"key": "id",
+															"value": "9976"
+														}
+													]
+												}
+											},
+											"status": "No Content",
+											"code": 204,
+											"_postman_previewlanguage": "text",
+											"header": [],
+											"cookie": [],
+											"body": ""
+										},
+										{
+											"name": "Client non trouvé",
+											"originalRequest": {
+												"method": "DELETE",
+												"header": [
+													{
+														"key": "Authorization",
+														"value": "Bearer <token>",
+														"description": "Added as a part of security scheme: bearer"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/api/clients/:id",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"clients",
+														":id"
+													],
+													"variable": [
+														{
+															"key": "id",
+															"value": "9976"
+														}
+													]
+												}
+											},
+											"status": "Not Found",
+											"code": 404,
+											"_postman_previewlanguage": "text",
+											"header": [],
+											"cookie": [],
+											"body": ""
+										}
+									]
+								}
+							]
+						},
+						{
+							"name": "Récupérer tous les clients",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{bearerToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/clients",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"clients"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Liste des clients",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											},
+											{
+												"key": "Authorization",
+												"value": "Bearer <token>",
+												"description": "Added as a part of security scheme: bearer"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/api/clients",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"clients"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "[\n  {\n    \"id\": 1,\n    \"numCompte\": \"TG17238947562839\",\n    \"typeCompte\": \"COURANT\",\n    \"dateCreation\": \"2024-01-15\",\n    \"solde\": 2500.75,\n    \"clientId\": 1,\n    \"nom\": \"string\",\n    \"prenom\": 9003.455202678531\n  },\n  {\n    \"id\": 1,\n    \"numCompte\": \"TG17238947562839\",\n    \"typeCompte\": \"COURANT\",\n    \"dateCreation\": \"2024-01-15\",\n    \"solde\": 2500.75,\n    \"clientId\": 1,\n    \"nom\": \"string\",\n    \"prenom\": 1878\n  }\n]"
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "comptes",
+					"item": [
+						{
+							"name": "{id}",
+							"item": [
+								{
+									"name": "Creer un compte",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"if (pm.response.code === 201) {",
+													"    var jsonData = pm.response.json();",
+													"    pm.collectionVariables.set('COMPTE_ID', jsonData.data.id);",
+													"    pm.collectionVariables.set('NUMERO_COMPTE', jsonData.data.numeroCompte);",
+													"}"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Authorization",
+												"value": "Bearer {{TOKEN}}"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"typeCompte\": \"COURANT\",\n  \"clientId\": {{CLIENT_ID}}\n}"
+										},
+										"url": {
+											"raw": "{{BASE_URL}}/api/comptes",
+											"host": [
+												"{{BASE_URL}}"
+											],
+											"path": [
+												"api",
+												"comptes"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Récupérer un compte par ID",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{bearerToken}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/api/comptes/:id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"comptes",
+												":id"
+											],
+											"variable": [
+												{
+													"key": "id",
+													"value": "9976"
+												}
+											]
+										}
+									},
+									"response": [
+										{
+											"name": "Compte trouvé",
+											"originalRequest": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "application/json"
+													},
+													{
+														"key": "Authorization",
+														"value": "Bearer <token>",
+														"description": "Added as a part of security scheme: bearer"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/api/comptes/:id",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"comptes",
+														":id"
+													],
+													"variable": [
+														{
+															"key": "id",
+															"value": "9976"
+														}
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "{\n  \"value\": \"reference #/components/schemas/CompteDTO not found in the OpenAPI spec\"\n}"
+										},
+										{
+											"name": "Compte non trouvé",
+											"originalRequest": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "Authorization",
+														"value": "Bearer <token>",
+														"description": "Added as a part of security scheme: bearer"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/api/comptes/:id",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"comptes",
+														":id"
+													],
+													"variable": [
+														{
+															"key": "id",
+															"value": "9976"
+														}
+													]
+												}
+											},
+											"status": "Not Found",
+											"code": 404,
+											"_postman_previewlanguage": "text",
+											"header": [],
+											"cookie": [],
+											"body": ""
+										}
+									]
+								},
+								{
+									"name": "Supprimer un compte",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{bearerToken}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/api/comptes/:id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"comptes",
+												":id"
+											],
+											"variable": [
+												{
+													"key": "id",
+													"value": "9976"
+												}
+											]
+										}
+									},
+									"response": [
+										{
+											"name": "Compte supprimé",
+											"originalRequest": {
+												"method": "DELETE",
+												"header": [
+													{
+														"key": "Authorization",
+														"value": "Bearer <token>",
+														"description": "Added as a part of security scheme: bearer"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/api/comptes/:id",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"comptes",
+														":id"
+													],
+													"variable": [
+														{
+															"key": "id",
+															"value": "9976"
+														}
+													]
+												}
+											},
+											"status": "No Content",
+											"code": 204,
+											"_postman_previewlanguage": "text",
+											"header": [],
+											"cookie": [],
+											"body": ""
+										},
+										{
+											"name": "Compte non trouvé",
+											"originalRequest": {
+												"method": "DELETE",
+												"header": [
+													{
+														"key": "Authorization",
+														"value": "Bearer <token>",
+														"description": "Added as a part of security scheme: bearer"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/api/comptes/:id",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"comptes",
+														":id"
+													],
+													"variable": [
+														{
+															"key": "id",
+															"value": "9976"
+														}
+													]
+												}
+											},
+											"status": "Not Found",
+											"code": 404,
+											"_postman_previewlanguage": "text",
+											"header": [],
+											"cookie": [],
+											"body": ""
+										}
+									]
+								}
+							]
+						},
+						{
+							"name": "Récupérer tous les comptes",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{bearerToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/comptes",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"comptes"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Liste des comptes",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											},
+											{
+												"key": "Authorization",
+												"value": "Bearer <token>",
+												"description": "Added as a part of security scheme: bearer"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/api/comptes",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"comptes"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "[\n  {\n    \"value\": \"reference #/components/schemas/CompteDTO not found in the OpenAPI spec\"\n  },\n  {\n    \"value\": \"reference #/components/schemas/CompteDTO not found in the OpenAPI spec\"\n  }\n]"
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "{clientId}",
+					"item": [
+						{
+							"name": "Récupérer les comptes d'un client",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{bearerToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/comptes/client/:clientId",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"comptes",
+										"client",
+										":clientId"
+									],
+									"variable": [
+										{
+											"key": "clientId",
+											"value": "9976"
+										}
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Liste des comptes du client",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											},
+											{
+												"key": "Authorization",
+												"value": "Bearer <token>",
+												"description": "Added as a part of security scheme: bearer"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/api/comptes/client/:clientId",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"comptes",
+												"client",
+												":clientId"
+											],
+											"variable": [
+												{
+													"key": "clientId",
+													"value": "9976"
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "[\n  {\n    \"value\": \"reference #/components/schemas/CompteDTO not found in the OpenAPI spec\"\n  },\n  {\n    \"value\": \"reference #/components/schemas/CompteDTO not found in the OpenAPI spec\"\n  }\n]"
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "transactions",
+					"item": [
+						{
+							"name": "{id}",
+							"item": [
+								{
+									"name": "Faire un depot",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{bearerToken}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/api/transactions/depot?compteId=9976&montant=7320.367489234832&description=string",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"transactions",
+												"depot"
+											],
+											"query": [
+												{
+													"key": "compteId",
+													"value": "9976"
+												},
+												{
+													"key": "montant",
+													"value": "7320.367489234832"
+												},
+												{
+													"key": "description",
+													"value": "string"
+												}
+											]
+										}
+									},
+									"response": [
+										{
+											"name": "Dépôt effectué",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "application/json"
+													},
+													{
+														"key": "Authorization",
+														"value": "Bearer <token>",
+														"description": "Added as a part of security scheme: bearer"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/api/transactions/depot?compteId=9976&montant=7320.367489234832&description=string",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"transactions",
+														"depot"
+													],
+													"query": [
+														{
+															"key": "compteId",
+															"value": "9976"
+														},
+														{
+															"key": "montant",
+															"value": "7320.367489234832"
+														},
+														{
+															"key": "description",
+															"value": "string"
+														}
+													]
+												}
+											},
+											"status": "Created",
+											"code": 201,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "{\n  \"id\": 1,\n  \"typeTransaction\": \"DEPOT\",\n  \"montant\": 500,\n  \"dateTransaction\": \"2024-01-19T10:30:00\",\n  \"compteSourceId\": 1,\n  \"compteDestinationId\": 2,\n  \"description\": \"Dépôt en espèces\"\n}"
+										},
+										{
+											"name": "Montant invalide",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Authorization",
+														"value": "Bearer <token>",
+														"description": "Added as a part of security scheme: bearer"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/api/transactions/depot?compteId=9976&montant=7320.367489234832&description=string",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"transactions",
+														"depot"
+													],
+													"query": [
+														{
+															"key": "compteId",
+															"value": "9976"
+														},
+														{
+															"key": "montant",
+															"value": "7320.367489234832"
+														},
+														{
+															"key": "description",
+															"value": "string"
+														}
+													]
+												}
+											},
+											"status": "Bad Request",
+											"code": 400,
+											"_postman_previewlanguage": "text",
+											"header": [],
+											"cookie": [],
+											"body": ""
+										},
+										{
+											"name": "Compte non trouvé",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Authorization",
+														"value": "Bearer <token>",
+														"description": "Added as a part of security scheme: bearer"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/api/transactions/depot?compteId=9976&montant=7320.367489234832&description=string",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"transactions",
+														"depot"
+													],
+													"query": [
+														{
+															"key": "compteId",
+															"value": "9976"
+														},
+														{
+															"key": "montant",
+															"value": "7320.367489234832"
+														},
+														{
+															"key": "description",
+															"value": "string"
+														}
+													]
+												}
+											},
+											"status": "Not Found",
+											"code": 404,
+											"_postman_previewlanguage": "text",
+											"header": [],
+											"cookie": [],
+											"body": ""
+										}
+									]
+								}
+							]
+						},
+						{
+							"name": "Effectuer un retrait",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{bearerToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/transactions/retrait?compteId=9976&montant=7320.367489234832&description=string",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"transactions",
+										"retrait"
+									],
+									"query": [
+										{
+											"key": "compteId",
+											"value": "9976"
+										},
+										{
+											"key": "montant",
+											"value": "7320.367489234832"
+										},
+										{
+											"key": "description",
+											"value": "string"
+										}
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Retrait effectué",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											},
+											{
+												"key": "Authorization",
+												"value": "Bearer <token>",
+												"description": "Added as a part of security scheme: bearer"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/api/transactions/retrait?compteId=9976&montant=7320.367489234832&description=string",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"transactions",
+												"retrait"
+											],
+											"query": [
+												{
+													"key": "compteId",
+													"value": "9976"
+												},
+												{
+													"key": "montant",
+													"value": "7320.367489234832"
+												},
+												{
+													"key": "description",
+													"value": "string"
+												}
+											]
+										}
+									},
+									"status": "Created",
+									"code": 201,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"id\": 1,\n  \"typeTransaction\": \"DEPOT\",\n  \"montant\": 500,\n  \"dateTransaction\": \"2024-01-19T10:30:00\",\n  \"compteSourceId\": 1,\n  \"compteDestinationId\": 2,\n  \"description\": \"Dépôt en espèces\"\n}"
+								},
+								{
+									"name": "Montant invalide ou solde insuffisant",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer <token>",
+												"description": "Added as a part of security scheme: bearer"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/api/transactions/retrait?compteId=9976&montant=7320.367489234832&description=string",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"transactions",
+												"retrait"
+											],
+											"query": [
+												{
+													"key": "compteId",
+													"value": "9976"
+												},
+												{
+													"key": "montant",
+													"value": "7320.367489234832"
+												},
+												{
+													"key": "description",
+													"value": "string"
+												}
+											]
+										}
+									},
+									"status": "Bad Request",
+									"code": 400,
+									"_postman_previewlanguage": "text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								},
+								{
+									"name": "Compte non trouvé",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer <token>",
+												"description": "Added as a part of security scheme: bearer"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/api/transactions/retrait?compteId=9976&montant=7320.367489234832&description=string",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"transactions",
+												"retrait"
+											],
+											"query": [
+												{
+													"key": "compteId",
+													"value": "9976"
+												},
+												{
+													"key": "montant",
+													"value": "7320.367489234832"
+												},
+												{
+													"key": "description",
+													"value": "string"
+												}
+											]
+										}
+									},
+									"status": "Not Found",
+									"code": 404,
+									"_postman_previewlanguage": "text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								}
+							]
+						},
+						{
+							"name": "Effectuer un transfert",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{bearerToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/transactions/transfert?compteSourceId=9976&compteDestinationId=9976&montant=7320.367489234832&description=string",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"transactions",
+										"transfert"
+									],
+									"query": [
+										{
+											"key": "compteSourceId",
+											"value": "9976"
+										},
+										{
+											"key": "compteDestinationId",
+											"value": "9976"
+										},
+										{
+											"key": "montant",
+											"value": "7320.367489234832"
+										},
+										{
+											"key": "description",
+											"value": "string"
+										}
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Transfert effectué",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											},
+											{
+												"key": "Authorization",
+												"value": "Bearer <token>",
+												"description": "Added as a part of security scheme: bearer"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/api/transactions/transfert?compteSourceId=9976&compteDestinationId=9976&montant=7320.367489234832&description=string",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"transactions",
+												"transfert"
+											],
+											"query": [
+												{
+													"key": "compteSourceId",
+													"value": "9976"
+												},
+												{
+													"key": "compteDestinationId",
+													"value": "9976"
+												},
+												{
+													"key": "montant",
+													"value": "7320.367489234832"
+												},
+												{
+													"key": "description",
+													"value": "string"
+												}
+											]
+										}
+									},
+									"status": "Created",
+									"code": 201,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"id\": 1,\n  \"typeTransaction\": \"DEPOT\",\n  \"montant\": 500,\n  \"dateTransaction\": \"2024-01-19T10:30:00\",\n  \"compteSourceId\": 1,\n  \"compteDestinationId\": 2,\n  \"description\": \"Dépôt en espèces\"\n}"
+								},
+								{
+									"name": "Erreur (solde insuffisant, comptes identiques)",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer <token>",
+												"description": "Added as a part of security scheme: bearer"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/api/transactions/transfert?compteSourceId=9976&compteDestinationId=9976&montant=7320.367489234832&description=string",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"transactions",
+												"transfert"
+											],
+											"query": [
+												{
+													"key": "compteSourceId",
+													"value": "9976"
+												},
+												{
+													"key": "compteDestinationId",
+													"value": "9976"
+												},
+												{
+													"key": "montant",
+													"value": "7320.367489234832"
+												},
+												{
+													"key": "description",
+													"value": "string"
+												}
+											]
+										}
+									},
+									"status": "Bad Request",
+									"code": 400,
+									"_postman_previewlanguage": "text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								},
+								{
+									"name": "Compte source ou destination non trouvé",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer <token>",
+												"description": "Added as a part of security scheme: bearer"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/api/transactions/transfert?compteSourceId=9976&compteDestinationId=9976&montant=7320.367489234832&description=string",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"transactions",
+												"transfert"
+											],
+											"query": [
+												{
+													"key": "compteSourceId",
+													"value": "9976"
+												},
+												{
+													"key": "compteDestinationId",
+													"value": "9976"
+												},
+												{
+													"key": "montant",
+													"value": "7320.367489234832"
+												},
+												{
+													"key": "description",
+													"value": "string"
+												}
+											]
+										}
+									},
+									"status": "Not Found",
+									"code": 404,
+									"_postman_previewlanguage": "text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								}
+							]
+						},
+						{
+							"name": "Récupérer toutes les transactions",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{bearerToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/transactions",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"transactions"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Liste des transactions",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											},
+											{
+												"key": "Authorization",
+												"value": "Bearer <token>",
+												"description": "Added as a part of security scheme: bearer"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/api/transactions",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"transactions"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "[\n  {\n    \"id\": 1,\n    \"typeTransaction\": \"DEPOT\",\n    \"montant\": 500,\n    \"dateTransaction\": \"2024-01-19T10:30:00\",\n    \"compteSourceId\": 1,\n    \"compteDestinationId\": 2,\n    \"description\": \"Dépôt en espèces\"\n  },\n  {\n    \"id\": 1,\n    \"typeTransaction\": \"DEPOT\",\n    \"montant\": 500,\n    \"dateTransaction\": \"2024-01-19T10:30:00\",\n    \"compteSourceId\": 1,\n    \"compteDestinationId\": 2,\n    \"description\": \"Dépôt en espèces\"\n  }\n]"
+								}
+							]
+						},
+						{
+							"name": "Récupérer une transaction par ID",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{bearerToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/transactions/:id",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"transactions",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "9976"
+										}
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Transaction trouvée",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											},
+											{
+												"key": "Authorization",
+												"value": "Bearer <token>",
+												"description": "Added as a part of security scheme: bearer"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/api/transactions/:id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"transactions",
+												":id"
+											],
+											"variable": [
+												{
+													"key": "id",
+													"value": "9976"
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"id\": 1,\n  \"typeTransaction\": \"DEPOT\",\n  \"montant\": 500,\n  \"dateTransaction\": \"2024-01-19T10:30:00\",\n  \"compteSourceId\": 1,\n  \"compteDestinationId\": 2,\n  \"description\": \"Dépôt en espèces\"\n}"
+								},
+								{
+									"name": "Transaction non trouvée",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer <token>",
+												"description": "Added as a part of security scheme: bearer"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/api/transactions/:id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"transactions",
+												":id"
+											],
+											"variable": [
+												{
+													"key": "id",
+													"value": "9976"
+												}
+											]
+										}
+									},
+									"status": "Not Found",
+									"code": 404,
+									"_postman_previewlanguage": "text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								}
+							]
+						},
+						{
+							"name": "Récupérer les transactions par compte",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{TOKEN}}"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/api/transactions/compte/{{COMPTE_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"transactions",
+										"compte",
+										"{{COMPTE_ID}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "releves",
+					"item": [
+						{
+							"name": "{compteId}",
+							"item": [
+								{
+									"name": "Générer un relevé PDF",
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{TOKEN}}"
+											}
+										],
+										"url": {
+											"raw": "{{BASE_URL}}/api/releves/compte/{{COMPTE_ID}}?dateDebut=2025-01-01T00:00:00&dateFin=2025-12-31T23:59:59",
+											"host": [
+												"{{BASE_URL}}"
+											],
+											"path": [
+												"api",
+												"releves",
+												"compte",
+												"{{COMPTE_ID}}"
+											],
+											"query": [
+												{
+													"key": "dateDebut",
+													"value": "2025-01-01T00:00:00"
+												},
+												{
+													"key": "dateFin",
+													"value": "2025-12-31T23:59:59"
+												}
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "client",
+					"item": [
+						{
+							"name": "Connexion",
+							"item": [
+								{
+									"name": "Connexion client",
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"courriel\": \"client@example.com\",\n  \"password\": \"1234\"\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/api/auth/client/login",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"auth",
+												"client",
+												"login"
+											]
+										}
+									},
+									"response": [
+										{
+											"name": "Connexion réussie",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"courriel\": \"client@example.com\",\n  \"password\": \"1234\"\n}",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/api/auth/client/login",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"auth",
+														"client",
+														"login"
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "{\n  \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\",\n  \"type\": \"Bearer\",\n  \"username\": \"admin\",\n  \"role\": \"USER\"\n}"
+										},
+										{
+											"name": "Identifiants invalides",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"courriel\": \"client@example.com\",\n  \"password\": \"1234\"\n}",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/api/auth/client/login",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"auth",
+														"client",
+														"login"
+													]
+												}
+											},
+											"status": "Unauthorized",
+											"code": 401,
+											"_postman_previewlanguage": "text",
+											"header": [],
+											"cookie": [],
+											"body": ""
+										}
+									]
+								}
+							]
+						},
+						{
+							"name": "dashboard",
+							"item": [
+								{
+									"name": "Récupérer les données du tableau de bord",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{bearerToken}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/api/client/dashboard",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"client",
+												"dashboard"
+											]
+										}
+									},
+									"response": [
+										{
+											"name": "Données du tableau de bord",
+											"originalRequest": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "application/json"
+													},
+													{
+														"key": "Authorization",
+														"value": "Bearer <token>",
+														"description": "Added as a part of security scheme: bearer"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/api/client/dashboard",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"client",
+														"dashboard"
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "{\n  \"totalSolde\": 5000.5,\n  \"nombreComptes\": 2,\n  \"nombreNotifications\": 3\n}"
+										},
+										{
+											"name": "Non authentifié",
+											"originalRequest": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "Authorization",
+														"value": "Bearer <token>",
+														"description": "Added as a part of security scheme: bearer"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/api/client/dashboard",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"client",
+														"dashboard"
+													]
+												}
+											},
+											"status": "Unauthorized",
+											"code": 401,
+											"_postman_previewlanguage": "text",
+											"header": [],
+											"cookie": [],
+											"body": ""
+										},
+										{
+											"name": "Erreur serveur",
+											"originalRequest": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "Authorization",
+														"value": "Bearer <token>",
+														"description": "Added as a part of security scheme: bearer"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/api/client/dashboard",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"client",
+														"dashboard"
+													]
+												}
+											},
+											"status": "Internal Server Error",
+											"code": 500,
+											"_postman_previewlanguage": "text",
+											"header": [],
+											"cookie": [],
+											"body": ""
+										}
+									]
+								}
+							]
+						},
+						{
+							"name": "comptes",
+							"item": [
+								{
+									"name": "Récupérer les comptes du client authentifié",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{bearerToken}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/api/client/comptes",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"client",
+												"comptes"
+											]
+										}
+									},
+									"response": [
+										{
+											"name": "Liste des comptes",
+											"originalRequest": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "application/json"
+													},
+													{
+														"key": "Authorization",
+														"value": "Bearer <token>",
+														"description": "Added as a part of security scheme: bearer"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/api/client/comptes",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"client",
+														"comptes"
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "[\n  {\n    \"value\": \"reference #/components/schemas/CompteDTO not found in the OpenAPI spec\"\n  },\n  {\n    \"value\": \"reference #/components/schemas/CompteDTO not found in the OpenAPI spec\"\n  }\n]"
+										}
+									]
+								}
+							]
+						},
+						{
+							"name": "transactions",
+							"item": [
+								{
+									"name": "Effectuer un virement",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{bearerToken}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/api/client/transactions/virement?compteSourceId=9976&compteDestinationId=9976&montant=7320.367489234832&description=string",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"client",
+												"transactions",
+												"virement"
+											],
+											"query": [
+												{
+													"key": "compteSourceId",
+													"value": "9976"
+												},
+												{
+													"key": "compteDestinationId",
+													"value": "9976"
+												},
+												{
+													"key": "montant",
+													"value": "7320.367489234832"
+												},
+												{
+													"key": "description",
+													"value": "string"
+												}
+											]
+										}
+									},
+									"response": [
+										{
+											"name": "Virement effectué",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "application/json"
+													},
+													{
+														"key": "Authorization",
+														"value": "Bearer <token>",
+														"description": "Added as a part of security scheme: bearer"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/api/client/transactions/virement?compteSourceId=9976&compteDestinationId=9976&montant=7320.367489234832&description=string",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"client",
+														"transactions",
+														"virement"
+													],
+													"query": [
+														{
+															"key": "compteSourceId",
+															"value": "9976"
+														},
+														{
+															"key": "compteDestinationId",
+															"value": "9976"
+														},
+														{
+															"key": "montant",
+															"value": "7320.367489234832"
+														},
+														{
+															"key": "description",
+															"value": "string"
+														}
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "{\n  \"id\": 1,\n  \"typeTransaction\": \"DEPOT\",\n  \"montant\": 500,\n  \"dateTransaction\": \"2024-01-19T10:30:00\",\n  \"compteSourceId\": 1,\n  \"compteDestinationId\": 2,\n  \"description\": \"Dépôt en espèces\"\n}"
+										},
+										{
+											"name": "Erreur (solde insuffisant, comptes identiques)",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Authorization",
+														"value": "Bearer <token>",
+														"description": "Added as a part of security scheme: bearer"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/api/client/transactions/virement?compteSourceId=9976&compteDestinationId=9976&montant=7320.367489234832&description=string",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"client",
+														"transactions",
+														"virement"
+													],
+													"query": [
+														{
+															"key": "compteSourceId",
+															"value": "9976"
+														},
+														{
+															"key": "compteDestinationId",
+															"value": "9976"
+														},
+														{
+															"key": "montant",
+															"value": "7320.367489234832"
+														},
+														{
+															"key": "description",
+															"value": "string"
+														}
+													]
+												}
+											},
+											"status": "Bad Request",
+											"code": 400,
+											"_postman_previewlanguage": "text",
+											"header": [],
+											"cookie": [],
+											"body": ""
+										},
+										{
+											"name": "Accès non autorisé",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Authorization",
+														"value": "Bearer <token>",
+														"description": "Added as a part of security scheme: bearer"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/api/client/transactions/virement?compteSourceId=9976&compteDestinationId=9976&montant=7320.367489234832&description=string",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"client",
+														"transactions",
+														"virement"
+													],
+													"query": [
+														{
+															"key": "compteSourceId",
+															"value": "9976"
+														},
+														{
+															"key": "compteDestinationId",
+															"value": "9976"
+														},
+														{
+															"key": "montant",
+															"value": "7320.367489234832"
+														},
+														{
+															"key": "description",
+															"value": "string"
+														}
+													]
+												}
+											},
+											"status": "Forbidden",
+											"code": 403,
+											"_postman_previewlanguage": "text",
+											"header": [],
+											"cookie": [],
+											"body": ""
+										}
+									]
+								},
+								{
+									"name": "Effectuer un retrait",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{bearerToken}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/api/client/transactions/retrait?compteId=9976&montant=7320.367489234832&description=string",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"client",
+												"transactions",
+												"retrait"
+											],
+											"query": [
+												{
+													"key": "compteId",
+													"value": "9976"
+												},
+												{
+													"key": "montant",
+													"value": "7320.367489234832"
+												},
+												{
+													"key": "description",
+													"value": "string"
+												}
+											]
+										}
+									},
+									"response": [
+										{
+											"name": "Retrait effectué",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "application/json"
+													},
+													{
+														"key": "Authorization",
+														"value": "Bearer <token>",
+														"description": "Added as a part of security scheme: bearer"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/api/client/transactions/retrait?compteId=9976&montant=7320.367489234832&description=string",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"client",
+														"transactions",
+														"retrait"
+													],
+													"query": [
+														{
+															"key": "compteId",
+															"value": "9976"
+														},
+														{
+															"key": "montant",
+															"value": "7320.367489234832"
+														},
+														{
+															"key": "description",
+															"value": "string"
+														}
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "{\n  \"id\": 1,\n  \"typeTransaction\": \"DEPOT\",\n  \"montant\": 500,\n  \"dateTransaction\": \"2024-01-19T10:30:00\",\n  \"compteSourceId\": 1,\n  \"compteDestinationId\": 2,\n  \"description\": \"Dépôt en espèces\"\n}"
+										},
+										{
+											"name": "Erreur (solde insuffisant, montant invalide)",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Authorization",
+														"value": "Bearer <token>",
+														"description": "Added as a part of security scheme: bearer"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/api/client/transactions/retrait?compteId=9976&montant=7320.367489234832&description=string",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"client",
+														"transactions",
+														"retrait"
+													],
+													"query": [
+														{
+															"key": "compteId",
+															"value": "9976"
+														},
+														{
+															"key": "montant",
+															"value": "7320.367489234832"
+														},
+														{
+															"key": "description",
+															"value": "string"
+														}
+													]
+												}
+											},
+											"status": "Bad Request",
+											"code": 400,
+											"_postman_previewlanguage": "text",
+											"header": [],
+											"cookie": [],
+											"body": ""
+										},
+										{
+											"name": "Accès non autorisé au compte",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Authorization",
+														"value": "Bearer <token>",
+														"description": "Added as a part of security scheme: bearer"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/api/client/transactions/retrait?compteId=9976&montant=7320.367489234832&description=string",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"client",
+														"transactions",
+														"retrait"
+													],
+													"query": [
+														{
+															"key": "compteId",
+															"value": "9976"
+														},
+														{
+															"key": "montant",
+															"value": "7320.367489234832"
+														},
+														{
+															"key": "description",
+															"value": "string"
+														}
+													]
+												}
+											},
+											"status": "Forbidden",
+											"code": 403,
+											"_postman_previewlanguage": "text",
+											"header": [],
+											"cookie": [],
+											"body": ""
+										}
+									]
+								},
+								{
+									"name": "Récupérer les transactions du client authentifié",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{bearerToken}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/api/client/transactions",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"client",
+												"transactions"
+											]
+										}
+									},
+									"response": [
+										{
+											"name": "Liste des transactions",
+											"originalRequest": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "application/json"
+													},
+													{
+														"key": "Authorization",
+														"value": "Bearer <token>",
+														"description": "Added as a part of security scheme: bearer"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/api/client/transactions",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"client",
+														"transactions"
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "[\n  {\n    \"id\": 1,\n    \"typeTransaction\": \"DEPOT\",\n    \"montant\": 500,\n    \"dateTransaction\": \"2024-01-19T10:30:00\",\n    \"compteSourceId\": 1,\n    \"compteDestinationId\": 2,\n    \"description\": \"Dépôt en espèces\"\n  },\n  {\n    \"id\": 1,\n    \"typeTransaction\": \"DEPOT\",\n    \"montant\": 500,\n    \"dateTransaction\": \"2024-01-19T10:30:00\",\n    \"compteSourceId\": 1,\n    \"compteDestinationId\": 2,\n    \"description\": \"Dépôt en espèces\"\n  }\n]"
+										}
+									]
+								}
+							]
+						},
+						{
+							"name": "notifications",
+							"item": [
+								{
+									"name": "{id}",
+									"item": [
+										{
+											"name": "lu",
+											"item": [
+												{
+													"name": "Marquer une notification comme lue",
+													"request": {
+														"auth": {
+															"type": "bearer",
+															"bearer": [
+																{
+																	"key": "token",
+																	"value": "{{bearerToken}}",
+																	"type": "string"
+																}
+															]
+														},
+														"method": "PUT",
+														"header": [],
+														"url": {
+															"raw": "{{baseUrl}}/api/client/notifications/:id/lu",
+															"host": [
+																"{{baseUrl}}"
+															],
+															"path": [
+																"api",
+																"client",
+																"notifications",
+																":id",
+																"lu"
+															],
+															"variable": [
+																{
+																	"key": "id",
+																	"value": "9976"
+																}
+															]
+														}
+													},
+													"response": [
+														{
+															"name": "Notification marquée comme lue",
+															"originalRequest": {
+																"method": "PUT",
+																"header": [
+																	{
+																		"key": "Authorization",
+																		"value": "Bearer <token>",
+																		"description": "Added as a part of security scheme: bearer"
+																	}
+																],
+																"url": {
+																	"raw": "{{baseUrl}}/api/client/notifications/:id/lu",
+																	"host": [
+																		"{{baseUrl}}"
+																	],
+																	"path": [
+																		"api",
+																		"client",
+																		"notifications",
+																		":id",
+																		"lu"
+																	],
+																	"variable": [
+																		{
+																			"key": "id",
+																			"value": "9976"
+																		}
+																	]
+																}
+															},
+															"status": "OK",
+															"code": 200,
+															"_postman_previewlanguage": "text",
+															"header": [],
+															"cookie": [],
+															"body": ""
+														},
+														{
+															"name": "Accès non autorisé",
+															"originalRequest": {
+																"method": "PUT",
+																"header": [
+																	{
+																		"key": "Authorization",
+																		"value": "Bearer <token>",
+																		"description": "Added as a part of security scheme: bearer"
+																	}
+																],
+																"url": {
+																	"raw": "{{baseUrl}}/api/client/notifications/:id/lu",
+																	"host": [
+																		"{{baseUrl}}"
+																	],
+																	"path": [
+																		"api",
+																		"client",
+																		"notifications",
+																		":id",
+																		"lu"
+																	],
+																	"variable": [
+																		{
+																			"key": "id",
+																			"value": "9976"
+																		}
+																	]
+																}
+															},
+															"status": "Forbidden",
+															"code": 403,
+															"_postman_previewlanguage": "text",
+															"header": [],
+															"cookie": [],
+															"body": ""
+														},
+														{
+															"name": "Notification non trouvée",
+															"originalRequest": {
+																"method": "PUT",
+																"header": [
+																	{
+																		"key": "Authorization",
+																		"value": "Bearer <token>",
+																		"description": "Added as a part of security scheme: bearer"
+																	}
+																],
+																"url": {
+																	"raw": "{{baseUrl}}/api/client/notifications/:id/lu",
+																	"host": [
+																		"{{baseUrl}}"
+																	],
+																	"path": [
+																		"api",
+																		"client",
+																		"notifications",
+																		":id",
+																		"lu"
+																	],
+																	"variable": [
+																		{
+																			"key": "id",
+																			"value": "9976"
+																		}
+																	]
+																}
+															},
+															"status": "Not Found",
+															"code": 404,
+															"_postman_previewlanguage": "text",
+															"header": [],
+															"cookie": [],
+															"body": ""
+														}
+													]
+												}
+											]
+										}
+									]
+								},
+								{
+									"name": "Récupérer les notifications du client",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{bearerToken}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/api/client/notifications",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"client",
+												"notifications"
+											]
+										}
+									},
+									"response": [
+										{
+											"name": "Liste des notifications",
+											"originalRequest": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "application/json"
+													},
+													{
+														"key": "Authorization",
+														"value": "Bearer <token>",
+														"description": "Added as a part of security scheme: bearer"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/api/client/notifications",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"client",
+														"notifications"
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "[\n  {\n    \"id\": 1,\n    \"message\": \"Dépôt de 500 F effectué sur votre compte TG17238947562839\",\n    \"dateNotification\": \"2024-01-19T10:30:00\",\n    \"lu\": false\n  },\n  {\n    \"id\": 1,\n    \"message\": \"Dépôt de 500 F effectué sur votre compte TG17238947562839\",\n    \"dateNotification\": \"2024-01-19T10:30:00\",\n    \"lu\": false\n  }\n]"
+										}
+									]
+								}
+							]
+						}
+					]
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8080"
+		},
+		{
+			"key": "token",
+			"value": ""
+		}
+	]
+}

@@ -1,0 +1,16 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Backend - Ega Backend" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
+    <module name="Ega-backend" />
+    <option name="SPRING_BOOT_MAIN_CLASS" value="com.example.Ega.backend.EgaBackendApplication" />
+    <option name="ALTERNATIVE_JRE_PATH" />
+    <option name="SHORTEN_COMMAND_LINE" value="NONE" />
+    <option name="ENVIRONMENT_VARIABLES">
+      <map>
+        <entry key="SPRING_PROFILES_ACTIVE" value="" />
+      </map>
+    </option>
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

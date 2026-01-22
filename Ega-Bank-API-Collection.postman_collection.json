@@ -1,0 +1,751 @@
+{
+	"info": {
+		"_postman_id": "ega-bank-api-collection",
+		"name": "Ega Bank API - Collection Complète",
+		"description": "Collection complète des endpoints de l'API Ega Bank avec authentification JWT",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{jwt_token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"// Auto-login si pas de token",
+					"if (!pm.globals.get('jwt_token')) {",
+					"    console.log('Aucun token JWT trouvé, connexion automatique...');",
+					"}"
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8080/api",
+			"type": "string"
+		},
+		{
+			"key": "jwt_token",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "admin_username",
+			"value": "admin",
+			"type": "string"
+		},
+		{
+			"key": "admin_password",
+			"value": "Admin@123",
+			"type": "string"
+		},
+		{
+			"key": "client_id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "compte_numero",
+			"value": "",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "🔐 Authentification",
+			"item": [
+				{
+					"name": "Initialiser Admin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Admin initialisé avec succès', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"if (pm.response.code === 200) {",
+									"    console.log('✅ Admin initialisé avec succès');",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/auth/init-admin?username={{admin_username}}&password={{admin_password}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"init-admin"
+							],
+							"query": [
+								{
+									"key": "username",
+									"value": "{{admin_username}}"
+								},
+								{
+									"key": "password",
+									"value": "{{admin_password}}"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Connexion Admin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Connexion admin réussie', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"if (pm.response.code === 200) {",
+									"    const response = pm.response.json();",
+									"    pm.globals.set('jwt_token', response.token);",
+									"    pm.globals.set('current_user_id', response.userId);",
+									"    pm.globals.set('current_username', response.username);",
+									"    pm.globals.set('current_role', response.role);",
+									"    console.log('✅ Connexion admin réussie, token sauvegardé');",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"{{admin_username}}\",\n    \"password\": \"{{admin_password}}\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					}
+				},
+				{
+					"name": "Inscription Client",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Inscription client réussie', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"if (pm.response.code === 200) {",
+									"    const response = pm.response.json();",
+									"    pm.globals.set('jwt_token', response.token);",
+									"    pm.globals.set('client_id', response.clientId);",
+									"    pm.globals.set('current_user_id', response.userId);",
+									"    pm.globals.set('current_username', response.username);",
+									"    pm.globals.set('current_role', response.role);",
+									"    console.log('✅ Inscription client réussie, token sauvegardé');",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"nom\": \"Dupont\",\n    \"prenom\": \"Jean\",\n    \"dateNaissance\": \"1990-05-15\",\n    \"sexe\": \"M\",\n    \"adresse\": \"123 Rue de la Paix, 75001 Paris\",\n    \"telephone\": \"0123456789\",\n    \"courriel\": \"jean.dupont@email.com\",\n    \"nationalite\": \"Française\",\n    \"username\": \"jean.dupont\",\n    \"password\": \"motdepasse123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/register",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"register"
+							]
+						}
+					}
+				},
+				{
+					"name": "Connexion Client",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Connexion client réussie', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"if (pm.response.code === 200) {",
+									"    const response = pm.response.json();",
+									"    pm.globals.set('jwt_token', response.token);",
+									"    pm.globals.set('client_id', response.clientId);",
+									"    pm.globals.set('current_user_id', response.userId);",
+									"    pm.globals.set('current_username', response.username);",
+									"    pm.globals.set('current_role', response.role);",
+									"    console.log('✅ Connexion client réussie, token sauvegardé');",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"jean.dupont\",\n    \"password\": \"motdepasse123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "👥 Gestion Clients",
+			"item": [
+				{
+					"name": "Lister tous les clients",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Liste des clients récupérée', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"if (pm.response.code === 200) {",
+									"    const clients = pm.response.json();",
+									"    if (clients.length > 0) {",
+									"        pm.globals.set('client_id', clients[0].id);",
+									"        console.log('✅ Premier client ID sauvegardé:', clients[0].id);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/clients",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"clients"
+							]
+						}
+					}
+				},
+				{
+					"name": "Obtenir client par ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/clients/{{client_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"clients",
+								"{{client_id}}"
+							]
+						}
+					}
+				},
+				{
+					"name": "Créer un client",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"nom\": \"Martin\",\n    \"prenom\": \"Marie\",\n    \"dateNaissance\": \"1985-03-20\",\n    \"sexe\": \"F\",\n    \"adresse\": \"456 Avenue des Champs, 75008 Paris\",\n    \"telephone\": \"0987654321\",\n    \"courriel\": \"marie.martin@email.com\",\n    \"nationalite\": \"Française\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/clients",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"clients"
+							]
+						}
+					}
+				},
+				{
+					"name": "Modifier un client",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"nom\": \"Martin\",\n    \"prenom\": \"Marie-Claire\",\n    \"dateNaissance\": \"1985-03-20\",\n    \"sexe\": \"F\",\n    \"adresse\": \"456 Avenue des Champs Élysées, 75008 Paris\",\n    \"telephone\": \"0987654321\",\n    \"courriel\": \"marie.martin@email.com\",\n    \"nationalite\": \"Française\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/clients/{{client_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"clients",
+								"{{client_id}}"
+							]
+						}
+					}
+				},
+				{
+					"name": "Supprimer un client",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/clients/{{client_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"clients",
+								"{{client_id}}"
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "🏦 Gestion Comptes",
+			"item": [
+				{
+					"name": "Lister tous les comptes",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Liste des comptes récupérée', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"if (pm.response.code === 200) {",
+									"    const comptes = pm.response.json();",
+									"    if (comptes.length > 0) {",
+									"        pm.globals.set('compte_numero', comptes[0].numeroCompte);",
+									"        console.log('✅ Premier compte numéro sauvegardé:', comptes[0].numeroCompte);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/comptes",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"comptes"
+							]
+						}
+					}
+				},
+				{
+					"name": "Créer compte courant",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    const compte = pm.response.json();",
+									"    pm.globals.set('compte_numero', compte.numeroCompte);",
+									"    console.log('✅ Compte courant créé:', compte.numeroCompte);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/comptes/client/{{client_id}}?typeCompte=COURANT",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"comptes",
+								"client",
+								"{{client_id}}"
+							],
+							"query": [
+								{
+									"key": "typeCompte",
+									"value": "COURANT"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Créer compte épargne",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/comptes/client/{{client_id}}?typeCompte=EPARGNE",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"comptes",
+								"client",
+								"{{client_id}}"
+							],
+							"query": [
+								{
+									"key": "typeCompte",
+									"value": "EPARGNE"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Obtenir compte par numéro",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/comptes/numero/{{compte_numero}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"comptes",
+								"numero",
+								"{{compte_numero}}"
+							]
+						}
+					}
+				},
+				{
+					"name": "Obtenir comptes par client",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/comptes/client/{{client_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"comptes",
+								"client",
+								"{{client_id}}"
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "💳 Transactions",
+			"item": [
+				{
+					"name": "Effectuer un dépôt",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"numeroCompte\": \"{{compte_numero}}\",\n    \"montant\": 1000.00,\n    \"description\": \"Dépôt initial\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/transactions/depot",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"transactions",
+								"depot"
+							]
+						}
+					}
+				},
+				{
+					"name": "Effectuer un retrait",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"numeroCompte\": \"{{compte_numero}}\",\n    \"montant\": 100.00,\n    \"description\": \"Retrait DAB\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/transactions/retrait",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"transactions",
+								"retrait"
+							]
+						}
+					}
+				},
+				{
+					"name": "Effectuer un virement",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"compteSource\": \"{{compte_numero}}\",\n    \"compteDestinataire\": \"COMPTE_DEST_123\",\n    \"montant\": 250.00,\n    \"description\": \"Virement vers ami\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/transactions/virement",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"transactions",
+								"virement"
+							]
+						}
+					}
+				},
+				{
+					"name": "Obtenir transactions par compte",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/transactions/compte/{{compte_numero}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"transactions",
+								"compte",
+								"{{compte_numero}}"
+							]
+						}
+					}
+				},
+				{
+					"name": "Obtenir relevé de compte",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"numeroCompte\": \"{{compte_numero}}\",\n    \"dateDebut\": \"2024-01-01\",\n    \"dateFin\": \"2024-12-31\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/transactions/releve",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"transactions",
+								"releve"
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "📄 Relevés",
+			"item": [
+				{
+					"name": "Imprimer relevé PDF",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"numeroCompte\": \"{{compte_numero}}\",\n    \"dateDebut\": \"2024-01-01\",\n    \"dateFin\": \"2024-12-31\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/releves/imprimer",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"releves",
+								"imprimer"
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "🧪 Tests Complets",
+			"item": [
+				{
+					"name": "Workflow Complet - Nouveau Client",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Générer des données aléatoires pour le test",
+									"const timestamp = Date.now();",
+									"pm.globals.set('test_username', 'testuser' + timestamp);",
+									"pm.globals.set('test_email', 'test' + timestamp + '@email.com');",
+									"pm.globals.set('test_phone', '01234567' + (timestamp % 100));"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Workflow complet réussi', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"// Ce test simule un workflow complet:",
+									"// 1. Inscription",
+									"// 2. Création de compte",
+									"// 3. Dépôt",
+									"// 4. Retrait",
+									"// 5. Consultation du solde"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"nom\": \"TestUser\",\n    \"prenom\": \"Test\",\n    \"dateNaissance\": \"1995-01-01\",\n    \"sexe\": \"M\",\n    \"adresse\": \"123 Test Street\",\n    \"telephone\": \"{{test_phone}}\",\n    \"courriel\": \"{{test_email}}\",\n    \"nationalite\": \"Française\",\n    \"username\": \"{{test_username}}\",\n    \"password\": \"testpass123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/register",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"register"
+							]
+						}
+					}
+				}
+			]
+		}
+	]
+}

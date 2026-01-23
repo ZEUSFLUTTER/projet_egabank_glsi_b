@@ -1,0 +1,103 @@
+<!-- src/app/components/accounts/account-list/account-list.component.html -->
+<app-navbar></app-navbar>
+
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>
+      <i class="fas fa-wallet me-2"></i>Liste des Comptes ({{ accounts.length }})
+    </h2>
+    <a routerLink="/accounts/new" class="btn btn-success">
+      <i class="fas fa-plus me-2"></i>Nouveau Compte
+    </a>
+  </div>
+
+  <div *ngIf="errorMessage" class="alert alert-danger alert-dismissible fade show">
+    <i class="fas fa-exclamation-triangle me-2"></i>{{ errorMessage }}
+    <button type="button" class="btn-close" (click)="errorMessage = ''"></button>
+  </div>
+
+  <div *ngIf="isLoading" class="text-center py-5">
+    <div class="spinner-border text-success" role="status">
+      <span class="visually-hidden">Chargement...</span>
+    </div>
+    <p class="mt-2">Chargement des comptes...</p>
+  </div>
+
+  <div *ngIf="!isLoading && accounts.length === 0" class="alert alert-info text-center">
+    <i class="fas fa-info-circle me-2"></i>
+    Aucun compte trouvé.
+    <a routerLink="/accounts/new" class="alert-link">Créer le premier compte</a>
+  </div>
+
+  <div *ngIf="!isLoading && accounts.length > 0" class="row g-4">
+    <div class="col-md-6 col-lg-4" *ngFor="let account of accounts">
+      <div class="card account-card h-100 shadow-sm border-0">
+        <div class="card-header text-white"
+             [ngClass]="account.typeCompte === 'COMPTE_EPARGNE' ? 'bg-success' : 'bg-primary'">
+          <h5 class="mb-0">
+            <i class="fas fa-credit-card me-2"></i>
+            {{ account.typeCompte === 'COMPTE_EPARGNE' ? 'Compte Épargne' : 'Compte Courant' }}
+          </h5>
+        </div>
+        <div class="card-body">
+          <div class="mb-3">
+            <label class="text-muted small mb-1">Numéro de compte</label>
+            <p class="mb-0 fw-semibold text-break small">{{ account.numeroCompte }}</p>
+          </div>
+
+          <div class="mb-3">
+            <label class="text-muted small mb-1">Propriétaire</label>
+            <p class="mb-0">
+              <i class="fas fa-user me-1"></i>{{ account.proprietaireNom }}
+            </p>
+          </div>
+
+          <div class="mb-3">
+            <label class="text-muted small mb-1">Date de création</label>
+            <p class="mb-0">
+              <i class="fas fa-calendar me-1"></i>{{ account.dateCreation | date:'dd/MM/yyyy' }}
+            </p>
+          </div>
+
+          <hr>
+
+          <div class="text-center">
+            <label class="text-muted small mb-2 d-block">Solde disponible</label>
+            <h3 class="text-primary mb-0 fw-bold">
+              {{ account.solde | number:'1.0-0' }} <small class="text-muted">FCFA</small>
+            </h3>
+          </div>
+        </div>
+        <div class="card-footer bg-light border-0">
+          <button
+            class="btn btn-outline-danger btn-sm w-100"
+            (click)="deleteAccount(account.id!)">
+            <i class="fas fa-trash me-1"></i>Supprimer ce compte
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="!isLoading && accounts.length > 0" class="mt-4">
+    <div class="alert alert-light border">
+      <div class="row text-center">
+        <div class="col-md-4">
+          <i class="fas fa-wallet fa-2x text-primary mb-2"></i>
+          <h5>{{ accounts.length }}</h5>
+          <small class="text-muted">Comptes Totaux</small>
+        </div>
+        <div class="col-md-4">
+          <i class="fas fa-piggy-bank fa-2x text-success mb-2"></i>
+          <h5>{{ getCountByType('COMPTE_EPARGNE') }}</h5>
+          <small class="text-muted">Comptes Épargne</small>
+        </div>
+        <div class="col-md-4">
+          <i class="fas fa-money-check fa-2x text-info mb-2"></i>
+          <h5>{{ getCountByType('COMPTE_COURANT') }}</h5>
+          <small class="text-muted">Comptes Courants</small>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

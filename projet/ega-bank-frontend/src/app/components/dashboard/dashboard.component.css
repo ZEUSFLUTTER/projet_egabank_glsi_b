@@ -1,0 +1,41 @@
+/* src/app/components/dashboard/dashboard.component.css */
+.stat-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15) !important;
+}
+
+.stat-icon {
+  opacity: 0.3;
+}
+
+.bg-gradient-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.bg-gradient-success {
+  background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+}
+
+.bg-gradient-info {
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+}
+
+.list-group-item:last-child {
+  padding-bottom: 0 !important;
+}
+
+.btn-lg {
+  padding: 0.8rem 1.2rem;
+}
+
+.card-header {
+  border-radius: 8px 8px 0 0 !important;
+}
+
+.card-body.rounded {
+  border-radius: 8px;
+}

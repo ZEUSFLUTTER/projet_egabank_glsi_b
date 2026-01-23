@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Compte forme</title>
+</head>
+<body>
+<div class="container mt-4">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header bg-success text-white">
+          <h4 class="mb-0">
+            <i class="fas fa-plus-circle me-2"></i>Nouveau Compte
+          </h4>
+        </div>
+        <div class="card-body">
+          <div *ngIf="errorMessage" class="alert alert-danger">
+            {{ errorMessage }}
+          </div>
+
+          <form (ngSubmit)="onSubmit()" #accountForm="ngForm">
+            <div class="mb-3">
+              <label for="typeCompte" class="form-label">Type de Compte *</label>
+              <select
+                class="form-select"
+                id="typeCompte"
+                name="typeCompte"
+                [(ngModel)]="account.typeCompte"
+                required
+              >
+                <option value="COMPTE_COURANT">Compte Courant</option>
+                <option value="COMPTE_EPARGNE">Compte Épargne</option>
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <label for="proprietaireId" class="form-label">Client Propriétaire *</label>
+              <select
+                class="form-select"
+                id="proprietaireId"
+                name="proprietaireId"
+                [(ngModel)]="account.proprietaireId"
+                required
+              >
+                <option value="0" disabled>Sélectionnez un client</option>
+                <option *ngFor="let client of clients" [value]="client.id">
+                  {{ client.prenom }} {{ client.nom }}
+                </option>
+              </select>
+            </div>
+
+            <div class="alert alert-info">
+              <i class="fas fa-info-circle me-2"></i>
+              Le solde initial du compte sera de 0 FCFA
+            </div>
+
+            <div class="d-flex gap-2">
+              <button
+                type="submit"
+                class="btn btn-success"
+                [disabled]="!accountForm.valid || isLoading || account.proprietaireId === 0"
+              >
+                <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2"></span>
+                <i *ngIf="!isLoading" class="fas fa-save me-2"></i>
+                Créer le Compte
+              </button>
+              <button
+                type="button"
+                class="btn btn-secondary"
+                routerLink="/accounts"
+              >
+                <i class="fas fa-times me-2"></i>Annuler
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

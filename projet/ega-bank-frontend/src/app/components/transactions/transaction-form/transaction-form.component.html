@@ -1,0 +1,258 @@
+
+<app-navbar></app-navbar>
+
+<div class="container mt-4">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="card">
+        <div class="card-header bg-info text-white">
+          <h4 class="mb-0">
+            <i class="fas fa-exchange-alt me-2"></i>Nouvelle Transaction
+          </h4>
+        </div>
+        <div class="card-body">
+          <div *ngIf="errorMessage" class="alert alert-danger">
+            <i class="fas fa-exclamation-triangle me-2"></i>{{ errorMessage }}
+          </div>
+
+          <div *ngIf="successMessage" class="alert alert-success">
+            <i class="fas fa-check-circle me-2"></i>{{ successMessage }}
+          </div>
+
+          <!-- Sélection du type de transaction -->
+          <div class="mb-4">
+            <label class="form-label fw-bold">Type de Transaction</label>
+            <div class="btn-group w-100" role="group">
+              <input
+                type="radio"
+                class="btn-check"
+                name="transactionType"
+                id="depot"
+                value="DEPOT"
+                [(ngModel)]="transactionType"
+              >
+              <label class="btn btn-outline-success" for="depot">
+                <i class="fas fa-arrow-down me-2"></i>Dépôt
+              </label>
+
+              <input
+                type="radio"
+                class="btn-check"
+                name="transactionType"
+                id="retrait"
+                value="RETRAIT"
+                [(ngModel)]="transactionType"
+              >
+              <label class="btn btn-outline-warning" for="retrait">
+                <i class="fas fa-arrow-up me-2"></i>Retrait
+              </label>
+
+              <input
+                type="radio"
+                class="btn-check"
+                name="transactionType"
+                id="virement"
+                value="VIREMENT"
+                [(ngModel)]="transactionType"
+              >
+              <label class="btn btn-outline-primary" for="virement">
+                <i class="fas fa-exchange-alt me-2"></i>Virement
+              </label>
+            </div>
+          </div>
+
+          <!-- Formulaire Dépôt -->
+          <form *ngIf="transactionType === 'DEPOT'" (ngSubmit)="onSubmit()" #depotForm="ngForm">
+            <div class="mb-3">
+              <label for="depotCompte" class="form-label">Compte *</label>
+              <select
+                class="form-select"
+                id="depotCompte"
+                name="numeroCompte"
+                [(ngModel)]="depotData.numeroCompte"
+                required
+              >
+                <option value="">Sélectionnez un compte</option>
+                <option *ngFor="let account of accounts" [value]="account.numeroCompte">
+                  {{ account.numeroCompte }} - {{ account.proprietaireNom }} ({{ account.solde | number:'1.0-0' }} FCFA)
+                </option>
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <label for="depotMontant" class="form-label">Montant (FCFA) *</label>
+              <input
+                type="number"
+                class="form-control"
+                id="depotMontant"
+                name="montant"
+                [(ngModel)]="depotData.montant"
+                required
+                min="1"
+              >
+            </div>
+
+            <div class="mb-3">
+              <label for="depotDescription" class="form-label">Description</label>
+              <textarea
+                class="form-control"
+                id="depotDescription"
+                name="description"
+                [(ngModel)]="depotData.description"
+                rows="2"
+              ></textarea>
+            </div>
+
+            <div class="d-flex gap-2">
+              <button
+                type="submit"
+                class="btn btn-success"
+                [disabled]="!depotForm.valid || isLoading"
+              >
+                <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2"></span>
+                <i *ngIf="!isLoading" class="fas fa-check me-2"></i>
+                Effectuer le Dépôt
+              </button>
+              <button type="button" class="btn btn-secondary" routerLink="/transactions">
+                <i class="fas fa-times me-2"></i>Annuler
+              </button>
+            </div>
+          </form>
+
+          <!-- Formulaire Retrait -->
+          <form *ngIf="transactionType === 'RETRAIT'" (ngSubmit)="onSubmit()" #retraitForm="ngForm">
+            <div class="mb-3">
+              <label for="retraitCompte" class="form-label">Compte *</label>
+              <select
+                class="form-select"
+                id="retraitCompte"
+                name="numeroCompte"
+                [(ngModel)]="retraitData.numeroCompte"
+                required
+              >
+                <option value="">Sélectionnez un compte</option>
+                <option *ngFor="let account of accounts" [value]="account.numeroCompte">
+                  {{ account.numeroCompte }} - {{ account.proprietaireNom }} ({{ account.solde | number:'1.0-0' }} FCFA)
+                </option>
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <label for="retraitMontant" class="form-label">Montant (FCFA) *</label>
+              <input
+                type="number"
+                class="form-control"
+                id="retraitMontant"
+                name="montant"
+                [(ngModel)]="retraitData.montant"
+                required
+                min="1"
+              >
+            </div>
+
+            <div class="mb-3">
+              <label for="retraitDescription" class="form-label">Description</label>
+              <textarea
+                class="form-control"
+                id="retraitDescription"
+                name="description"
+                [(ngModel)]="retraitData.description"
+                rows="2"
+              ></textarea>
+            </div>
+
+            <div class="d-flex gap-2">
+              <button
+                type="submit"
+                class="btn btn-warning"
+                [disabled]="!retraitForm.valid || isLoading"
+              >
+                <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2"></span>
+                <i *ngIf="!isLoading" class="fas fa-check me-2"></i>
+                Effectuer le Retrait
+              </button>
+              <button type="button" class="btn btn-secondary" routerLink="/transactions">
+                <i class="fas fa-times me-2"></i>Annuler
+              </button>
+            </div>
+          </form>
+
+          <!-- Formulaire Virement -->
+          <form *ngIf="transactionType === 'VIREMENT'" (ngSubmit)="onSubmit()" #virementForm="ngForm">
+            <div class="mb-3">
+              <label for="virementSource" class="form-label">Compte Source *</label>
+              <select
+                class="form-select"
+                id="virementSource"
+                name="numeroCompteSource"
+                [(ngModel)]="virementData.numeroCompteSource"
+                required
+              >
+                <option value="">Sélectionnez le compte source</option>
+                <option *ngFor="let account of accounts" [value]="account.numeroCompte">
+                  {{ account.numeroCompte }} - {{ account.proprietaireNom }} ({{ account.solde | number:'1.0-0' }} FCFA)
+                </option>
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <label for="virementDestination" class="form-label">Compte Destination *</label>
+              <select
+                class="form-select"
+                id="virementDestination"
+                name="numeroCompteDestination"
+                [(ngModel)]="virementData.numeroCompteDestination"
+                required
+              >
+                <option value="">Sélectionnez le compte destination</option>
+                <option *ngFor="let account of accounts" [value]="account.numeroCompte">
+                  {{ account.numeroCompte }} - {{ account.proprietaireNom }}
+                </option>
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <label for="virementMontant" class="form-label">Montant (FCFA) *</label>
+              <input
+                type="number"
+                class="form-control"
+                id="virementMontant"
+                name="montant"
+                [(ngModel)]="virementData.montant"
+                required
+                min="1"
+              >
+            </div>
+
+            <div class="mb-3">
+              <label for="virementDescription" class="form-label">Description</label>
+              <textarea
+                class="form-control"
+                id="virementDescription"
+                name="description"
+                [(ngModel)]="virementData.description"
+                rows="2"
+              ></textarea>
+            </div>
+
+            <div class="d-flex gap-2">
+              <button
+                type="submit"
+                class="btn btn-primary"
+                [disabled]="!virementForm.valid || isLoading"
+              >
+                <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2"></span>
+                <i *ngIf="!isLoading" class="fas fa-check me-2"></i>
+                Effectuer le Virement
+              </button>
+              <button type="button" class="btn btn-secondary" routerLink="/transactions">
+                <i class="fas fa-times me-2"></i>Annuler
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+

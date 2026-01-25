@@ -1,0 +1,60 @@
+<div class="deposit-container">
+  <div class="header">
+    <button class="back-button" (click)="goBack()">
+      <i class="fas fa-arrow-left"></i> Retour à mes comptes
+    </button>
+    <h2><i class="fas fa-money-bill-wave"></i> Effectuer un dépôt</h2>
+  </div>
+
+  <div class="form-card">
+    <form #depositForm="ngForm" (ngSubmit)="onDeposit()">
+      <div class="form-group">
+        <label for="accountId">ID du compte</label>
+        <input
+          type="text"
+          id="accountId"
+          name="accountId"
+          [(ngModel)]="accountId"
+          placeholder="Entrez l'ID de votre compte"
+          required
+          readonly
+          class="account-id-input"
+        />
+        <small *ngIf="!accountId" class="warning-text">Veuillez sélectionner un compte.</small>
+      </div>
+
+      <div class="form-group">
+        <label for="amount">Montant à déposer</label>
+        <input
+          type="number"
+          id="amount"
+          name="amount"
+          [(ngModel)]="amount"
+          placeholder="0.00 F FCA"
+          required
+          min="0.01"
+          step="0.01"
+          class="amount-input"
+        />
+        <!-- ✅ Utilise la méthode isAmountInvalid() -->
+        <small *ngIf="amount && isAmountInvalid()" class="warning-text">
+          Le montant doit être supérieur à 0.
+        </small>
+      </div>
+
+      <button
+        type="submit"
+        class="submit-button"
+        [disabled]="!depositForm.form.valid || loading"
+        [class.loading]="loading"
+      >
+        <i class="fas fa-paper-plane"></i> {{ loading ? 'Traitement...' : 'Déposer' }}
+      </button>
+    </form>
+  </div>
+
+  <!-- Message d'état -->
+  <div *ngIf="message" class="message" [class.success]="messageType === 'success'" [class.error]="messageType === 'error'">
+    {{ message }}
+  </div>
+</div>

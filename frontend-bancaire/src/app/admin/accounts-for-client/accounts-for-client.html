@@ -1,0 +1,102 @@
+<div class="admin-client-accounts-container">
+  <h2>Comptes du Client : {{ clientName }}</h2>
+  <button class="back-btn" (click)="goBack()">Retour à la liste des clients</button>
+
+  <div class="loading" *ngIf="loadingAccounts">Chargement des comptes...</div>
+  <div class="error" *ngIf="errorAccounts">Erreur lors du chargement des comptes.</div>
+
+  <table class="accounts-table" *ngIf="accounts.length > 0">
+    <thead>
+      <tr>
+        <th>ID Compte</th>
+        <th>Numéro</th>
+        <th>Type</th>
+        <th>Solde</th>
+        <th>Devise</th>
+        <th>Actif</th>
+        <!-- Ajouter d'autres colonnes si nécessaire -->
+        <th>Actions</th>
+        <th>Opérations Admin</th> <!-- Nouvelle colonne -->
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let account of accounts">
+        <td>{{ account.id }}</td>
+        <td>{{ account.numeroCompte }}</td>
+        <td>{{ account.type || 'Non spécifié' }}</td>
+        <td>{{ account.solde | number:'1.2-2' }} {{ account.devise }}</td>
+        <td>{{ account.devise }}</td>
+        <td>
+          <span [class.active]="account.isActive" [class.inactive]="!account.isActive">
+            {{ account.isActive ? 'Oui' : 'Non' }}
+          </span>
+        </td>
+        <td>
+          <!-- Bouton pour voir les transactions de ce compte -->
+          <button class="btn btn-secondary" (click)="viewAccountTransactions(account.id)">
+            Voir Transactions
+          </button>
+          <!-- Bouton pour télécharger le PDF de ce compte -->
+          <button class="btn btn-info" (click)="downloadAccountPdf(account.id)">
+            PDF
+          </button>
+        </td>
+        <td> <!-- Colonne pour les opérations admin -->
+          <div class="admin-operations">
+            <button class="btn btn-success" (click)="openDepotForm(account.id)">Dépôt</button>
+            <button class="btn btn-warning" (click)="openRetraitForm(account.id)">Retrait</button>
+            <button class="btn btn-info" (click)="openVirementForm(account.id)">Virement</button>
+
+            <!-- Formulaire pour l'opération sélectionnée -->
+            <div class="operation-form" *ngIf="selectedAccountId === account.id">
+              <h4 *ngIf="operationType === 'depot'">Dépôt sur {{ account.numeroCompte }}</h4>
+              <h4 *ngIf="operationType === 'retrait'">Retrait de {{ account.numeroCompte }}</h4>
+              <h4 *ngIf="operationType === 'virement'">Virement depuis {{ account.numeroCompte }}</h4>
+
+              <form (ngSubmit)="operationType === 'depot' ? performDepot() : operationType === 'retrait' ? performRetrait() : performVirement()" #operationForm="ngForm">
+                <div *ngIf="operationType === 'depot' || operationType === 'retrait'" class="form-group">
+                  <label for="amount_{{account.id}}">Montant:</label>
+                  <input type="number" id="amount_{{account.id}}" [(ngModel)]="operationAmount" name="amount" required min="0.01" step="0.01">
+                </div>
+
+                <div *ngIf="operationType === 'virement'" class="form-group">
+                  <label for="targetAccount_{{account.id}}">Compte Destinataire ID:</label>
+                  <input type="text" id="targetAccount_{{account.id}}" [(ngModel)]="targetAccountIdForTransfer" name="targetAccount" required>
+                </div>
+
+                 <div *ngIf="operationType === 'virement'" class="form-group">
+                  <label for="amount_virement_{{account.id}}">Montant:</label>
+                  <input type="number" id="amount_virement_{{account.id}}" [(ngModel)]="operationAmount" name="amountVirement" required min="0.01" step="0.01">
+                </div>
+
+                <button type="submit" class="btn btn-primary" [disabled]="!operationForm.form.valid">Confirmer</button>
+                <button type="button" class="btn btn-secondary" (click)="cancelOperation()">Annuler</button>
+              </form>
+            </div>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="empty-state" *ngIf="accounts.length === 0 && !loadingAccounts && !errorAccounts">
+    Aucun compte trouvé pour ce client.
+  </div>
+
+  <!-- Bouton pour créer un nouveau compte pour ce client -->
+  <div class="create-account-section">
+    <h3>Créer un nouveau compte</h3>
+    <form (ngSubmit)="createNewAccount()" #accountForm="ngForm">
+      <label for="newAccountType">Type:</label>
+      <select id="newAccountType" [(ngModel)]="newAccountType" name="type" required>
+        <option value="courant">Courant</option>
+        <option value="epargne">Épargne</option>
+      </select>
+
+      <label for="newAccountBalance">Solde Initial:</label>
+      <input type="number" id="newAccountBalance" [(ngModel)]="newAccountBalance" name="balance" required>
+
+      <button type="submit" class="btn btn-primary" [disabled]="!accountForm.form.valid">Créer Compte</button>
+    </form>
+  </div>
+</div>

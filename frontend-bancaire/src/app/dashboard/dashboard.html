@@ -1,0 +1,49 @@
+<div class="dashboard-container">
+  <div class="header">
+    <h1>🏦 EGA Bank
+Tableau de bord</h1>
+    <p>Bienvenue, {{ userName }} !</p>
+  </div>
+
+  <!-- Affiche le message si showNoAccountMessage est true -->
+  <div *ngIf="showNoAccountMessage" class="no-account-banner">
+    <p>ℹ️ Vous n'avez pas encore de compte. <a (click)="redirectToCreateAccount()" style="cursor: pointer; text-decoration: underline;">Créez votre premier compte</a> pour accéder à cette fonctionnalité.</p>
+    <button (click)="closeMessage()" style="margin-left: 10px; background: none; border: none; cursor: pointer;">×</button>
+  </div>
+
+  <div class="quick-actions">
+    <button (click)="goToAccounts()" class="action-button">
+      <i class="fas fa-wallet"></i>
+      Mes comptes
+    </button>
+
+    <button (click)="goToTransactions()" class="action-button">
+      <i class="fas fa-exchange-alt"></i>
+      Mes transactions
+    </button>
+
+    <button (click)="goToTransfer()" class="action-button">
+      <i class="fas fa-arrow-right"></i>
+      Virement
+    </button>
+
+    <button (click)="goToVersement()" class="action-button">
+      <i class="fas fa-plus"></i>
+      Versement
+    </button>
+
+    <button (click)="goToWithdraw()" class="action-button">
+      <i class="fas fa-minus"></i>
+      Retrait
+    </button>
+
+    <button (click)="logout()" class="action-button logout">
+      <i class="fas fa-sign-out-alt"></i>
+      Déconnexion
+    </button>
+  </div>
+
+  <div class="footer">
+    <p>© 2026 FrontendBancaire - Tous droits réservés</p>
+  </div>
+</div>

@@ -1,0 +1,148 @@
+.first-account-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+
+  .navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 40px;
+    background: #2c3e50;
+    color: white;
+
+    .nav-brand h2 {
+      margin: 0;
+      color: white;
+    }
+
+    .nav-user {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+
+      .logout-btn {
+        background: #e74c3c;
+        color: white;
+        border: none;
+        padding: 10px 15px;
+        border-radius: 5px;
+        cursor: pointer;
+
+        &:hover {
+          background: #c0392b;
+        }
+      }
+    }
+  }
+
+  .main-content {
+    flex: 1;
+    padding: 40px;
+    background: #f5f7fa;
+
+    .welcome-section {
+      text-align: center;
+      margin-bottom: 40px;
+
+      h1 {
+        color: #2c3e50;
+        font-size: 2.5rem;
+        margin-bottom: 10px;
+      }
+
+      p {
+        color: #7f8c8d;
+        font-size: 1.2rem;
+      }
+    }
+
+    .account-form {
+      max-width: 500px;
+      margin: 0 auto;
+
+      .form-card {
+        background: white;
+        padding: 40px;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+
+        h2 {
+          color: #2c3e50;
+          margin-bottom: 30px;
+          text-align: center;
+        }
+
+        .form-group {
+          margin-bottom: 25px;
+
+          label {
+            display: block;
+            margin-bottom: 8px;
+            color: #2c3e50;
+            font-weight: 600;
+          }
+
+          select, input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e1e8ed;
+            border-radius: 5px;
+            font-size: 16px;
+
+            &:focus {
+              outline: none;
+              border-color: #3498db;
+            }
+          }
+        }
+
+        .form-actions {
+          display: flex;
+          gap: 15px;
+          justify-content: space-between;
+
+          button {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+
+            &:hover {
+              transform: translateY(-2px);
+            }
+          }
+
+          .primary-btn {
+            background: #27ae60;
+            color: white;
+
+            &:hover {
+              background: #219a52;
+            }
+          }
+
+          .secondary-btn {
+            background: #ecf0f1;
+            color: #2c3e50;
+
+            &:hover {
+              background: #bdc3c7;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .footer {
+    padding: 20px;
+    text-align: center;
+    background: #2c3e50;
+    color: white;
+  }
+}

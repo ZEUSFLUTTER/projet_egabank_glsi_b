@@ -1,0 +1,15 @@
+<div class="transactions-container">
+  <div class="header">
+    <button class="back-button" (click)="goBack()">← Retour à mes comptes</button>
+    <h2>Mes Transactions</h2>
+  </div>
+<!-- 
+  <p>Nombre de transactions : {{ transactions.length }}</p>
+
+  Boucle simple sans styles complexes -->
+  <div>
+    <div *ngFor="let transaction of transactions; let i = index">
+      <p>{{ i + 1 }}. {{ transaction.description }} ({{ transaction.type }})</p>
+    </div>
+  </div>
+</div>

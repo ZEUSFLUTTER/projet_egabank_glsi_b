@@ -1,0 +1,59 @@
+<div class="accounts-container">
+  <!-- Barre de navigation -->
+  <nav class="navbar">
+    <div class="nav-brand">
+      <h2>🏦 EGA Bank</h2>
+    </div>
+    <div class="nav-user">
+      <span>Bienvenue, {{ userName }} !</span>
+      <button class="logout-btn" (click)="logout()">
+        <i class="fas fa-sign-out-alt"></i> Déconnexion
+      </button>
+    </div>
+  </nav>
+
+  <!-- Contenu principal -->
+  <main class="main-content">
+    <div class="header">
+      <h1>Mes Comptes</h1>
+    </div>
+
+    <!-- Debug temporaire -->
+    <p class="debug">Debug: {{ accounts.length }} comptes chargés</p>
+
+    <!-- Liste des comptes -->
+    <div class="accounts-list">
+      <div *ngIf="accounts.length === 0" class="empty-state">
+        <p>Vous n'avez aucun compte pour le moment.</p>
+        <a routerLink="/first-account" class="create-account-btn">
+          <i class="fas fa-plus"></i> Créer mon premier compte
+        </a>
+      </div>
+
+      <div *ngFor="let account of accounts; trackBy: trackById" class="account-card">
+        <div class="account-info">
+          <div class="account-icon">
+            <i class="fas fa-wallet"></i>
+          </div>
+          <div class="account-details">
+            <h3>{{ account.numeroCompte }}</h3>
+            <!-- ✅ Gestion des valeurs null -->
+            <p>Type : {{ account.type || 'Non défini' }}</p>
+            <p>Solde : {{ account.solde | currency:'XOF':'symbol':'1.2-2' }}</p>
+          </div>
+        </div>
+        <div class="account-actions">
+          <button (click)="goToTransactions(account.id)">Voir les transactions</button>
+          <button (click)="goToTransfer(account.id)">Faire un virement</button>
+          <button (click)="goToDeposit(account.id)">Déposer</button>
+          <button (click)="goToWithdraw(account.id)">Faire un retrait</button>  <!-- ✅ Bouton ajouté -->
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Pied de page -->
+  <footer class="footer">
+    <p>© 2026 EGA Bank - Tous droits réservés</p>
+  </footer>
+</div>

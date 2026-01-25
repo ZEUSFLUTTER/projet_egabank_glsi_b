@@ -1,0 +1,27 @@
+<div class="transfer-container">
+  <div class="header">
+    <button class="back-button" (click)="goBack()">← Retour à mes comptes</button>
+    <h2>Virement</h2>
+  </div>
+
+  <div class="form">
+    <div class="form-group">
+      <label for="sourceAccountId">Compte source</label>
+      <input type="text" id="sourceAccountId" [(ngModel)]="sourceAccountId" placeholder="ID du compte source" required>
+    </div>
+
+    <div class="form-group">
+      <label for="destinationAccountId">Compte destination</label>
+      <input type="text" id="destinationAccountId" [(ngModel)]="destinationAccountId" placeholder="ID du compte destination" required>
+    </div>
+
+    <div class="form-group">
+      <label for="amount">Montant</label>
+      <input type="number" id="amount" [(ngModel)]="amount" placeholder="Montant à transférer" required>
+    </div>
+
+    <button class="submit-button" (click)="onTransfer()">Effectuer le virement</button>
+  </div>
+
+  <div *ngIf="message" class="message">{{ message }}</div>
+</div>

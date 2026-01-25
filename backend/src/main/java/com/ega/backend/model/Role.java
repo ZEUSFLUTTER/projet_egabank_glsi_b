@@ -1,0 +1,6 @@
+package com.ega.backend.model;
+
+public enum Role {
+    CLIENT,
+    ADMIN
+}

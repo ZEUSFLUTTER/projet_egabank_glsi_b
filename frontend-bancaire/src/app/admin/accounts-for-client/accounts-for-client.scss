@@ -1,0 +1,177 @@
+.admin-client-accounts-container {
+  padding: 2rem;
+  max-width: 1000px;
+  margin: 0 auto;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+h2 {
+  text-align: center;
+  color: #2c3e50;
+}
+
+.back-btn {
+  background-color: #6c757d;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-bottom: 1rem;
+}
+
+.back-btn:hover {
+  background-color: #5a6268;
+}
+
+.accounts-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+
+.accounts-table th,
+.accounts-table td {
+  border: 1px solid #ccc;
+  padding: 0.75rem;
+  text-align: left;
+}
+
+.accounts-table th {
+  background-color: #34495e;
+  color: white;
+}
+
+.accounts-table tr:nth-child(even) {
+  background-color: #ecf0f1;
+}
+
+.active {
+  color: green;
+  font-weight: bold;
+}
+
+.inactive {
+  color: red;
+  font-weight: bold;
+}
+
+.btn {
+  padding: 0.3rem 0.6rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  margin-right: 0.25rem;
+}
+
+.btn-secondary {
+  background-color: #6c757d;
+  color: white;
+}
+
+.btn-secondary:hover {
+  background-color: #5a6268;
+}
+
+.btn-info {
+  background-color: #17a2b8;
+  color: white;
+}
+
+.btn-info:hover {
+  background-color: #138496;
+}
+
+.btn-primary {
+  background-color: #007bff;
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: #0069d9;
+}
+
+.btn-success {
+  background-color: #28a745;
+  color: white;
+}
+
+.btn-success:hover {
+  background-color: #218838;
+}
+
+.btn-warning {
+  background-color: #ffc107;
+  color: black;
+}
+
+.btn-warning:hover {
+  background-color: #e0a800;
+}
+
+.loading, .error, .empty-state {
+  text-align: center;
+  padding: 1rem;
+  font-style: italic;
+  color: #666;
+}
+
+.error {
+  color: #dc3545;
+}
+
+.create-account-section {
+  margin-top: 2rem;
+  padding: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+}
+
+.create-account-section label {
+  display: inline-block;
+  width: 150px;
+  margin-right: 0.5rem;
+}
+
+.create-account-section input, .create-account-section select {
+  padding: 0.3rem;
+  margin-right: 1rem;
+}
+
+/* Styles pour les opérations admin */
+.admin-operations {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.operation-form {
+  margin-top: 0.5rem;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #f9f9f9;
+}
+
+.operation-form .form-group {
+  margin-bottom: 0.5rem;
+}
+
+.operation-form .form-group label {
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+.operation-form .form-group input {
+  width: 100%;
+  padding: 0.25rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+.operation-form .btn {
+  margin-right: 0.25rem;
+}

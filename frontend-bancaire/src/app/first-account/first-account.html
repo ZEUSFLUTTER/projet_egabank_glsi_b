@@ -1,0 +1,57 @@
+<div class="first-account-container">
+  <!-- Barre de navigation -->
+  <nav class="navbar">
+    <div class="nav-brand">
+      <h2>🏦 EGA Bank</h2>
+    </div>
+    <div class="nav-user">
+      <span>Bienvenue, {{ userName }} !</span>
+      <button class="logout-btn" (click)="skip()">
+        <i class="fas fa-sign-out-alt"></i> Passer
+      </button>
+    </div>
+  </nav>
+
+  <!-- Contenu principal -->
+  <main class="main-content">
+    <div class="welcome-section">
+      <h1>Créer votre premier compte</h1>
+      <p>Commencez à gérer vos finances dès maintenant</p>
+    </div>
+
+    <div class="account-form">
+      <div class="form-card">
+        <h2>Informations du compte</h2>
+        
+        <div class="form-group">
+          <label>Type de compte</label>
+          <select [(ngModel)]="newAccountType">
+            <option value="courant">Compte courant</option>
+            <option value="epargne">Compte épargne</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Solde initial</label>
+          <input 
+            type="number" 
+            [(ngModel)]="newAccountBalance" 
+            placeholder="0.00" 
+            min="0"
+            step="0.01"
+          >
+        </div>
+
+        <div class="form-actions">
+          <button class="secondary-btn" (click)="skip()">Passer pour l'instant</button>
+          <button class="primary-btn" (click)="createFirstAccount()">Créer mon compte</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Pied de page -->
+  <footer class="footer">
+    <p>© 2026 EGA Bank - Tous droits réservés</p>
+  </footer>
+</div>

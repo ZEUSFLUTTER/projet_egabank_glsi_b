@@ -1,0 +1,36 @@
+.bank-card {
+    border-radius: 24px;
+    color: white;
+    min-height: 220px;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s ease;
+
+    &:hover { transform: translateY(-5px); }
+
+    &.card-blue { background: linear-gradient(135deg, #0d6efd 0%, #003d99 100%); }
+    &.card-dark { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); }
+
+    .card-type { font-size: 0.8rem; opacity: 0.8; font-weight: 600; text-transform: uppercase; }
+    .card-number { font-family: 'Courier New', Courier, monospace; letter-spacing: 2px; font-size: 1.1rem; }
+    .card-balance {
+        margin-top: 20px;
+        .label { font-size: 0.75rem; opacity: 0.7; }
+        .amount { font-size: 2.2rem; font-weight: 800; }
+    }
+}
+
+.icon-circle {
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 15px;
+    font-size: 1.5rem;
+}
+
+.quick-action-btn {
+    transition: all 0.2s ease;
+    &:active { transform: scale(0.95); }
+}

@@ -1,0 +1,120 @@
+<div *ngIf="account" class="animate__animated animate__fadeIn">
+  <div class="mb-4">
+    <h2 class="fw-bold text-dark">Détails du Compte</h2>
+    <p class="text-muted">{{ account.client.prenom }} {{ account.client.nom }}</p>
+  </div>
+
+  <div class="row g-4">
+    <!-- BLOC INFORMATION COMPTE -->
+    <div class="col-md-8">
+      <div class="card border-0 shadow-sm p-4 rounded-4 bg-white h-100">
+        <h5 class="fw-bold mb-4">Informations du compte</h5>
+        <div class="row mb-4">
+          <div class="col-6">
+            <div class="extra-small text-muted fw-bold text-uppercase">IBAN</div>
+            <div class="small font-monospace fw-bold">{{ account.numCompte }}</div>
+          </div>
+          <div class="col-6">
+            <div class="extra-small text-muted fw-bold text-uppercase">Type</div>
+            <div class="small fw-bold">{{ account.decouvert !== undefined ? 'Compte Courant' : 'Compte Épargne' }}</div>
+          </div>
+        </div>
+
+        <div class="p-4 bg-primary-subtle rounded-4 mb-4 border border-primary-subtle">
+          <div class="extra-small text-primary fw-bold">SOLDE ACTUEL</div>
+          <div class="display-5 fw-bold text-primary">{{ account.solde | number:'1.2-2' }} {{ account.devis }}</div>
+        </div>
+
+        <!-- GESTION DU STATUT ET ACTIONS DE COMPTE -->
+        <div class="d-flex align-items-center gap-2">
+            <!-- Badge de statut dynamique -->
+            <span class="badge rounded-pill px-3 py-2" 
+                  [ngClass]="{
+                    'bg-success-subtle text-success': account.status === 'ACTIVATED', 
+                    'bg-warning-subtle text-warning': account.status === 'SUSPENDED',
+                    'bg-dark text-white': account.status === 'CLOSED'
+                  }">
+              <i class="bi bi-circle-fill me-1 small"></i>
+              {{ account.status === 'ACTIVATED' ? 'Compte Actif' : account.status === 'SUSPENDED' ? 'Compte Suspendu' : 'Compte Clôturé' }}
+            </span>
+
+            <!-- Actions réservées aux comptes NON CLÔTURÉS -->
+            <ng-container *ngIf="account.status !== 'CLOSED'">
+                <button class="btn btn-sm btn-outline-secondary rounded-pill px-3 ms-2" 
+                        (click)="toggleAccountStatus()">
+                  {{ account.status === 'ACTIVATED' ? 'Bloquer' : 'Réactiver' }}
+                </button>
+                
+                <button class="btn btn-sm btn-danger rounded-pill px-3" 
+                        (click)="closeAccount()">
+                  <i class="bi bi-x-circle me-1"></i> Clôturer le compte
+                </button>
+            </ng-container>
+
+            <span class="badge bg-light text-muted border px-3 py-2 ms-auto">Créé le {{ account.createdAt | date:'dd/MM/yyyy' }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- BLOC ACTIONS RAPIDES (Désactivées si compte fermé) -->
+    <div class="col-md-4">
+      <div class="card border-0 shadow-sm p-4 rounded-4 h-100">
+        <h5 class="fw-bold mb-4">Actions rapides</h5>
+        <div class="d-grid gap-3">
+          <button (click)="handleOperation('CREDIT')" 
+                  [disabled]="account.status === 'CLOSED'"
+                  class="btn btn-primary py-3 rounded-3 fw-bold shadow-sm">
+            <i class="bi bi-download me-2"></i> Versement
+          </button>
+          
+          <button (click)="handleOperation('DEBIT')" 
+                  [disabled]="account.status === 'CLOSED'"
+                  class="btn btn-outline-secondary py-3 rounded-3 fw-bold border-2">
+            <i class="bi bi-upload me-2"></i> Retrait
+          </button>
+              
+          <button (click)="handleVirement()" 
+                  [disabled]="account.status === 'CLOSED'"
+                  class="btn btn-outline-secondary py-3 rounded-3 fw-bold border-2">
+            <i class="bi bi-arrow-left-right me-2"></i> Virement
+          </button>
+
+          <a [routerLink]="['/admin/releves']" class="btn btn-light py-3 rounded-3 fw-bold text-muted border">
+            <i class="bi bi-file-earmark-pdf me-2"></i> Imprimer Relevé
+          </a>
+        </div>
+        
+        <div *ngIf="account.status === 'CLOSED'" class="alert alert-light border-0 small text-center mt-3 mb-0">
+            <i class="bi bi-info-circle me-1"></i> Ce compte est fermé. Aucune transaction n'est possible.
+        </div>
+      </div>
+    </div>
+
+    <!-- TABLEAU DES DERNIÈRES TRANSACTIONS -->
+    <div class="col-12">
+      <div class="card border-0 shadow-sm p-4 rounded-4 mt-2">
+        <h5 class="fw-bold mb-4">Transactions récentes</h5>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <tbody>
+                    
+                    <tr *ngFor="let op of account.operations | slice:0:5">
+                        <td class="py-3">
+                            <i [class]="$any(op).typeOperation === 'CREDIT' ? 'bi bi-arrow-down-left text-success' : 'bi bi-arrow-up-right text-danger'" class="fs-4 me-3"></i>
+                            <span class="fw-bold small">{{ $any(op).description }}</span>
+                        </td>
+                        <td class="text-muted small">{{ $any(op).dateOperation | date:'dd MMM yyyy, HH:mm' }}</td>
+                        <td [class]="$any(op).typeOperation === 'CREDIT' ? 'text-success' : 'text-danger'" class="text-end fw-bold">
+                            {{ $any(op).typeOperation === 'CREDIT' ? '+' : '-' }} {{ $any(op).montant | number:'1.2-2' }}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <div *ngIf="account.operations?.length === 0" class="text-center p-4 text-muted">
+                Aucune transaction enregistrée pour ce compte.
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

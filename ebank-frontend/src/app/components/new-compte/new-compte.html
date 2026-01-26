@@ -1,0 +1,44 @@
+<div class="mb-4">
+  <h2 class="fw-bold text-dark">Ouvrir un nouveau compte</h2>
+  <p class="text-muted small">Configuration du compte pour le client ID: #{{clientId}}</p>
+</div>
+
+<div class="card border-0 shadow-sm p-5 rounded-4 mx-auto" style="max-width: 700px;">
+  <form [formGroup]="compteForm" (ngSubmit)="handleSave()">
+    <div class="row g-4">
+      <!-- Type de compte -->
+      <div class="col-md-12">
+        <label class="form-label small fw-bold text-muted">TYPE DE COMPTE</label>
+        <select formControlName="type" class="form-select form-select-lg bg-light border-0">
+          <option value="COURANT">Compte Courant (avec Découvert)</option>
+          <option value="EPARGNE">Compte Épargne (avec Taux d'intérêt)</option>
+        </select>
+      </div>
+
+      <!-- Devise -->
+      <div class="col-md-12">
+        <label class="form-label small fw-bold text-muted">DEVISE</label>
+        <input type="text" formControlName="devis" class="form-control bg-light border-0" readonly>
+      </div>
+
+      <!-- Champ dynamique : Découvert (si Courant) -->
+      <div class="col-md-12" *ngIf="compteForm.value.type === 'COURANT'">
+        <label class="form-label small fw-bold text-muted">AUTORISATION DE DÉCOUVERT (CFA)</label>
+        <input type="number" formControlName="decouvert" class="form-control form-control-lg bg-light border-0" placeholder="Ex: 50000">
+      </div>
+
+      <!-- Champ dynamique : Taux (si Epargne) -->
+      <div class="col-md-12" *ngIf="compteForm.value.type === 'EPARGNE'">
+        <label class="form-label small fw-bold text-muted">TAUX D'INTÉRÊT (%)</label>
+        <input type="number" formControlName="tauxInteret" class="form-control form-control-lg bg-light border-0" placeholder="Ex: 3.5">
+      </div>
+    </div>
+
+    <div class="d-flex justify-content-end gap-3 mt-5">
+      <a [routerLink]="['/admin/client-details', clientId]" class="btn btn-light px-4 rounded-pill fw-bold">Annuler</a>
+      <button [disabled]="compteForm.invalid" type="submit" class="btn btn-primary px-5 rounded-pill fw-bold shadow-sm">
+        <i class="bi bi-check2-circle me-2"></i>Confirmer l'ouverture
+      </button>
+    </div>
+  </form>
+</div>

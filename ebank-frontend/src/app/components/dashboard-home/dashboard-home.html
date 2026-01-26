@@ -1,0 +1,113 @@
+<div class="dashboard-wrapper animate__animated animate__fadeIn p-3">
+
+  <!--  VUE CLIENT                       -->
+  <div *ngIf="authService.isUser()">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <div>
+        <h2 class="fw-bold mb-1 text-dark">Ravi de vous revoir ! 👋</h2>
+        <p class="text-muted small">Voici l'état de vos finances aujourd'hui.</p>
+      </div>
+      <span class="badge bg-success-subtle text-success border border-success rounded-pill px-3 py-2">
+        SESSION SÉCURISÉE
+      </span>
+    </div>
+
+    <!-- Actions Rapides -->
+    <div class="row g-4 mb-5">
+      <div class="col-md-4" *ngFor="let act of quickActions">
+        <div class="action-card text-center p-4 shadow-sm bg-white rounded-4 border-0" [routerLink]="act.link">
+          <div class="icon-circle mb-3 mx-auto" [ngClass]="act.colorClass">
+            <i [class]="act.icon + ' fs-3'"></i>
+          </div>
+          <div class="fw-bold">{{ act.label }}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mes Comptes () -->
+    <h5 class="fw-bold mb-3">Mes Comptes</h5>
+    <div class="row g-4 mb-5">
+      <div class="col-md-6" *ngFor="let acc of myAccounts">
+        <div class="fintech-card p-4 shadow-lg text-white" [ngClass]="acc.decouvert !== undefined ? 'grad-blue' : 'grad-dark'">
+          <div class="d-flex justify-content-between mb-5">
+            <div>
+              <div class="card-label small opacity-75">{{ acc.decouvert !== undefined ? 'COMPTE COURANT' : 'COMPTE ÉPARGNE' }}</div>
+              <div class="card-iban font-monospace">{{ acc.numCompte }}</div>
+            </div>
+            <i class="bi bi-cpu fs-1 opacity-25"></i>
+          </div>
+          <div class="card-balance">
+            <div class="amount">{{ acc.solde | number:'1.2-2' }} <span class="fs-4">CFA</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Transactions Récentes (Client) -->
+    <div class="mt-5">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h5 class="fw-bold m-0">Transactions Récentes</h5>
+        <a routerLink="/admin/releves" class="btn btn-link text-decoration-none fw-bold">Voir tout</a>
+      </div>
+
+      <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+        <div class="table-responsive">
+          <table class="table table-hover align-middle mb-0">
+            <thead class="bg-light">
+              <tr class="extra-small text-muted fw-bold">
+                <th class="ps-4">DESCRIPTION</th>
+                <th>DATE</th>
+                <th class="text-end pe-4">MONTANT</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let tr of recentTransactions">
+                <td class="ps-4 py-3">
+                  <div class="d-flex align-items-center">
+                    <div class="icon-circle-small me-3 shadow-sm" [ngClass]="tr.typeOperation === 'CREDIT' ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger'">
+                      <i [class]="tr.typeOperation === 'CREDIT' ? 'bi bi-arrow-down-left' : 'bi bi-arrow-up-right'"></i>
+                    </div>
+                    <span class="fw-bold small">{{tr.description}}</span>
+                  </div>
+                </td>
+                <td class="text-muted small">{{tr.dateOperation | date:'dd MMM yyyy'}}</td>
+                <td class="text-end pe-4 fw-bold" [ngClass]="tr.typeOperation === 'CREDIT' ? 'text-success' : 'text-danger'">
+                  {{tr.typeOperation === 'CREDIT' ? '+' : '-'}} {{tr.montant | number}} CFA
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <div *ngIf="recentTransactions.length === 0" class="text-center p-5 text-muted">Aucune activité récente.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!--VUE ADMINISTRATEUR (Stats globales)            -->
+  <div *ngIf="authService.isAdmin()">
+    <h2 class="fw-bold mb-4 text-dark">Tableau de bord Administrateur</h2>
+    
+    <div class="row g-4 mb-5">
+      <div class="col-md-4" *ngFor="let card of summaryCards">
+        <div class="card p-4 border-0 shadow-sm rounded-4">
+          <i [class]="card.icon + ' fs-1 mb-2 ' + card.bgClass + ' text-white p-2 rounded-3'"></i>
+          <h3 class="fw-bold">{{card.value}}</h3>
+          <p class="text-muted m-0">{{card.title}}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card border-0 shadow-sm rounded-4 p-4">
+        <h5 class="fw-bold mb-4">Flux récents (Global)</h5>
+        <!--  -->
+        <div *ngIf="recentTransactions.length === 0" class="text-center text-muted">En attente de transactions...</div>
+        <table class="table table-hover" *ngIf="recentTransactions.length > 0">
+            <tr *ngFor="let tr of recentTransactions">
+                <td>{{tr.description}}</td>
+                <td class="fw-bold">{{tr.montant | number}} CFA</td>
+            </tr>
+        </table>
+    </div>
+  </div>
+
+</div>

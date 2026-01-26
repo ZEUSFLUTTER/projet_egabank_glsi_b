@@ -1,0 +1,117 @@
+<!-- EN-TÊTE-->
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+  <div>
+    <h2 class="fw-bold text-dark mb-1">Gestion des Clients</h2>
+    <p class="text-muted small mb-0">Consultez et gérez la liste complète des clients.</p>
+  </div>
+  <div>
+    <a routerLink="/admin/new-client" class="btn btn-primary px-4 py-2 rounded shadow-sm w-100 w-md-auto">
+      <i class="bi bi-person-plus-fill me-2"></i>Nouveau Client
+    </a>
+  </div>
+</div>
+
+<div class="card border-0 shadow-sm rounded-3">
+  <div class="card-body p-0"> 
+    
+    <!-- BARRE D'OUTILS DATATABLE  -->
+    <div class="p-4 border-bottom">
+      <div class="row g-3 align-items-center">
+        <div class="col-12 col-md-6 d-flex align-items-center">
+          <span class="me-2 small text-muted">Afficher</span>
+          <select class="form-select form-select-sm border w-auto" [(ngModel)]="pageSize" (change)="onPageSizeChange()">
+            <option [ngValue]="5">5</option>
+            <option [ngValue]="10">10</option>
+            <option [ngValue]="25">25</option>
+          </select>
+          <span class="ms-2 small text-muted">entrées</span>
+        </div>
+
+        <div class="col-12 col-md-6 d-flex justify-content-md-end align-items-center">
+          <span class="me-2 small text-muted">Rechercher:</span>
+          <div class="input-group input-group-sm w-100 w-md-auto" style="max-width: 300px;">
+            <span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-muted"></i></span>
+            <input type="text" class="form-control border-start-0 ps-0" 
+                   [(ngModel)]="keyword" (keyup)="applyFilterAndPagination()" placeholder="Filtrer...">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TABLEAU -->
+    <div class="table-responsive">
+      <table class="table table-hover mb-0">
+        <thead class="bg-light">
+          <tr class="small text-uppercase fw-bold text-secondary">
+            <th class="ps-4 py-3 border-0">Nom & Prénom</th>
+            <th class="py-3 border-0 text-center">Âge</th>
+            <th class="py-3 border-0">Nationalité</th>
+            <th class="py-3 border-0">Email / Téléphone</th>
+            <th class="py-3 border-0 text-end pe-4">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let c of pagedClients">
+            <td class="ps-4 py-3 fw-medium text-dark">{{c.nom}} {{c.prenom}}</td>
+            <td class="py-3 text-center">30</td>
+            <td class="py-3 text-secondary">{{c.nationalite || 'Togolaise'}}</td>
+            <td class="py-3">
+              <div class="small fw-bold">{{c.email}}</div>
+              <div class="extra-small text-muted">{{c.telephone}}</div>
+            </td>
+            <td class="py-3 text-end pe-4">
+              <!-- MENU ACTION -->
+              <div class="dropdown">
+                <button class="btn btn-link text-primary p-0 text-decoration-none fw-bold" type="button" data-bs-toggle="dropdown">
+                  <i class="bi bi-three-dots fs-5"></i>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end shadow border-0 p-2">
+  <li>    
+    <a [routerLink]="['/admin/client-details', c.id]" class="dropdown-item py-2 small rounded">
+      <i class="bi bi-eye me-2 text-primary"></i> Voir détails
+    </a>
+  </li>
+  <li>
+    <a [routerLink]="['/admin/edit-client', c.id]" class="dropdown-item py-2 small rounded">
+      <i class="bi bi-pencil me-2 text-warning"></i> Modifier
+    </a>
+  </li>
+  <li><hr class="dropdown-divider"></li>
+  <li>
+    <!--  -->
+    <button (click)="handleDeleteClient(c)" class="dropdown-item py-2 small rounded text-danger">
+      <i class="bi bi-trash me-2"></i> Supprimer
+    </button>
+  </li>
+</ul>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- FOOTER DATATABLE  -->
+    <div class="p-4 border-top">
+      <div class="row g-3 align-items-center">
+        <div class="col-12 col-md-6 text-center text-md-start small text-muted">
+          Affichage de 1 à {{pagedClients.length}} sur {{filteredClients.length}} entrées
+        </div>
+        <div class="col-12 col-md-6 d-flex justify-content-center justify-content-md-end">
+          <nav>
+            <ul class="pagination pagination-sm m-0">
+              <li class="page-item" [class.disabled]="currentPage === 1">
+                <button class="page-link" (click)="onPageChange(currentPage - 1)"><i class="bi bi-chevron-left"></i></button>
+              </li>
+              <li class="page-item active"><a class="page-link">{{currentPage}}</a></li>
+              <li class="page-item" [class.disabled]="pagedClients.length < pageSize">
+                <button class="page-link" (click)="onPageChange(currentPage + 1)"><i class="bi bi-chevron-right"></i></button>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

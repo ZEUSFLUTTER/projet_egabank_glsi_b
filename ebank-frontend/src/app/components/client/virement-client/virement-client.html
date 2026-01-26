@@ -1,0 +1,25 @@
+<div class="container py-4">
+    <div class="card border-0 shadow-sm rounded-4 p-4 mx-auto" style="max-width: 500px;">
+        <h4 class="fw-bold mb-4 text-center">Effectuer un Transfert</h4>
+        <form [formGroup]="transferForm" (ngSubmit)="onTransfer()">
+            <div class="mb-3">
+                <label class="form-label small fw-bold">COMPTE À DÉBITER</label>
+                <select formControlName="numCompte" class="form-select bg-light border-0 py-2">
+                    <option value="">Sélectionner votre compte</option>
+                    <option *ngFor="let a of myAccounts" [value]="a.numCompte">{{a.numCompte}} ({{a.solde}} CFA)</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label class="form-label small fw-bold">IBAN DU BÉNÉFICIAIRE</label>
+                <input type="text" formControlName="numCompteDest" class="form-control bg-light border-0 py-2" placeholder="FR76...">
+            </div>
+            <div class="mb-4">
+                <label class="form-label small fw-bold">MONTANT DU TRANSFERT (CFA)</label>
+                <input type="number" formControlName="montant" class="form-control bg-light border-0 py-3 fw-bold text-primary fs-4">
+            </div>
+            <button [disabled]="transferForm.invalid" class="btn btn-primary w-100 py-3 rounded-pill fw-bold shadow">
+                Confirmer le Virement
+            </button>
+        </form>
+    </div>
+</div>

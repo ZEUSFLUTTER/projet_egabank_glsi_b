@@ -1,0 +1,68 @@
+<div class="container py-5 animate__animated animate__fadeIn">
+  <div class="card border-0 shadow-lg rounded-4 overflow-hidden mx-auto" style="max-width: 600px;">
+    
+    <!-- En-tête  -->
+    <div class="bg-primary p-4 text-white text-center">
+      <h3 class="fw-bold mb-1">Alimenter mon compte</h3>
+      <p class="opacity-75 small mb-0">Rechargez votre compte via nos partenaires sécurisés</p>
+    </div>
+
+    <div class="p-4 p-md-5 bg-white">
+      <form [formGroup]="depotForm" (ngSubmit)="handleDepot()">
+        
+        <!-- CHOIX DU COMPTE DESTINATION -->
+        <label class="form-label small fw-bold text-primary mb-3">1. COMPTE À CRÉDITER (EGA BANK)</label>
+        <div class="row g-3 mb-4">
+          <div class="col-6" *ngFor="let acc of myAccounts">
+            <input type="radio" class="btn-check" name="numCompte" [id]="acc.numCompte" [value]="acc.numCompte" formControlName="numCompte">
+            <label class="btn btn-outline-primary w-100 p-3 rounded-4 text-start shadow-sm" [for]="acc.numCompte">
+              <div class="extra-small opacity-75">{{ acc.decouvert !== undefined ? 'COURANT' : 'ÉPARGNE' }}</div>
+              <div class="fw-bold small">{{ acc.solde | number }} CFA</div>
+              <div class="extra-small font-monospace">{{ acc.numCompte.substring(0,10) }}...</div>
+            </label>
+          </div>
+        </div>
+
+        <!-- SOURCE DE L'ARGENT  -->
+        <label class="form-label small fw-bold text-primary mb-3">2. SOURCE DES FONDS (EXTERNE)</label>
+        <div class="row g-3 mb-4">
+          <div class="col-4">
+            <input type="radio" class="btn-check" name="source" id="tmoney" value="TMONEY" formControlName="source">
+            <label class="btn btn-outline-warning w-100 p-2 rounded-3 text-center" for="tmoney">
+              <div class="fw-bold small">T-Money</div>
+            </label>
+          </div>
+          <div class="col-4">
+            <input type="radio" class="btn-check" name="source" id="flooz" value="FLOOZ" formControlName="source">
+            <label class="btn btn-outline-danger w-100 p-2 rounded-3 text-center" for="flooz">
+              <div class="fw-bold small">Flooz</div>
+            </label>
+          </div>
+          <div class="col-4">
+            <input type="radio" class="btn-check" name="source" id="visa" value="VISA_CARD" formControlName="source">
+            <label class="btn btn-outline-dark w-100 p-2 rounded-3 text-center" for="visa">
+              <div class="fw-bold small">Carte Visa</div>
+            </label>
+          </div>
+        </div>
+
+        <!-- MONTANT -->
+        <div class="mb-4">
+          <label class="form-label small fw-bold text-primary">3. MONTANT À RECHARGER (CFA)</label>
+          <div class="input-group input-group-lg">
+            <input type="number" formControlName="montant" class="form-control border-0 bg-light rounded-start-4 py-3 fw-bold text-center" placeholder="Ex: 5000">
+            <span class="input-group-text border-0 bg-light rounded-end-4 fw-bold text-muted">CFA</span>
+          </div>
+          <div class="form-text text-center mt-2 small italic">Frais de transaction : 0 CFA (Offert)</div>
+        </div>
+
+        <!-- BOUTON VALIDATION -->
+        <button [disabled]="depotForm.invalid || loading" class="btn btn-primary w-100 py-3 rounded-pill fw-bold shadow-lg mt-3">
+          <span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span>
+          {{ loading ? 'Communication avec le partenaire...' : 'Confirmer la recharge' }}
+        </button>
+
+      </form>
+    </div>
+  </div>
+</div>

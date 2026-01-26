@@ -1,0 +1,24 @@
+.icon-box-small {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+}
+
+.extra-small {
+  font-size: 0.65rem;
+  letter-spacing: 0.5px;
+}
+
+table thead th {
+  font-size: 0.75rem;
+  padding: 15px 10px;
+  border: none;
+}
+
+.card-header {
+  border-bottom: 1px solid #f1f5f9 !important;
+}

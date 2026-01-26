@@ -1,0 +1,43 @@
+<div class="container-fluid animate__animated animate__fadeIn">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold">Historique des Transactions</h2>
+    <select [(ngModel)]="selectedAccount" (change)="loadHistory()" class="form-select w-auto rounded-pill border-0 shadow-sm px-4">
+      <option *ngFor="let acc of myAccounts" [value]="acc.numCompte">{{ acc.numCompte }}</option>
+    </select>
+  </div>
+
+  <div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white">
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="bg-light-subtle">
+          <tr class="extra-small text-muted fw-bold">
+            <th class="ps-4">ACTIVITÉ</th>
+            <th>STATUT</th>
+            <th>DATE</th>
+            <th class="text-end pe-4">MONTANT</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let op of transactions">
+            <td class="ps-4">
+              <div class="d-flex align-items-center">
+                <div class="icon-circle me-3" [ngClass]="op.typeOperation === 'CREDIT' ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger'">
+                  <i [class]="op.typeOperation === 'CREDIT' ? 'bi bi-arrow-down-left' : 'bi bi-arrow-up-right'"></i>
+                </div>
+                <div>
+                  <div class="fw-bold small">{{ op.description }}</div>
+                  <div class="text-muted extra-small">ID: {{ op.numOperation }}</div>
+                </div>
+              </div>
+            </td>
+            <td><span class="badge bg-success-subtle text-success rounded-pill px-3">Complété</span></td>
+            <td class="small text-muted">{{ op.dateOperation | date:'dd-MM-yyyy HH:mm' }}</td>
+            <td class="text-end pe-4 fw-bold" [ngClass]="op.typeOperation === 'CREDIT' ? 'text-success' : 'text-danger'">
+              {{ op.typeOperation === 'CREDIT' ? '+' : '-' }} {{ op.montant | number }} CFA
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,89 @@
+<div class="d-flex" id="wrapper">
+  <!-- Sidebar -->
+  <div class="sidebar-custom text-white p-3 shadow" [class.collapsed]="isCollapsed" id="sidebar-wrapper">
+    
+    <div class="sidebar-heading text-center py-4 border-bottom border-white-50 mb-3">
+      <i class="bi" [ngClass]="authService.isAdmin() ? 'bi-bank2' : 'bi-person-badge'"></i> 
+      <span *ngIf="!isCollapsed" class="ms-2 fw-bold fs-5">
+        {{ authService.isAdmin() ? 'EGA ADMIN' : 'ESPACE CLIENT' }}
+      </span>
+    </div>
+    
+    <div class="list-group list-group-flush mt-2">
+      
+      <!-- LIEN COMMUN : TABLEAU DE BORD -->
+      <a routerLink="/admin/home" routerLinkActive="active-link" class="list-group-item list-group-item-action bg-transparent text-white border-0 py-3 rounded d-flex align-items-center">
+        <i class="bi bi-grid-fill fs-5" [class.me-3]="!isCollapsed"></i>
+        <span *ngIf="!isCollapsed">Tableau de bord</span>
+      </a>
+
+      <!--  ESPACE ADMINISTRATEUR -->
+      <ng-container *ngIf="authService.isAdmin()">
+        <a routerLink="/admin/clients" routerLinkActive="active-link" class="list-group-item list-group-item-action bg-transparent text-white border-0 py-3 rounded d-flex align-items-center">
+          <i class="bi bi-people-fill fs-5" [class.me-3]="!isCollapsed"></i>
+          <span *ngIf="!isCollapsed">Gestion Clients</span>
+        </a>
+        <a routerLink="/admin/comptes" routerLinkActive="active-link" class="list-group-item list-group-item-action bg-transparent text-white border-0 py-3 rounded d-flex align-items-center">
+          <i class="bi bi-wallet2 fs-5" [class.me-3]="!isCollapsed"></i>
+          <span *ngIf="!isCollapsed">Comptes Bancaires</span>
+        </a>
+       
+        <a routerLink="/admin/operations" routerLinkActive="active-link" class="list-group-item list-group-item-action bg-transparent text-white border-0 py-3 rounded d-flex align-items-center">
+          <i class="bi bi-arrow-left-right fs-5" [class.me-3]="!isCollapsed"></i>
+          <span *ngIf="!isCollapsed">Journal des Transactions</span>
+        </a>
+      </ng-container>
+
+      <!--  ESPACE CLIENT -->
+      <ng-container *ngIf="authService.isUser()">
+        <a routerLink="/admin/mes-comptes" routerLinkActive="active-link" class="list-group-item list-group-item-action bg-transparent text-white border-0 py-3 rounded d-flex align-items-center">
+          <i class="bi bi-person-lines-fill fs-5" [class.me-3]="!isCollapsed"></i>
+          <span *ngIf="!isCollapsed">Mes Comptes</span>
+        </a>
+        
+        <a routerLink="/admin/depot-client" routerLinkActive="active-link" class="list-group-item list-group-item-action bg-transparent text-white border-0 py-3 rounded d-flex align-items-center">
+    <i class="bi bi-plus-circle-fill me-3"></i><span>Dépôt</span>
+  </a>
+  <a routerLink="/admin/retrait-client" routerLinkActive="active-link" class="list-group-item list-group-item-action bg-transparent text-white border-0 py-3 rounded d-flex align-items-center">
+    <i class="bi bi-dash-circle-fill me-3"></i><span>Retrait</span>
+  </a>
+        <a routerLink="/admin/virement-client" routerLinkActive="active-link" class="list-group-item list-group-item-action bg-transparent text-white border-0 py-3 rounded d-flex align-items-center">
+          <i class="bi bi-send-fill fs-5" [class.me-3]="!isCollapsed"></i>
+          <span *ngIf="!isCollapsed">Virement</span>
+        </a>
+        <!--  Historique propre au client -->
+        <a routerLink="/admin/historique-client" routerLinkActive="active-link" class="list-group-item list-group-item-action bg-transparent text-white border-0 py-3 rounded d-flex align-items-center">
+          <i class="bi bi-clock-history fs-5" [class.me-3]="!isCollapsed"></i>
+          <span *ngIf="!isCollapsed">Mon Historique</span>
+        </a>
+      </ng-container>
+
+      <!--  RELEVÉS (Commun) -->
+      <a routerLink="/admin/releves" routerLinkActive="active-link" class="list-group-item list-group-item-action bg-transparent text-white border-0 py-3 rounded d-flex align-items-center">
+        <i class="bi bi-file-earmark-text-fill fs-5" [class.me-3]="!isCollapsed"></i>
+        <span *ngIf="!isCollapsed">Relevés</span>
+      </a>
+      
+      <!--  DÉCONNEXION -->
+      <div class="mt-5 pt-4">
+        <button (click)="handleLogout()" class="btn btn-link text-white-50 text-decoration-none w-100 text-start ps-3 d-flex align-items-center">
+          <i class="bi bi-box-arrow-right fs-5" [class.me-3]="!isCollapsed"></i>
+          <span *ngIf="!isCollapsed">Déconnexion</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!--  (Navbar + RouterOutlet) -->
+  <div id="page-content-wrapper" class="w-100 bg-light">
+    <nav class="navbar navbar-light bg-white border-bottom p-3 shadow-sm">
+      <div class="container-fluid">
+        <button class="btn btn-light" (click)="toggleSidebar()"><i class="bi bi-list fs-4"></i></button>
+        <span class="ms-auto fw-bold text-primary">{{ authService.isAdmin() ? 'ADMIN' : 'CLIENT' }}</span>
+      </div>
+    </nav>
+    <div class="container-fluid p-4">
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+</div>

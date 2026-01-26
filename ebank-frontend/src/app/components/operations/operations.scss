@@ -1,0 +1,60 @@
+.label-premium {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-left: 5px;
+  margin-bottom: 5px;
+  display: block;
+}
+
+.select-premium, .input-premium {
+  border: 1px solid #f1f5f9;
+  background-color: #f8fafc;
+  border-radius: 12px;
+  font-size: 0.9rem;
+  padding: 10px 15px;
+  &:focus {
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+    border-color: #3b82f6;
+    outline: none;
+  }
+}
+
+.table-header-premium th {
+  background-color: #fcfcfc;
+  color: #94a3b8;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  padding: 20px 10px;
+  border: none;
+}
+
+.transaction-row {
+  border-bottom: 1px solid #f8fafc;
+  transition: background-color 0.2s;
+  &:hover { background-color: #f8fafc !important; }
+}
+
+.icon-circle {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+}
+
+.badge-premium {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 6px 14px;
+  border-radius: 10px;
+  &.badge-success { background: #dcfce7; color: #166534; }
+  &.badge-danger { background: #fee2e2; color: #991b1b; }
+}
+
+.extra-small { font-size: 0.7rem; }

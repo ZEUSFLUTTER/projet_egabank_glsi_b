@@ -1,0 +1,65 @@
+/* Import de la police Fintech par excellence */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: #f8fafc;
+  color: #1e293b;
+}
+
+/* Couleurs de fond pour les icônes des cartes */
+.bg-blue-light { background-color: #eff6ff; }
+.bg-green-light { background-color: #f0fdf4; }
+.bg-cyan-light { background-color: #ecfeff; }
+.bg-orange-light { background-color: #fffbeb; }
+
+/* Design des Cartes Premium */
+.card {
+  border: none !important;
+  border-radius: 20px !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1) !important;
+  
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1) !important;
+  }
+}
+
+.search-bar input:focus { outline: none; }
+
+
+
+
+
+
+
+
+
+// /* Couleurs de fond pour les icônes des cartes */
+// .bg-blue-light { background-color: #e0e7ff; }
+// .bg-green-light { background-color: #dcfce7; }
+// .bg-cyan-light { background-color: #ecfeff; }
+// .bg-orange-light { background-color: #fef3c7; }
+
+// /* Ombre douce pour les cartes */
+// .card {
+//   border: none;
+//   border-radius: 16px !important;
+//   transition: all 0.3s ease;
+//   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  
+//   &:hover {
+//     transform: translateY(-5px);
+//     box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+//   }
+// }
+
+// /* Barre de recherche sans bordure moche */
+// .search-bar input:focus {
+//   outline: none;
+// }
+
+// body {
+//   background-color: #f8fafc;
+// }

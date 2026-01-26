@@ -1,0 +1,78 @@
+/* --- STYLE ÉCRAN --- */
+.page-a4 {
+  width: 210mm;
+  min-height: 297mm;
+  background: white;
+  margin: auto;
+  position: relative;
+}
+
+.logo-box {
+  width: 60px;
+  height: 60px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #0d6efd;
+}
+
+.extra-small {
+  font-size: 0.7rem;
+  letter-spacing: 0.5px;
+}
+
+/* --- STYLE IMPRESSION (PDF) --- */
+@media print {
+  @page {
+    size: A4;
+    margin: 0;
+  }
+
+  /* Cacher l'interface Angular inutile */
+  body * {
+    visibility: hidden;
+  }
+  
+  /* Cacher la sidebar et les boutons */
+  .no-print, nav, .sidebar-custom, button, .no-print-bg {
+    display: none !important;
+  }
+
+  /* Afficher uniquement la feuille A4 */
+  #printable-area, #printable-area * {
+    visibility: visible;
+  }
+
+  /* Positionner la feuille pour remplir le PDF */
+  #printable-area {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    margin: 0;
+    padding: 15mm !important; /* Marge interne propre */
+    box-shadow: none !important;
+    border: none !important;
+  }
+
+  /* Forcer l'impression des couleurs de fond (Chrome/Edge/Firefox) */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  
+  .print-bg-primary {
+    background-color: #0d6efd !important;
+    color: white !important;
+  }
+  
+  .print-bg-light {
+    background-color: #f8f9fa !important;
+  }
+  
+  .print-color {
+    background-color: #0d6efd !important;
+    color: white !important;
+  }
+}

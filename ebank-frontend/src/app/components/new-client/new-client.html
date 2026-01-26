@@ -1,0 +1,68 @@
+<div class="mb-4">
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a routerLink="/admin/clients" class="text-decoration-none">Clients</a></li>
+      <li class="breadcrumb-item active">Nouveau Client</li>
+    </ol>
+  </nav>
+  <h2 class="fw-bold text-dark">Informations Client</h2>
+  <p class="text-muted small">Remplissez les champs ci-dessous pour créer un nouveau profil.</p>
+</div>
+
+<div class="card border-0 shadow-sm p-4 rounded-4">
+  <form [formGroup]="clientForm" (ngSubmit)="handleSaveClient()">
+    <div class="row g-4">
+      <!-- Prénom -->
+      <div class="col-md-6">
+        <label class="form-label small fw-bold text-muted">PRÉNOM *</label>
+        <input type="text" formControlName="prenom" class="form-control bg-light border-0 py-2" placeholder="Entrez le prénom">
+      </div>
+      <!-- Nom -->
+      <div class="col-md-6">
+        <label class="form-label small fw-bold text-muted">NOM *</label>
+        <input type="text" formControlName="nom" class="form-control bg-light border-0 py-2" placeholder="Entrez le nom de famille">
+      </div>
+      <!-- Email -->
+      <div class="col-md-6">
+        <label class="form-label small fw-bold text-muted">EMAIL *</label>
+        <input type="email" formControlName="email" class="form-control bg-light border-0 py-2" placeholder="exemple@mail.com">
+      </div>
+      <!-- Téléphone -->
+      <div class="col-md-6">
+        <label class="form-label small fw-bold text-muted">TÉLÉPHONE *</label>
+        <input type="text" formControlName="telephone" class="form-control bg-light border-0 py-2" placeholder="+228 XX XX XX XX">
+      </div>
+      <!-- Date de Naissance -->
+      <div class="col-md-6">
+        <label class="form-label small fw-bold text-muted">DATE DE NAISSANCE *</label>
+        <input type="date" formControlName="dateNaissance"  [max]="today" class="form-control bg-light border-0 py-2">
+      </div>
+      <!-- Genre -->
+      <div class="col-md-6">
+        <label class="form-label small fw-bold text-muted">GENRE *</label>
+        <select formControlName="sexe" class="form-select bg-light border-0 py-2">
+          <option value="M">Masculin (M)</option>
+          <option value="F">Féminin (F)</option>
+        </select>
+      </div>
+      <!-- Adresse -->
+      <div class="col-md-12">
+        <label class="form-label small fw-bold text-muted">ADRESSE COMPLÈTE *</label>
+        <input type="text" formControlName="adresse" class="form-control bg-light border-0 py-2" placeholder="N° Rue, Quartier, Ville">
+      </div>
+      <!-- Nationalité -->
+      <div class="col-md-12">
+        <label class="form-label small fw-bold text-muted">NATIONALITÉ *</label>
+        <input type="text" formControlName="nationalite" class="form-control bg-light border-0 py-2" placeholder="Ex: Togolaise">
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="d-flex justify-content-end gap-3 mt-5">
+      <a routerLink="/admin/clients" class="btn btn-light px-4 rounded-pill fw-bold">Annuler</a>
+      <button [disabled]="clientForm.invalid" type="submit" class="btn btn-primary px-5 rounded-pill fw-bold shadow-sm">
+        <i class="bi bi-save me-2"></i>Enregistrer le client
+      </button>
+    </div>
+  </form>
+</div>

@@ -1,0 +1,17 @@
+.btn-outline-primary:hover { color: white !important; }
+.extra-small { font-size: 0.65rem; }
+
+.btn-check:checked + label {
+    border-width: 2px;
+    box-shadow: 0 0.5rem 1rem rgba(13, 110, 253, 0.15) !important;
+}
+
+.input-group-lg .form-control {
+    font-size: 1.8rem;
+    &:focus { box-shadow: none; background-color: #f1f5f9; }
+}
+
+label.btn {
+    transition: all 0.2s ease;
+    &:active { transform: scale(0.98); }
+}

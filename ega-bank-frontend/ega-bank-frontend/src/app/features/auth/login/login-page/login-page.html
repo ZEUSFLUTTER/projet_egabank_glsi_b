@@ -1,0 +1,81 @@
+<div class="relative p-6 bg-white z-1 dark:bg-gray-900 sm:p-0">
+    <div class="relative flex flex-col justify-center w-full h-screen lg:flex-row dark:bg-gray-900">
+
+        <!-- LEFT -->
+        <div class="flex flex-col flex-1 w-full lg:w-1/2">
+            <div class="flex flex-col justify-center flex-1 w-full max-w-md mx-auto">
+                <div class="mb-5 sm:mb-8">
+                    <h1 class="mb-3 font-bold text-gray-800 dark:text-white text-2xl sm:text-3xl lg:text-4xl">
+                        Connectez-vous
+                    </h1>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">
+                        Saisissez votre adresse e-mail et votre mot de passe pour vous connecter.
+                    </p>
+                </div>
+
+                <!-- FORM -->
+                <form (ngSubmit)="onLogin()">
+                    <div class="space-y-5">
+
+                        <!-- EMAIL -->
+                        <div>
+                            <label for="email"
+                                class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
+                                Email<span class="text-error-500">*</span>
+                            </label>
+                            <input [(ngModel)]="email" name="email" type="email" id="email" placeholder="info@gmail.com"
+                                class="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm" />
+                        </div>
+
+                        <!-- PASSWORD -->
+                        <div>
+                            <label for="password"
+                                class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
+                                Mot de passe<span class="text-error-500">*</span>
+                            </label>
+                            <div class="relative">
+                                <input [(ngModel)]="password" name="password"
+                                    [type]="showPassword ? 'text' : 'password'" id="password"
+                                    placeholder="Entrez votre mot de passe"
+                                    class="h-11 w-full rounded-lg border border-gray-300 bg-transparent py-2.5 pl-4 pr-11 text-sm" />
+                                <span (click)="togglePasswordVisibility()"
+                                    class="absolute cursor-pointer right-4 top-1/2 -translate-y-1/2">
+                                    👁
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- SUBMIT -->
+                        <button type="submit"
+                            class="mt-6 w-full px-4 py-3 text-sm font-medium text-white rounded-lg bg-blue-500 hover:bg-blue-600">
+                            Se connecter
+                        </button>
+
+                        <!-- FOOTER -->
+                        <p class="pt-4 text-xs text-center text-gray-400">
+                            © 2026 EGA Bank. Tous droits réservés.
+                        </p>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- RIGHT -->
+        <div class="bg-blue-500 relative hidden w-full h-full lg:w-1/2 bg-brand-950 lg:grid place-items-center">
+            <div class="flex flex-col items-center text-center">
+
+                <h2 class="mb-6 text-4xl font-extrabold tracking-wide text-white">
+                    EGABANK
+                </h2>
+
+                <img src="/images/logo/banking.svg" width="231" height="48" class="mb-6" alt="EgaBank Logo" />
+
+                <p class="max-w-sm text-sm text-white/70">
+                    Bienvenue sur la plateforme sécurisée d’EGA Bank.
+                    Connectez-vous pour gérer vos opérations bancaires
+                    en toute confiance et simplicité.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>

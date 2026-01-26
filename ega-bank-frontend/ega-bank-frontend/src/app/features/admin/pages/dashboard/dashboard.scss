@@ -1,0 +1,136 @@
+// Styles personnalisés pour compléter Tailwind
+:host {
+  display: block;
+  animation: fadeIn 0.5s ease-out;
+}
+
+// Animation d'apparition
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Style pour les cartes de statistiques
+.stat-card {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+  }
+}
+
+// Style pour les lignes du tableau avec effet de hover amélioré
+.table-row-hover {
+  position: relative;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(90deg, rgba(59, 130, 246, 0.05) 0%, rgba(59, 130, 246, 0) 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+  }
+  
+  &:hover::after {
+    opacity: 1;
+  }
+}
+
+// Style pour les indicateurs de pourcentage
+.percentage-indicator {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  
+  &.positive {
+    background-color: rgba(34, 197, 94, 0.1);
+    color: #16a34a;
+  }
+  
+  &.negative {
+    background-color: rgba(239, 68, 68, 0.1);
+    color: #dc2626;
+  }
+}
+
+// Style personnalisé pour les bordures des cartes
+.card-border-left {
+  position: relative;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 20%;
+    height: 60%;
+    width: 3px;
+    border-radius: 0 2px 2px 0;
+  }
+  
+  &.blue::before {
+    background: linear-gradient(180deg, #3b82f6 0%, #60a5fa 100%);
+  }
+  
+  &.green::before {
+    background: linear-gradient(180deg, #10b981 0%, #34d399 100%);
+  }
+  
+  &.purple::before {
+    background: linear-gradient(180deg, #8b5cf6 0%, #a78bfa 100%);
+  }
+  
+  &.orange::before {
+    background: linear-gradient(180deg, #f97316 0%, #fb923c 100%);
+  }
+}
+
+// Style pour les icônes dans les cartes
+.card-icon-container {
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: rotate(5deg) scale(1.1);
+  }
+}
+
+// Responsive design
+@media (max-width: 640px) {
+  .table-container {
+    margin: 0 -1rem;
+  }
+  
+  .stat-card {
+    padding: 1rem;
+  }
+}
+
+// Animation pour les nouvelles transactions
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.new-transaction {
+  animation: slideIn 0.3s ease-out;
+}

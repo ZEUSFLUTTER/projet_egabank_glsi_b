@@ -13,10 +13,10 @@ import { AuthService } from '../services/auth.service';
       <div class="card login-card">
         <div class="header">
            <div class="logo-container">
-            <img src="/assets/logoega.png" alt="EGA Bank" class="app-logo" width="240" height="96" />
+            <img src="assets/logo.png" alt="EGA BANQUE" class="app-logo" style="height: 64px; width: auto;" />
            </div>
           <h2 class="text-2xl font-bold mb-2 text-center">Créer un Compte</h2>
-          <p class="text-gray-500 text-sm text-center">Rejoignez EGA Bank aujourd'hui</p>
+          <p class="text-gray-500 text-sm text-center">Rejoignez EGA BANQUE aujourd'hui</p>
         </div>
 
         <div *ngIf="errorMessage" class="alert alert-danger">

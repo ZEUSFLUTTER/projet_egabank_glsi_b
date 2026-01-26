@@ -1,8 +1,8 @@
 <div class="sidebar">
     <!-- Logo (Click goes to Dashboard) -->
-    <div class="logo-area" style="cursor: pointer; justify-content: center;"
-         [routerLink]="isAdmin ? '/admin/dashboard' : '/client/dashboard'">
-        <img src="/assets/logoega.png" alt="EGA Bank" width="200" height="80" style="height: 80px; width: auto;">
+    <div class="logo-area" style="cursor: pointer; justify-content: center; padding: 2rem 1rem;"
+        [routerLink]="isAdmin ? '/admin/dashboard' : '/client/dashboard'">
+        <img src="assets/logo.png" alt="EGA BANQUE" style="height: 54px; width: auto;" class="animate-float">
     </div>
 
     <!-- Navigation -->
@@ -16,9 +16,8 @@
 
     <!-- Footer Actions -->
     <div class="footer-area">
-        <a [routerLink]="isAdmin ? '/admin/settings' : '/client/settings'"
-           class="nav-item mb-2" style="color: var(--gray-500); cursor: pointer;"
-           routerLinkActive="bg-gray-100 text-primary">
+        <a [routerLink]="isAdmin ? '/admin/settings' : '/client/settings'" class="nav-item mb-2"
+            style="color: var(--gray-500); cursor: pointer;" routerLinkActive="bg-gray-100 text-primary">
             <i class="ri-settings-3-line" style="font-size: 1.25rem;"></i>
             <span>Paramètres</span>
         </a>

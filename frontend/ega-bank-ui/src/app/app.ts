@@ -12,14 +12,15 @@ import { DashboardHeader } from './shared/dashboard-header.component';
 })
 export class App {
   protected readonly title = signal('angular-app');
-  showLayout = signal(true);
+  showLayout = signal(false);
 
   constructor(private router: Router) {
     this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
-        const url = event.urlAfterRedirects.split('?')[0];
-        // Afficher le layout pour toutes les routes SAUF login et landing
-        const publicRoutes = ['/login', '/'];
+        // Nettoyer l'URL des paramètres (?) et des ancres (#)
+        const url = this.router.url.split('?')[0].split('#')[0];
+        // Masquer le layout pour le login, register et la landing page
+        const publicRoutes = ['/', '', '/login', '/register'];
         this.showLayout.set(!publicRoutes.includes(url));
       }
     });

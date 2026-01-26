@@ -1,9 +1,15 @@
-<div class="app-shell">
-  <app-sidebar *ngIf="showLayout()"></app-sidebar>
-  <div class="app-content">
-    <dashboard-header *ngIf="showLayout()"></dashboard-header>
-    <main class="app-main">
-      <router-outlet></router-outlet>
-    </main>
+<ng-container *ngIf="showLayout(); else fullPage">
+  <div class="app-shell">
+    <app-sidebar></app-sidebar>
+    <div class="app-content">
+      <dashboard-header></dashboard-header>
+      <main class="app-main">
+        <router-outlet></router-outlet>
+      </main>
+    </div>
   </div>
-</div>
+</ng-container>
+
+<ng-template #fullPage>
+  <router-outlet></router-outlet>
+</ng-template>

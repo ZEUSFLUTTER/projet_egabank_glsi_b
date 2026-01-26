@@ -16,10 +16,13 @@ import { TransactionFormComponent } from './pages/transaction-form.component';
 import { TransactionsComponent } from './pages/transactions.component';
 import { LandingComponent } from './pages/landing.component';
 
+import { RegisterComponent } from './pages/register.component';
+
 export const routes: Routes = [
 	// Routes publiques
 	{ path: '', component: LandingComponent },
 	{ path: 'login', component: LoginComponent },
+	{ path: 'register', component: RegisterComponent },
 
 	// Routes ADMIN uniquement (gestion des clients et comptes pour tous)
 	{

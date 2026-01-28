@@ -1,0 +1,520 @@
+<div class="admin-dashboard">
+  <!-- Modern Header Section -->
+  <div class="dashboard-header">
+    <div class="header-content">
+      <div class="welcome-section">
+        <h1 class="dashboard-title">
+          <svg class="title-icon" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+            <polyline points="9,22 9,12 15,12 15,22"></polyline>
+          </svg>
+          Administration EGA Bank
+        </h1>
+        <p class="dashboard-subtitle">Tableau de bord administrateur moderne</p>
+      </div>
+      <div class="header-actions">
+        <button class="btn btn-icon" (click)="loadDashboardData()" title="Actualiser">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="23 4 23 10 17 10"></polyline>
+            <polyline points="1 20 1 14 7 14"></polyline>
+            <path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"></path>
+          </svg>
+        </button>
+        <div class="user-menu">
+          <span class="user-info">Admin</span>
+          <button class="btn btn-danger" (click)="logout()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+              <polyline points="16,17 21,12 16,7"></polyline>
+              <line x1="21" y1="12" x2="9" y2="12"></line>
+            </svg>
+            Déconnexion
+          </button>
+        </div>
+      </div>
+      <div class="header-decoration">
+        <div class="floating-shape shape-1"></div>
+        <div class="floating-shape shape-2"></div>
+        <div class="floating-shape shape-3"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-container">
+    <div class="loading-card">
+      <div class="loading-spinner">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 12a9 9 0 1 1-6.219-8.56"></path>
+        </svg>
+      </div>
+      <h3>Chargement des données...</h3>
+      <p>Nous récupérons les informations administratives</p>
+    </div>
+  </div>
+
+  <!-- Dashboard Content -->
+  <main *ngIf="!loading" class="dashboard-content">
+    <!-- Statistics Section -->
+    <div class="stats-section">
+      <h2 class="section-title">Statistiques générales</h2>
+      <div class="stats-grid">
+        <div class="stat-card stat-card-primary">
+          <div class="stat-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+              <circle cx="9" cy="7" r="4"></circle>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+            </svg>
+          </div>
+          <div class="stat-content">
+            <h3 class="stat-number">{{ stats.totalClients }}</h3>
+            <p class="stat-label">Clients actifs</p>
+            <span class="stat-trend positive">+5% ce mois</span>
+          </div>
+          <div class="stat-decoration"></div>
+        </div>
+        
+        <div class="stat-card stat-card-secondary">
+          <div class="stat-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+              <line x1="1" y1="10" x2="23" y2="10"></line>
+            </svg>
+          </div>
+          <div class="stat-content">
+            <h3 class="stat-number">{{ stats.totalComptes }}</h3>
+            <p class="stat-label">Comptes ouverts</p>
+            <span class="stat-trend positive">+12% ce mois</span>
+          </div>
+          <div class="stat-decoration"></div>
+        </div>
+        
+        <div class="stat-card stat-card-success">
+          <div class="stat-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="1" x2="12" y2="23"></line>
+              <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+            </svg>
+          </div>
+          <div class="stat-content">
+            <h3 class="stat-number">{{ stats.soldeTotal | currency:'EUR':'symbol':'1.0-0' }}</h3>
+            <p class="stat-label">Solde total</p>
+            <span class="stat-trend positive">+8% ce mois</span>
+          </div>
+          <div class="stat-decoration"></div>
+        </div>
+        
+        <div class="stat-card stat-card-warning">
+          <div class="stat-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 3v18h18"></path>
+              <path d="m19 9-5 5-4-4-3 3"></path>
+            </svg>
+          </div>
+          <div class="stat-content">
+            <h3 class="stat-number">{{ stats.totalTransactions }}</h3>
+            <p class="stat-label">Transactions</p>
+            <span class="stat-trend neutral">Cette semaine</span>
+          </div>
+          <div class="stat-decoration"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Actions Section -->
+    <div class="actions-section">
+      <h2 class="section-title">Actions rapides</h2>
+      <div class="actions-grid">
+        <div class="action-card" (click)="toggleCreateClientForm()">
+          <div class="action-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+              <circle cx="8.5" cy="7" r="4"></circle>
+              <line x1="20" y1="8" x2="20" y2="14"></line>
+              <line x1="23" y1="11" x2="17" y2="11"></line>
+            </svg>
+          </div>
+          <div class="action-content">
+            <h3>Nouveau Client</h3>
+            <p>Créer un nouveau client</p>
+          </div>
+        </div>
+        
+        <div class="action-card" (click)="toggleCreateCompteForm()" [class.disabled]="!selectedClient">
+          <div class="action-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+              <line x1="1" y1="10" x2="23" y2="10"></line>
+              <circle cx="12" cy="14" r="2"></circle>
+            </svg>
+          </div>
+          <div class="action-content">
+            <h3>Nouveau Compte</h3>
+            <p>Ouvrir un compte</p>
+          </div>
+        </div>
+        
+        <div class="action-card" (click)="goToTransactions()">
+          <div class="action-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"></path>
+            </svg>
+          </div>
+          <div class="action-content">
+            <h3>Transactions</h3>
+            <p>Créer une transaction</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent Activity Section -->
+    <div class="recent-activity-section">
+      <h2 class="section-title">Activité récente</h2>
+      <div class="activity-card">
+        <div *ngFor="let transaction of recentTransactions.slice(0, 5)" class="activity-item">
+          <div class="activity-icon" [class]="'type-' + transaction.type.toLowerCase()">
+            <svg *ngIf="transaction.type === 'DEPOT'" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="1" x2="12" y2="23"></line>
+              <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+            </svg>
+            <svg *ngIf="transaction.type === 'RETRAIT'" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 6h18l-2 13H5L3 6Z"></path>
+              <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+            </svg>
+            <svg *ngIf="transaction.type === 'VIREMENT'" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M7 17L17 7"></path>
+              <path d="M17 17H7V7"></path>
+            </svg>
+          </div>
+          <div class="activity-content">
+            <h4>{{ transaction.type }}</h4>
+            <p>{{ transaction.description }}</p>
+            <span class="activity-time">{{ transaction.dateOperation | date:'dd/MM/yyyy HH:mm' }}</span>
+          </div>
+          <div class="activity-amount" [class.positive]="transaction.type === 'DEPOT'" [class.negative]="transaction.type === 'RETRAIT'">
+            {{ transaction.montant | currency:'EUR':'symbol':'1.2-2' }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Client Management Section -->
+    <div class="clients-management-section">
+      <div class="section-header">
+        <h2 class="section-title">Gestion des clients</h2>
+        <div class="section-actions">
+          <div class="search-box">
+            <input type="text" placeholder="Rechercher un client..." [(ngModel)]="clientSearchTerm" (input)="filterClients()">
+            <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"></circle>
+              <path d="m21 21-4.35-4.35"></path>
+            </svg>
+          </div>
+          <button class="btn btn-primary" (click)="toggleCreateClientForm()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="8" x2="12" y2="16"></line>
+              <line x1="8" y1="12" x2="16" y2="12"></line>
+            </svg>
+            Nouveau Client
+          </button>
+        </div>
+      </div>
+
+      <!-- Empty State -->
+      <div *ngIf="filteredClients.length === 0" class="empty-state">
+        <div class="empty-card">
+          <div class="empty-icon">
+            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+              <circle cx="9" cy="7" r="4"></circle>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+            </svg>
+          </div>
+          <h3>Aucun client trouvé</h3>
+          <p>Commencez par créer votre premier client</p>
+          <button class="btn btn-primary" (click)="toggleCreateClientForm()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="8" x2="12" y2="16"></line>
+              <line x1="8" y1="12" x2="16" y2="12"></line>
+            </svg>
+            Créer un client
+          </button>
+        </div>
+      </div>
+      
+      <!-- Clients Grid -->
+      <div *ngIf="filteredClients.length > 0" class="clients-grid">
+        <div *ngFor="let client of filteredClients" class="client-card">
+          <div class="client-header">
+            <div class="client-avatar">
+              {{ client.nom.charAt(0) }}{{ client.prenom.charAt(0) }}
+            </div>
+            <div class="client-info">
+              <h3>{{ client.nom }} {{ client.prenom }}</h3>
+              <span class="client-id">ID: {{ client.id }}</span>
+            </div>
+          </div>
+          
+          <div class="client-contact">
+            <div class="contact-item">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                <polyline points="22,6 12,13 2,6"></polyline>
+              </svg>
+              <span>{{ client.courriel }}</span>
+            </div>
+            <div class="contact-item" *ngIf="client.telephone">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+              </svg>
+              <span>{{ client.telephone }}</span>
+            </div>
+          </div>
+          
+          <div class="client-accounts">
+            <div class="accounts-summary">
+              <span class="accounts-count">{{ client.nombreComptes || 0 }}</span>
+              <span class="accounts-label">compte(s)</span>
+            </div>
+          </div>
+          
+          <div class="client-actions">
+            <!-- Basic Actions -->
+            <div class="actions-group basic-actions">
+              <button class="btn btn-sm btn-outline" (click)="selectClient(client)" title="Voir détails">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                  <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+                Voir
+              </button>
+              <button class="btn btn-sm btn-secondary" (click)="editClient(client)" title="Modifier client">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"></path>
+                </svg>
+                Modifier
+              </button>
+              <button class="btn btn-sm btn-danger" (click)="deleteClient(client)" title="Supprimer client">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="3,6 5,6 21,6"></polyline>
+                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                </svg>
+                Supprimer
+              </button>
+            </div>
+            
+            <!-- Banking Operations -->
+            <div class="actions-group banking-actions">
+              <!-- If client has no accounts -->
+              <button *ngIf="!client.nombreComptes || client.nombreComptes === 0" 
+                      class="btn btn-sm btn-success" 
+                      (click)="selectClientForAccount(client)" 
+                      title="Créer un compte">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+                  <line x1="1" y1="10" x2="23" y2="10"></line>
+                </svg>
+                Créer Compte
+              </button>
+              
+              <!-- If client has accounts -->
+              <div *ngIf="client.nombreComptes && client.nombreComptes > 0" class="banking-operations">
+                <button class="btn btn-sm btn-success" (click)="openTransactionForm(client, 'DEPOT')" title="Effectuer un dépôt">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="12" y1="1" x2="12" y2="23"></line>
+                    <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                  </svg>
+                  Dépôt
+                </button>
+                <button class="btn btn-sm btn-warning" (click)="openTransactionForm(client, 'RETRAIT')" title="Effectuer un retrait">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 6h18l-2 13H5L3 6Z"></path>
+                    <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                  </svg>
+                  Retrait
+                </button>
+                <button class="btn btn-sm btn-info" (click)="openTransactionForm(client, 'VIREMENT')" title="Effectuer un virement">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M7 17L17 7"></path>
+                    <path d="M17 17H7V7"></path>
+                  </svg>
+                  Virement
+                </button>
+                <button class="btn btn-sm btn-primary" (click)="selectClientForAccount(client)" title="Créer un nouveau compte">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="16"></line>
+                    <line x1="8" y1="12" x2="16" y2="12"></line>
+                  </svg>
+                  + Compte
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+  <!-- Modals -->
+  <!-- Formulaire création client -->
+  <div *ngIf="showCreateClientForm" class="modal-overlay" (click)="toggleCreateClientForm()">
+    <div class="modal-container" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>Créer un nouveau client</h3>
+        <button class="modal-close" (click)="toggleCreateClientForm()">✕</button>
+      </div>
+      <form (ngSubmit)="createClient()" class="modal-form">
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Nom *</label>
+            <input type="text" [(ngModel)]="newClient.nom" name="nom" required>
+          </div>
+          <div class="form-group">
+            <label>Prénom *</label>
+            <input type="text" [(ngModel)]="newClient.prenom" name="prenom" required>
+          </div>
+          <div class="form-group">
+            <label>Email *</label>
+            <input type="email" [(ngModel)]="newClient.courriel" name="courriel" required>
+          </div>
+          <div class="form-group">
+            <label>Téléphone</label>
+            <input type="tel" [(ngModel)]="newClient.telephone" name="telephone">
+          </div>
+          <div class="form-group">
+            <label>Date de naissance</label>
+            <input type="date" [(ngModel)]="newClient.dateNaissance" name="dateNaissance">
+          </div>
+          <div class="form-group">
+            <label>Sexe</label>
+            <select [(ngModel)]="newClient.sexe" name="sexe">
+              <option value="MASCULIN">Masculin</option>
+              <option value="FEMININ">Féminin</option>
+            </select>
+          </div>
+          <div class="form-group full-width">
+            <label>Adresse</label>
+            <textarea [(ngModel)]="newClient.adresse" name="adresse" rows="2"></textarea>
+          </div>
+          <div class="form-group">
+            <label>Nationalité</label>
+            <input type="text" [(ngModel)]="newClient.nationalite" name="nationalite">
+          </div>
+          <div class="form-group">
+            <label>Mot de passe *</label>
+            <input type="password" [(ngModel)]="newClient.password" name="password" required>
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-outline" (click)="toggleCreateClientForm()">
+            Annuler
+          </button>
+          <button type="submit" class="btn btn-primary">
+            Créer Client
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Formulaire création compte -->
+  <div *ngIf="showCreateCompteForm" class="modal-overlay" (click)="toggleCreateCompteForm()">
+    <div class="modal-container" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>Créer un compte pour {{ selectedClient?.nom }} {{ selectedClient?.prenom }}</h3>
+        <button class="modal-close" (click)="toggleCreateCompteForm()">✕</button>
+      </div>
+      <form (ngSubmit)="createCompteForClient()" class="modal-form">
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Type de compte</label>
+            <select [(ngModel)]="newCompte.type" name="type">
+              <option value="COURANT">Compte Courant</option>
+              <option value="EPARGNE">Compte Épargne</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Solde initial</label>
+            <input type="number" [(ngModel)]="newCompte.soldeInitial" name="soldeInitial" min="0" step="0.01">
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-outline" (click)="toggleCreateCompteForm()">
+            Annuler
+          </button>
+          <button type="submit" class="btn btn-primary">
+            Créer Compte
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Formulaire création transaction -->
+  <div *ngIf="showCreateTransactionForm" class="modal-overlay" (click)="toggleCreateTransactionForm()">
+    <div class="modal-container" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>
+          <span *ngIf="!selectedClient">Créer une nouvelle transaction</span>
+          <span *ngIf="selectedClient">{{ newTransaction.type }} pour {{ selectedClient.nom }} {{ selectedClient.prenom }}</span>
+        </h3>
+        <button class="modal-close" (click)="toggleCreateTransactionForm()">✕</button>
+      </div>
+      <form (ngSubmit)="createTransaction()" class="modal-form">
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Compte source *</label>
+            <select [(ngModel)]="newTransaction.compteId" name="compteId" required>
+              <option value="0">Sélectionner un compte</option>
+              <option *ngFor="let compte of availableComptes" [value]="compte.id">
+                {{ compte.numeroCompte }} - {{ compte.clientNom }} {{ compte.clientPrenom }} ({{ compte.solde | currency:'EUR':'symbol':'1.2-2' }})
+              </option>
+            </select>
+            <small *ngIf="selectedClient" class="form-help">
+              Comptes de {{ selectedClient.nom }} {{ selectedClient.prenom }}
+            </small>
+          </div>
+          <div class="form-group">
+            <label>Type de transaction *</label>
+            <select [(ngModel)]="newTransaction.type" name="type" required>
+              <option value="DEPOT">Dépôt</option>
+              <option value="RETRAIT">Retrait</option>
+              <option value="VIREMENT">Virement</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Montant *</label>
+            <input type="number" [(ngModel)]="newTransaction.montant" name="montant" min="0.01" step="0.01" required>
+          </div>
+          <div class="form-group" *ngIf="newTransaction.type === 'VIREMENT'">
+            <label>Compte destinataire *</label>
+            <select [(ngModel)]="newTransaction.compteDestinataire" name="compteDestinataire">
+              <option value="">Sélectionner un compte destinataire</option>
+              <option *ngFor="let compte of availableComptes" [value]="compte.id" [disabled]="compte.id === newTransaction.compteId">
+                {{ compte.numeroCompte }} - {{ compte.clientNom }} {{ compte.clientPrenom }}
+              </option>
+            </select>
+          </div>
+          <div class="form-group full-width">
+            <label>Description *</label>
+            <textarea [(ngModel)]="newTransaction.description" name="description" rows="3" required placeholder="Décrivez la transaction..."></textarea>
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-outline" (click)="toggleCreateTransactionForm()">
+            Annuler
+          </button>
+          <button type="submit" class="btn btn-primary">
+            Créer Transaction
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
